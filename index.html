@@ -233,7 +233,7 @@
 <!-- ───────── 사용 설명서 (오른쪽 서랍) ───────── -->
 <div class="help-bg" id="helpBg" onclick="helpClose()"></div>
 <div class="help" id="helpDrawer" role="dialog" aria-label="사용 설명서">
-  <div class="help-hd"><b>📖 사용 설명서</b><span class="hint" style="margin:0">역할 탭을 고르세요</span><button class="btn small" style="margin-left:auto" onclick="helpClose()">닫기 ✕</button></div>
+  <div class="help-hd"><b>📖 사용 설명서</b><span class="hint" style="margin:0">역할 탭을 고르세요 &nbsp;|&nbsp; 프로그램 버전 2026-11-03</span><button class="btn small" style="margin-left:auto" onclick="helpClose()">닫기 ✕</button></div>
   <div class="help-tabs" id="helpTabs">
     <button data-h="start" onclick="helpTab('start')">시작하기</button>
     <button data-h="user" onclick="helpTab('user')">담임, 전담</button>
@@ -3168,6 +3168,7 @@ async function loadLog(){
   $('logTable').querySelector('tbody').innerHTML = list.map(l=>`<tr><td style="white-space:nowrap;color:var(--ink-3)">${esc(l.일시)}</td><td>${esc(l.역할)}</td><td>${esc(l.작업)}</td><td>${esc(l.대상)}</td><td>${esc(l.요약)}</td></tr>`).join('') || '<tr><td class="empty">이력이 없습니다.</td></tr>';
 }
 
+const APP_VERSION = '2026-11-03';   // 빌드 날짜 (설치 안내 페이지가 이 값을 읽어 최신 버전을 표시)
 // ───────── 브라우저 탭 아이콘 ─────────
 const DEFAULT_FAVICON = document.getElementById('favicon').getAttribute('href');
 function setFavicon(src){ $('favicon').href = src || DEFAULT_FAVICON; }
@@ -3237,7 +3238,7 @@ function renderTestBanner(){
     const head = DEMO ? '🧪 <b>연수용 연습 페이지</b>입니다. 마음껏 눌러 보세요. 여기 입력한 내용은 다른 참가자와 함께 쓰는 연습 자료입니다. 혼자 쓰려면 "나만의 연습 방 만들기"를 누르세요.'
                       : '🧪 <b>공용 테스트 페이지</b>입니다. 마음껏 눌러 보세요. 여기 입력한 내용은 실제 자료와 상관없고, 다른 사람과 함께 쓰는 연습 자료입니다.';
     el.innerHTML = `<span>${head} &nbsp;${pw}</span>
-      <span style="display:flex;gap:8px;flex-wrap:wrap">${btn('resetTestSchool()','샘플 자료로 되돌리기')}${btn('makeTestRoom()','나만의 연습 방 만들기')}${room ? lnk(roomUrl(room), '내 연습 방으로 ('+room+')') : ''}${sample}${DEMO ? '' : lnk('./','실제 프로그램으로')}</span>`;
+      <span style="display:flex;gap:8px;flex-wrap:wrap">${btn('resetTestSchool()','샘플 자료로 되돌리기')}${btn('makeTestRoom()','나만의 연습 방 만들기')}${room ? lnk(roomUrl(room), '내 연습 방으로 ('+room+')') : ''}${sample}${DEMO ? lnk('./setup.html','🏫 우리 학교에 설치하기') : lnk('./','실제 프로그램으로')}</span>`;
   } else {
     try{ localStorage.setItem(ROOM_KEY, SID); }catch(e){}
     el.innerHTML = `<span>🧪 <b>내 연습 방</b> (${esc(SID)})입니다. 이 방의 자료는 이 주소로 들어온 사람만 봅니다. 주소를 즐겨찾기 해 두세요. &nbsp;${pw}</span>

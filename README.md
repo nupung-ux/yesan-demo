@@ -6,6 +6,7 @@
 - 여러 사람이 동시에 연습할 때는 위쪽 "나만의 연습 방 만들기"를 누르면 각자 따로 쓰는 방이 생깁니다
 - `예시_품의목록.xlsx` 는 에듀파인 반영 연습용 파일입니다 (위쪽 띠의 버튼으로도 받을 수 있음)
 - 자료 저장: `firebase-config.js` 에 적은 Firebase 프로젝트. `SITE_MODE = 'demo'` 줄이 연수용 표시입니다
+- `setup.html` 은 다른 학교가 자기 Firebase와 깃허브로 설치하는 순서를 안내하는 페이지입니다. 설치 파일(index.html, firebase-config.template.js, firestore.rules, 시트자료_내보내기.gs)도 이 저장소에서 바로 내려받습니다
 - `index.html` 을 바꿔 올리면 1~2분 뒤 자동 반영됩니다
 
 made by 너펑이

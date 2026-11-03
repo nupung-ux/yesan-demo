@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>예산 관리 프로그램 설치 안내</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2324427a'/%3E%3Ctext x='32' y='45' font-size='34' font-family='sans-serif' font-weight='700' fill='%23fff' text-anchor='middle'%3E%EC%98%88%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{--ink:#1c2230;--ink-2:#4b5563;--ink-3:#8a94a6;--paper:#f5f6f8;--panel:#fff;--line:#d9dee7;--line-2:#eef1f5;--navy:#24427a;--navy-2:#1a3160;--navy-tint:#e9eef8;--warn:#b45309;--warn-tint:#fff4e5;--ok:#2f855a;--ok-tint:#e8f5ec;--danger:#b91c1c;--r:8px}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15.5px;line-height:1.6}
+  button,input,select,textarea{font:inherit;color:inherit}
+  h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em}
+  a{color:var(--navy)}
+  .top{background:var(--panel);border-bottom:1px solid var(--line)}
+  .top .in{max-width:1240px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .top .t{font-size:18px;font-weight:700}
+  .top .s{color:var(--ink-3)}
+  .top .r{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px;flex-wrap:wrap}
+  .ver{background:var(--ok-tint);color:var(--ok);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600}
+  .layout{max-width:1240px;margin:0 auto;display:flex;gap:22px;padding:22px 24px 60px;align-items:flex-start}
+  .side{width:300px;flex:none;position:sticky;top:16px}
+  .main{flex:1;min-width:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .steps{list-style:none;margin:0;padding:0}
+  .steps li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:14.5px;color:var(--ink-2)}
+  .steps li:hover{background:var(--line-2)}
+  .steps li.cur{background:var(--navy-tint);color:var(--navy);font-weight:600}
+  .steps li .n{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink-3);background:#fff}
+  .steps li.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+  .steps li.cur .n{border-color:var(--navy);color:var(--navy)}
+  .steps li.cur.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+  .prog{height:8px;background:var(--line-2);border-radius:999px;overflow:hidden;margin:12px 0 6px}
+  .prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+  .step-hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .step-hd h2{font-size:22px}
+  .step-hd .time{color:var(--ink-3);font-size:14px}
+  .why{color:var(--ink-2);margin:4px 0 16px}
+  ol.todo{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.todo>li{counter-increment:s;position:relative;padding:10px 0 10px 44px;border-top:1px solid var(--line-2)}
+  ol.todo>li:first-child{border-top:0}
+  ol.todo>li::before{content:counter(s);position:absolute;left:4px;top:11px;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .path{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;margin:2px 0}
+  .path b{background:var(--navy-tint);color:var(--navy);border-radius:6px;padding:1px 8px;font-weight:600;font-size:14px}
+  .path i{color:var(--ink-3);font-style:normal}
+  .note{background:var(--warn-tint);border-left:3px solid var(--warn);padding:10px 12px;border-radius:0 var(--r) var(--r) 0;margin:12px 0;font-size:14.5px}
+  .ok{background:var(--ok-tint);border-left:3px solid var(--ok);padding:10px 12px;border-radius:0 var(--r) var(--r) 0;margin:12px 0;font-size:14.5px}
+  .check{display:flex;gap:10px;align-items:center;background:var(--ok-tint);border:1px solid #bfe3c9;border-radius:10px;padding:12px 14px;margin-top:18px;cursor:pointer;font-weight:600}
+  .check input{width:20px;height:20px}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:9px 16px;cursor:pointer;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{background:var(--line-2)}
+  .btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+  .btn.primary:hover{background:var(--navy-2)}
+  .btn.small{padding:5px 10px;font-size:13.5px}
+  .btn[disabled]{opacity:.5;cursor:default}
+  pre{background:#1e2533;color:#e6edf7;border-radius:10px;padding:14px 16px;overflow:auto;font-size:13.5px;line-height:1.5;margin:8px 0}
+  .codebox{position:relative}
+  .codebox .btn{position:absolute;right:10px;top:10px;background:#fff}
+  textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font-family:Consolas,monospace;font-size:13.5px;resize:vertical}
+  input[type=text]{border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;width:100%}
+  .files{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
+  .file{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:6px}
+  .file b{font-size:15px}
+  .file .d{color:var(--ink-3);font-size:13px;flex:1}
+  table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--line-2);white-space:nowrap}
+  details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fff}
+  summary{cursor:pointer;font-weight:600}
+  .hint{color:var(--ink-3);font-size:13.5px}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 4px}
+  .flow span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:14px}
+  .flow em{color:var(--ink-3);font-style:normal}
+  @media(max-width:860px){.layout{display:block}.side{position:static;width:auto;margin-bottom:16px}}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <span class="t">교육활동 예산 관리 프로그램</span><span class="s">우리 학교에 설치하기</span>
+  <span class="r"><span class="ver" id="ver">최신 버전 확인 중…</span><a class="btn small" href="./">🧪 연습 사이트</a></span>
+</div></div>
+
+<div class="layout">
+  <aside class="side">
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:6px">설치 순서</h3>
+      <div class="hint">단계를 누르면 그 설명이 열립니다. 마친 단계는 체크해 두세요. 체크는 이 컴퓨터에 저장됩니다.</div>
+      <div class="prog"><i id="progBar"></i></div>
+      <div class="hint" id="progText" style="margin-bottom:8px"></div>
+      <ol class="steps" id="stepNav"></ol>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" onclick="resetProgress()">체크 모두 지우기</button><button class="btn small" onclick="go('files')">📥 설치 파일 받기</button></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="card" id="stepBox"></div>
+  </main>
+</div>
+
+<script>
+// ───────── 공통 자료 ─────────
+const RULES = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 이 앱(익명 로그인)으로 접속한 경우에만 읽고 쓸 수 있습니다.
+    match /schools/{school} {
+      allow read, write: if request.auth != null;
+    }
+    match /schools/{school}/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}`;
+const CONFIG_TEMPLATE = `// ─────────────────────────────────────────────────────────────
+// Firebase 설정 — 이 파일만 우리 학교 것으로 바꾸면 됩니다.
+// Firebase 콘솔 → 프로젝트 설정(톱니) → 일반 → 내 앱 → "SDK 설정 및 구성" → 구성(Config) 에 나오는
+// firebaseConfig 값을 그대로 복사해 아래에 붙여 넣으세요. (따옴표 안의 값만 바꾸면 됩니다)
+// 이 값들은 비밀번호가 아니라 "주소"라서 공개되어도 됩니다. 접근 제한은 Firestore 규칙이 담당합니다.
+// ─────────────────────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "@@apiKey@@",
+  authDomain: "@@authDomain@@",
+  projectId: "@@projectId@@",
+  storageBucket: "@@storageBucket@@",
+  messagingSenderId: "@@messagingSenderId@@",
+  appId: "@@appId@@"
+};
+`;
+const KEYS = ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const path = (...a) => `<span class="path">${a.map((x,i)=>(i?'<i>→</i>':'')+'<b>'+esc(x)+'</b>').join('')}</span>`;
+
+// ───────── 저장 (이 컴퓨터) ─────────
+const SK = 'yesan_setup';
+let state = { done: {}, cur: 'ready', cfg: '', url: '' };
+try { Object.assign(state, JSON.parse(localStorage.getItem(SK)||'{}')); } catch(e) {}
+function save(){ try{ localStorage.setItem(SK, JSON.stringify(state)); }catch(e){} }
+
+// ───────── 단계 ─────────
+const STEPS = [
+ { id:'ready', title:'시작하기 전에', time:'5분', body:() => `
+  <p class="why">이 프로그램은 두 곳에 나뉘어 삽니다. <b>프로그램 파일</b>은 깃허브(GitHub)에 올려 두고 주소를 받고, <b>자료</b>는 구글의 Firebase에 저장됩니다. 둘 다 무료이고, 한 번 설치하면 선생님들은 주소만 열면 됩니다. 전체 30분쯤 걸립니다.</p>
+  <div class="flow"><span>Firebase 프로젝트 만들기</span><em>→</em><span>설정 파일 만들기</span><em>→</em><span>깃허브에 파일 올리기</span><em>→</em><span>주소 받기</span><em>→</em><span>처음 설정</span></div>
+  <h3 style="margin:18px 0 8px">준비물</h3>
+  <ol class="todo">
+    <li><b>구글 계정</b> — 개인 계정보다 학교 업무용 구글 계정을 권합니다. Firebase 프로젝트가 이 계정에 묶이므로, 담당자가 바뀌어도 계정만 넘기면 됩니다.</li>
+    <li><b>깃허브 계정</b> — <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>에서 이메일, 비밀번호, 사용자 이름을 넣고 이메일 인증을 합니다. <b>사용자 이름이 프로그램 주소에 들어갑니다</b>(예: 사용자 이름이 hsbr-school 이면 주소는 https://hsbr-school.github.io/…). 영문 소문자와 숫자, 하이픈만 됩니다.</li>
+    <li><b>이 페이지</b> — 설치 중에 설정 파일을 만들고 프로그램 파일을 받는 곳입니다. 즐겨찾기 해 두세요.</li>
+  </ol>
+  <div class="note">컴퓨터에 따로 설치하는 것은 없습니다. 모두 웹 브라우저(크롬 권장)에서 합니다.</div>` },
+
+ { id:'fb1', title:'Firebase 프로젝트 만들기', time:'3분', body:() => `
+  <p class="why">자료가 저장될 곳을 만듭니다.</p>
+  <ol class="todo">
+    <li><a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> 에 접속해 구글 계정으로 로그인합니다.</li>
+    <li>${path('프로젝트 만들기')} (이미 다른 프로젝트가 있으면 "프로젝트 추가")</li>
+    <li>프로젝트 이름을 넣습니다. 예: <b>hsbr-budget</b> (영문 권장). 아래에 자동으로 생긴 프로젝트 ID는 그대로 두고 ${path('계속')}</li>
+    <li>"이 프로젝트에서 Google 애널리틱스 사용 설정" 스위치를 <b>꺼서</b> 끕니다 → ${path('프로젝트 만들기')}</li>
+    <li>잠시 뒤 "새 프로젝트가 준비되었습니다"가 나오면 ${path('계속')}</li>
+  </ol>
+  <div class="ok">확인: 왼쪽 위에 방금 만든 프로젝트 이름이 보이면 됩니다.</div>` },
+
+ { id:'fb2', title:'익명 로그인 켜기', time:'2분', body:() => `
+  <p class="why">선생님들이 따로 로그인하지 않고 쓰되, 이 프로그램을 통한 접속만 Firebase가 받아들이도록 하는 설정입니다.</p>
+  <ol class="todo">
+    <li>왼쪽 메뉴 ${path('빌드','Authentication')} (안 보이면 왼쪽 메뉴의 "모든 제품"에서 찾습니다)</li>
+    <li>${path('시작하기')}</li>
+    <li>${path('로그인 방법 탭')} → "새 제공업체 추가" 또는 목록에서 ${path('익명')}</li>
+    <li>"사용 설정" 스위치를 켜고 ${path('저장')}</li>
+  </ol>
+  <div class="ok">확인: 로그인 제공업체 목록에 "익명 — 사용 설정됨"이 보이면 됩니다.</div>` },
+
+ { id:'fb3', title:'Firestore 데이터베이스와 규칙', time:'4분', body:() => `
+  <p class="why">자료가 실제로 들어갈 데이터베이스를 만들고, 이 프로그램으로만 읽고 쓸 수 있게 규칙을 넣습니다.</p>
+  <ol class="todo">
+    <li>왼쪽 메뉴 ${path('빌드','Firestore Database')} → ${path('데이터베이스 만들기')}</li>
+    <li>데이터베이스 ID는 기본값(default)으로 두고, 위치는 <b>asia-northeast3 (Seoul)</b> 을 고릅니다 → ${path('다음')}</li>
+    <li>"<b>프로덕션 모드에서 시작</b>"을 고르고 ${path('만들기')}</li>
+    <li>데이터베이스가 열리면 위쪽 ${path('규칙 탭')} → 편집창의 내용을 <b>전부 지우고</b> 아래 규칙을 붙여 넣습니다 → ${path('게시')}</li>
+  </ol>
+  <div class="codebox"><button class="btn small" onclick="copyText(RULES, this)">복사</button><pre>${esc(RULES)}</pre></div>
+  <div class="ok">확인: "규칙이 게시되었습니다" 메시지가 뜨고, 규칙 편집창에 위 내용이 그대로 있으면 됩니다.</div>
+  <div class="note">테스트 모드로 만들었더라도 규칙 탭에서 위 내용으로 바꿔 게시하면 같습니다. 테스트 모드 규칙은 30일 뒤 막히므로 꼭 바꿔야 합니다.</div>` },
+
+ { id:'fb4', title:'웹 앱 등록하고 설정 파일 만들기', time:'4분', body:() => `
+  <p class="why">프로그램이 우리 Firebase에 연결되도록 하는 설정 파일(firebase-config.js)을 만듭니다. Firebase가 보여 주는 값을 아래 칸에 붙여 넣으면 이 페이지가 파일을 만들어 줍니다.</p>
+  <ol class="todo">
+    <li>왼쪽 위 ${path('톱니 ⚙','프로젝트 설정')} → ${path('일반 탭')} → 아래로 내려 "내 앱" → 웹 아이콘 <b>&lt;/&gt;</b></li>
+    <li>앱 닉네임에 <b>예산관리</b> 라고 넣고, "Firebase 호스팅 설정" 체크는 하지 않은 채 ${path('앱 등록')}</li>
+    <li>"Firebase SDK 추가" 화면에서 <b>구성(Config)</b>을 선택하면 <code>const firebaseConfig = { apiKey: "…", … };</code> 상자가 나옵니다. 상자 안 내용을 전부 드래그해 복사합니다 (중괄호 포함, 통째로 복사해도 됩니다).</li>
+    <li>아래 칸에 붙여 넣고 ${path('설정 파일 만들기')} → <b>firebase-config.js</b> 가 내려받아집니다. 이 파일은 6단계에서 올립니다.</li>
+  </ol>
+  <textarea id="cfgIn" placeholder='여기에 붙여 넣으세요. 예:
+const firebaseConfig = {
+  apiKey: "AIzaSy…",
+  authDomain: "hsbr-budget.firebaseapp.com",
+  projectId: "hsbr-budget",
+  storageBucket: "hsbr-budget.firebasestorage.app",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef"
+};'>${esc(state.cfg||'')}</textarea>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px"><button class="btn primary" onclick="makeConfig()">설정 파일 만들기 (firebase-config.js 받기)</button><span class="hint" id="cfgMsg"></span></div>
+  <div id="cfgOut"></div>
+  <details style="margin-top:14px"><summary>나중에 이 값을 다시 보려면</summary>Firebase 콘솔 → 톱니 → 프로젝트 설정 → 일반 → 아래 "내 앱" → 앱 선택 → "SDK 설정 및 구성"에서 "구성"을 고르면 같은 값이 나옵니다. 이 값은 비밀번호가 아니라 주소에 가까워서 공개되어도 괜찮습니다. 접근 제한은 3단계 규칙이 맡습니다.</details>` },
+
+ { id:'gh1', title:'깃허브 저장소 만들기', time:'2분', body:() => `
+  <p class="why">프로그램 파일을 올려 둘 공간(저장소)을 만듭니다. 저장소 이름이 주소의 뒷부분이 됩니다.</p>
+  <ol class="todo">
+    <li><a href="https://github.com" target="_blank" rel="noopener">github.com</a> 에 로그인 → 오른쪽 위 ${path('+','New repository')}</li>
+    <li>Repository name에 <b>budget</b> 처럼 영문 소문자로 넣습니다. (주소가 https://계정이름.github.io/<b>budget</b>/ 이 됩니다)</li>
+    <li><b>Public</b>을 선택합니다. (무료 계정은 Public이어야 주소가 열립니다. 올라가는 것은 프로그램 파일뿐이고 자료는 Firebase에 있으니 괜찮습니다)</li>
+    <li>"Add a README file"에 체크하고 ${path('Create repository')}</li>
+  </ol>
+  <div class="ok">확인: 저장소 화면에 README.md 파일 하나가 보이면 됩니다.</div>` },
+
+ { id:'gh2', title:'파일 올리기', time:'3분', body:() => `
+  <p class="why">프로그램 본체(index.html)와 4단계에서 만든 설정 파일(firebase-config.js), 두 파일을 올립니다.</p>
+  <ol class="todo">
+    <li>아래에서 <b>index.html</b> 을 내려받습니다. (4단계의 firebase-config.js 가 없으면 4단계로 돌아가 먼저 만드세요)</li>
+    <li>저장소 화면 → ${path('Add file','Upload files')}</li>
+    <li>내려받은 <b>index.html</b> 과 <b>firebase-config.js</b> 두 파일을 점선 상자에 끌어다 놓습니다. (또는 "choose your files"로 선택)</li>
+    <li>아래 ${path('Commit changes')}</li>
+  </ol>
+  ${filesHtml(['index','config'])}
+  <div class="ok">확인: 저장소 파일 목록에 index.html, firebase-config.js, README.md 세 개가 보이면 됩니다. 파일 이름은 소문자 그대로여야 합니다.</div>` },
+
+ { id:'gh3', title:'주소 만들기 (GitHub Pages)', time:'3분', body:() => `
+  <p class="why">올린 파일을 웹 주소로 열 수 있게 합니다.</p>
+  <ol class="todo">
+    <li>저장소 위쪽 ${path('Settings')} → 왼쪽 메뉴 ${path('Pages')}</li>
+    <li>"Build and deployment"의 Source를 <b>Deploy from a branch</b> 로 두고, Branch를 <b>main</b>, 폴더를 <b>/(root)</b> 로 고른 뒤 ${path('Save')}</li>
+    <li>1~2분 기다렸다가 새로고침하면 위쪽에 "Your site is live at https://계정이름.github.io/budget/" 가 나옵니다. <b>이 주소가 우리 학교 프로그램 주소</b>입니다.</li>
+  </ol>
+  <label class="hint">주소를 여기 적어 두면 다음 단계 설명에 넣어 드립니다 (이 컴퓨터에만 저장)</label>
+  <input type="text" id="urlIn" value="${esc(state.url||'')}" placeholder="https://계정이름.github.io/budget/" oninput="state.url=this.value.trim();save()">
+  <div class="note">아직 "404 There isn't a GitHub Pages site here"가 뜨면 조금 더 기다리거나, Pages 설정이 저장됐는지, 파일 이름이 index.html(소문자)인지 확인하세요.</div>` },
+
+ { id:'fb5', title:'Firebase에 주소 등록', time:'2분', body:() => `
+  <p class="why">방금 받은 주소에서 Firebase에 접속할 수 있게 허락하는 단계입니다. 빼먹으면 화면에 "Firebase 연결 실패"가 뜹니다.</p>
+  <ol class="todo">
+    <li>Firebase 콘솔 → ${path('Authentication')} → 위쪽 ${path('설정 탭')}</li>
+    <li>${path('승인된 도메인')} → ${path('도메인 추가')}</li>
+    <li><b>${esc(domainOf(state.url) || '계정이름.github.io')}</b> 를 넣고 ${path('추가')} (https:// 와 뒤의 /budget/ 은 빼고 도메인만)</li>
+  </ol>
+  <div class="ok">확인: 목록에 localhost, …firebaseapp.com, …web.app 과 함께 방금 넣은 도메인이 보이면 됩니다.</div>` },
+
+ { id:'first', title:'처음 열기와 학교 설정', time:'5분', body:() => `
+  <p class="why">주소를 처음 열면 "처음 설정" 화면이 한 번 나옵니다. 관리자가 될 선생님이 하세요.</p>
+  <ol class="todo">
+    <li>프로그램 주소${state.url?` (<a href="${esc(state.url)}" target="_blank" rel="noopener">${esc(state.url)}</a>)`:''}를 엽니다 → 학교 이름, 학년도, 관리자 비밀번호(4자 이상)를 넣고 ${path('시작하기')}</li>
+    <li>왼쪽 맨 아래 ${path('관리자')} → 비밀번호 → ${path('학교 설정')}: 학년별 학급 수를 넣고 저장. 학교 마크도 올릴 수 있습니다.</li>
+    <li>${path('부서 관리')}: 전담(예: 과학전담)과 추가 부서를 등록합니다.</li>
+    <li>예산을 배부할 담당 선생님은 첫 화면 왼쪽 ${path('처음이라면 담당자 등록하기')}로 이름과 비밀번호를 정합니다.</li>
+    <li>선생님들께 주소를 알려 줍니다. 왼쪽 ${path('📖 사용 설명서')} 버튼에 역할별 설명이 있고, 미리 눌러 보고 싶으면 <a href="./" target="_blank" rel="noopener">연습 사이트</a>를 쓰면 됩니다.</li>
+  </ol>
+  <div class="note">처음 설정 화면은 자료가 없을 때 한 번만 나옵니다. 다른 선생님이 먼저 열어도 이 화면이 보이니, 주소를 공유하기 전에 관리자가 먼저 접속해 두세요.</div>` },
+
+ { id:'update', title:'나중에 새 버전으로 바꾸기', time:'2분', body:() => `
+  <p class="why">프로그램이 개선되면 이 페이지의 index.html 이 새 버전으로 바뀝니다. 위쪽의 버전 날짜(<b id="verInline">${esc(VER||'확인 중')}</b>)와 우리 프로그램 사용 설명서 위쪽에 적힌 버전을 비교해 다르면 아래처럼 바꿉니다. 자료는 그대로 유지됩니다.</p>
+  <ol class="todo">
+    <li>아래에서 새 <b>index.html</b> 을 내려받습니다.</li>
+    <li>저장소 화면 → ${path('Add file','Upload files')} → index.html 을 끌어다 놓기 → ${path('Commit changes')}. 같은 이름이라 기존 파일이 교체됩니다.</li>
+    <li>1~2분 뒤 선생님들이 새로고침하면 새 버전입니다. <b>firebase-config.js 는 건드리지 않습니다.</b></li>
+  </ol>
+  ${filesHtml(['index'])}` },
+
+ { id:'trouble', title:'문제가 생기면', time:'', body:() => `
+  <table>
+    <tr><th>화면에 보이는 말</th><th>원인과 해결</th></tr>
+    <tr><td>firebase-config.js 에 Firebase 설정이 아직 없습니다</td><td>4단계 파일이 안 올라갔거나 값이 빈 양식 그대로입니다. 4단계에서 파일을 만들어 6단계처럼 올리세요.</td></tr>
+    <tr><td>Firebase 연결 실패 … "익명"</td><td>2단계. Authentication → 로그인 방법 → 익명이 "사용 설정"인지</td></tr>
+    <tr><td>Firebase 연결 실패 … auth/unauthorized-domain</td><td>8단계. 승인된 도메인에 계정이름.github.io 가 있는지</td></tr>
+    <tr><td>Missing or insufficient permissions</td><td>3단계. Firestore → 규칙에 붙여 넣고 "게시"를 눌렀는지</td></tr>
+    <tr><td>404 There isn't a GitHub Pages site here</td><td>7단계. Pages 설정이 저장됐는지, 파일 이름이 소문자 index.html 인지, 1~2분 기다렸는지</td></tr>
+    <tr><td>"처음 설정" 화면이 다시 나옴</td><td>Firestore에 자료가 없을 때 나옵니다. firebase-config.js 가 다른 프로젝트를 가리키거나, 콘솔에서 schools 자료를 지운 경우</td></tr>
+    <tr><td>관리자 비밀번호를 잊음</td><td>Firebase 콘솔 → Firestore Database → schools → school 문서 → 관리자비밀번호해시 값을 지우면(빈 문자열) 다음 접속 때 새로 정합니다</td></tr>
+    <tr><td>Quota exceeded / 할당량</td><td>무료 한도(하루 읽기 5만 회, 쓰기 2만 회)를 넘은 경우. 한 학교 사용량으로는 거의 없습니다</td></tr>
+  </table>
+  <details><summary>구글 시트(앱스 스크립트) 버전을 쓰던 학교라면</summary>
+    <p>기존 자료를 옮길 수 있습니다. 9단계 처음 설정의 학년도를 시트의 학년도와 같게 넣은 뒤:</p>
+    <ol class="todo">
+      <li>아래 <b>시트자료_내보내기.gs</b> 를 받아, 기존 스프레드시트 → 확장 프로그램 → Apps Script → 파일 + → 스크립트 → 내용 붙여 넣고 저장</li>
+      <li>함수 선택에서 <b>exportForFirebase</b> → 실행 (처음이면 권한 승인) → 실행 로그의 드라이브 링크에서 JSON 파일 내려받기</li>
+      <li>새 프로그램 → 관리자 → 데이터 → 자료 가져오기 → 파일 선택 → "전체" → 가져오기</li>
+    </ol>
+    ${filesHtml(['gs'])}
+  </details>` },
+
+ { id:'files', title:'설치 파일 받기', time:'', body:() => `
+  <p class="why">여기서 받는 파일은 항상 최신 버전입니다. 프로그램이 개선되면 이 페이지의 파일도 함께 바뀝니다. (현재 버전 <b>${esc(VER||'확인 중')}</b>)</p>
+  ${filesHtml(['index','config','rules','gs'])}
+  <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn primary" onclick="downloadZip()">📦 한꺼번에 받기 (budget-setup.zip)</button><span class="hint" id="zipMsg">index.html, firebase-config.js(4단계에서 만들었으면 그 값으로, 아니면 빈 양식), firestore.rules, 시트자료_내보내기.gs</span></div>
+  <table style="margin-top:16px">
+    <tr><th>파일</th><th>하는 일</th><th>어디에</th></tr>
+    <tr><td>index.html</td><td>프로그램 본체. 새 버전이 나오면 이 파일만 바꿔 올립니다</td><td>깃허브 저장소</td></tr>
+    <tr><td>firebase-config.js</td><td>우리 Firebase 연결 정보. 4단계에서 만든 것을 한 번만 올리고 그 뒤로는 손대지 않습니다</td><td>깃허브 저장소</td></tr>
+    <tr><td>firestore.rules</td><td>자료 접근 규칙. 3단계에서 Firebase 콘솔에 붙여 넣습니다 (파일로 받지 않고 복사해도 됩니다)</td><td>Firebase 콘솔</td></tr>
+    <tr><td>시트자료_내보내기.gs</td><td>구글 시트 버전을 쓰던 학교만. 기존 자료를 옮길 때 한 번 씁니다</td><td>기존 시트의 Apps Script</td></tr>
+  </table>` },
+];
+
+const FILES = {
+  index:  { name:'index.html', src:'./index.html', desc:'프로그램 본체', dl:'index.html' },
+  config: { name:'firebase-config.js', src:'./firebase-config.template.js', desc:'4단계에서 만든 파일이 있으면 그걸 쓰세요. 이것은 빈 양식입니다', dl:'firebase-config.js' },
+  rules:  { name:'firestore.rules', src:'./firestore.rules', desc:'3단계 규칙 (복사해서 붙여 넣어도 됨)', dl:'firestore.rules' },
+  gs:     { name:'시트자료_내보내기.gs', src:'./시트자료_내보내기.gs', desc:'구글 시트 버전 자료 옮기기용', dl:'시트자료_내보내기.gs' },
+};
+function filesHtml(keys){
+  return `<div class="files">${keys.map(k=>{ const f=FILES[k]; const made = k==='config' && state.cfgFile;
+    return `<div class="file"><b>${esc(f.name)}</b><span class="d">${made?'4단계에서 만든 우리 학교 설정 파일':esc(f.desc)}</span>${made
+      ? `<button class="btn small primary" onclick="downloadText(state.cfgFile,'firebase-config.js')">⬇ 내려받기 (우리 학교 값)</button>`
+      : `<a class="btn small" href="${f.src}" download="${esc(f.dl)}">⬇ 내려받기</a>`}</div>`; }).join('')}</div>`;
+}
+function domainOf(u){ try{ return new URL(u).host; }catch(e){ return ''; } }
+
+// ───────── 화면 ─────────
+let VER = '';
+function render(){
+  const nav = STEPS.filter(s=>s.id!=='files');
+  $('stepNav').innerHTML = nav.map((s,i)=>`<li class="${state.cur===s.id?'cur':''} ${state.done[s.id]?'done':''}" onclick="go('${s.id}')"><span class="n">${state.done[s.id]?'✓':i}</span><span>${esc(s.title)}${s.time?` <span class="hint">${esc(s.time)}</span>`:''}</span></li>`).join('');
+  const countable = nav.filter(s=>!['ready','trouble'].includes(s.id));
+  const done = countable.filter(s=>state.done[s.id]).length;
+  $('progBar').style.width = Math.round(done/countable.length*100)+'%';
+  $('progText').textContent = done===countable.length ? '설치 완료! 수고하셨습니다.' : `${done} / ${countable.length} 단계 완료`;
+  const s = STEPS.find(x=>x.id===state.cur) || STEPS[0];
+  const idx = STEPS.indexOf(s);
+  const prev = STEPS[idx-1], next = STEPS[idx+1];
+  const checkable = !['ready','trouble','files'].includes(s.id);
+  $('stepBox').innerHTML = `
+    <div class="step-hd"><h2>${idx>0 && s.id!=='files' && s.id!=='trouble' ? idx+'. ' : ''}${esc(s.title)}</h2>${s.time?`<span class="time">약 ${esc(s.time)}</span>`:''}</div>
+    ${s.body()}
+    ${checkable?`<label class="check"><input type="checkbox" ${state.done[s.id]?'checked':''} onchange="setDone('${s.id}', this.checked)"> 이 단계를 마쳤습니다</label>`:''}
+    <div class="nav"><span>${prev?`<button class="btn" onclick="go('${prev.id}')">← ${esc(prev.title)}</button>`:''}</span><span>${next && next.id!=='files'?`<button class="btn primary" onclick="${checkable?`setDone('${s.id}',true);`:''}go('${next.id}')">${checkable?'마쳤어요, ':''}다음: ${esc(next.title)} →</button>`:''}</span></div>`;
+  window.scrollTo(0,0);
+}
+function go(id){ state.cur = id; save(); render(); }
+function setDone(id, on){ state.done[id] = !!on; if(!on) delete state.done[id]; save(); render(); }
+function resetProgress(){ if(!confirm('체크를 모두 지울까요? (설정 파일 내용과 주소는 남습니다)')) return; state.done = {}; state.cur = 'ready'; save(); render(); }
+
+// ───────── 설정 파일 만들기 ─────────
+function parseConfig(text){
+  const out = {}; let ok = true;
+  KEYS.forEach(k => { const m = text.match(new RegExp(k + '\\s*[:=]\\s*["\']([^"\']+)["\']')); if(m) out[k] = m[1].trim(); else ok = false; });
+  return ok ? out : null;
+}
+function makeConfig(){
+  const text = $('cfgIn').value; state.cfg = text; save();
+  const c = parseConfig(text);
+  if(!c){ $('cfgMsg').style.color = 'var(--danger)'; $('cfgMsg').textContent = '여섯 가지 값(apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId)이 모두 보이지 않습니다. Firebase의 구성(Config) 상자 안 내용을 전부 복사해 붙여 넣어 주세요.'; return; }
+  if(!/^AIza/.test(c.apiKey)){ $('cfgMsg').style.color = 'var(--danger)'; $('cfgMsg').textContent = 'apiKey 가 AIza 로 시작하지 않습니다. 복사한 값을 다시 확인해 주세요.'; return; }
+  let file = CONFIG_TEMPLATE; KEYS.forEach(k => { file = file.replace('@@'+k+'@@', c[k]); });
+  state.cfgFile = file; save();
+  $('cfgMsg').style.color = 'var(--ok)'; $('cfgMsg').textContent = `프로젝트 ${c.projectId} 의 설정 파일을 만들었습니다. 내려받기가 시작됩니다.`;
+  $('cfgOut').innerHTML = `<div class="codebox" style="margin-top:10px"><button class="btn small" onclick="downloadText(state.cfgFile,'firebase-config.js')">다시 내려받기</button><pre>${esc(file)}</pre></div>`;
+  downloadText(file, 'firebase-config.js');
+}
+function downloadText(text, name){ const blob = new Blob([text], {type:'text/plain;charset=utf-8'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800); }
+async function copyText(text, btn){ try{ await navigator.clipboard.writeText(text); const t = btn.textContent; btn.textContent = '복사됨 ✓'; setTimeout(()=>btn.textContent=t, 1500); }catch(e){ alert('복사가 막혀 있습니다. 상자 안 글을 드래그해서 복사해 주세요.'); } }
+async function downloadZip(){
+  const msg = $('zipMsg'); msg.textContent = '파일을 모으는 중…';
+  try{
+    if(typeof JSZip === 'undefined') throw new Error('묶음 도구(JSZip)를 불러오지 못했습니다');
+    const zip = new JSZip();
+    for(const k of ['index','rules','gs']){ const r = await fetch(FILES[k].src); if(!r.ok) throw new Error(FILES[k].name + ' 을 읽지 못했습니다'); zip.file(FILES[k].dl, await r.text()); }
+    if(state.cfgFile) zip.file('firebase-config.js', state.cfgFile); else { const r = await fetch(FILES.config.src); zip.file('firebase-config.js', await r.text()); }
+    const blob = await zip.generateAsync({type:'blob'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'budget-setup.zip'; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
+    msg.textContent = '내려받기가 시작됐습니다.';
+  }catch(e){ msg.textContent = '묶는 데 실패했습니다: ' + (e.message||e) + ' — 위의 파일을 하나씩 받아 주세요.'; }
+}
+
+// ───────── 최신 버전 표시 (index.html 안의 APP_VERSION 을 읽음) ─────────
+(async () => {
+  try{
+    const r = await fetch('./index.html', {cache:'no-store'}); const t = await r.text();
+    const m = t.match(/APP_VERSION\s*=\s*'([^']+)'/); VER = m ? m[1] : '';
+    $('ver').textContent = VER ? `최신 버전 ${VER} (${Math.round(t.length/1024)}KB)` : '버전 정보 없음';
+  }catch(e){ $('ver').textContent = '버전 확인 실패'; }
+  render();
+})();
+render();
+</script>
+</body>
+</html>
