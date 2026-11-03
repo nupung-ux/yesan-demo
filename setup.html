@@ -147,7 +147,7 @@ const STEPS = [
   <div class="flow"><span>Firebase 프로젝트 만들기</span><em>→</em><span>설정 파일 만들기</span><em>→</em><span>깃허브에 파일 올리기</span><em>→</em><span>주소 받기</span><em>→</em><span>처음 설정</span></div>
   <h3 style="margin:18px 0 8px">준비물</h3>
   <ol class="todo">
-    <li><b>구글 계정</b> — 개인 계정보다 학교 업무용 구글 계정을 권합니다. Firebase 프로젝트가 이 계정에 묶이므로, 담당자가 바뀌어도 계정만 넘기면 됩니다.</li>
+    <li><b>개인 구글 계정</b> — 학교(교육청) 구글 계정은 조직 정책으로 Firebase가 막혀 있어 프로젝트를 만들 수 없습니다. <b>개인 gmail 계정</b>으로 하세요. Firebase 프로젝트가 이 계정에 묶이므로, 담당자가 바뀔 때는 Firebase 콘솔 → 프로젝트 설정 → "사용자 및 권한"에서 다음 담당자의 계정을 소유자로 추가하면 됩니다.</li>
     <li><b>깃허브 계정</b> — <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>에서 이메일, 비밀번호, 사용자 이름을 넣고 이메일 인증을 합니다. <b>사용자 이름이 프로그램 주소에 들어갑니다</b>(예: 사용자 이름이 hsbr-school 이면 주소는 https://hsbr-school.github.io/…). 영문 소문자와 숫자, 하이픈만 됩니다.</li>
     <li><b>이 페이지</b> — 설치 중에 설정 파일을 만들고 프로그램 파일을 받는 곳입니다. 즐겨찾기 해 두세요.</li>
   </ol>
@@ -156,7 +156,7 @@ const STEPS = [
  { id:'fb1', title:'Firebase 프로젝트 만들기', time:'3분', body:() => `
   <p class="why">자료가 저장될 곳을 만듭니다.</p>
   <ol class="todo">
-    <li><a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> 에 접속해 구글 계정으로 로그인합니다.</li>
+    <li><a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> 에 접속해 <b>개인 구글 계정</b>으로 로그인합니다. (학교 계정으로 로그인되어 있으면 오른쪽 위 프로필에서 계정을 바꾸세요)</li>
     <li>${path('프로젝트 만들기')} (이미 다른 프로젝트가 있으면 "프로젝트 추가")</li>
     <li>프로젝트 이름을 넣습니다. 예: <b>hsbr-budget</b> (영문 권장). 아래에 자동으로 생긴 프로젝트 ID는 그대로 두고 ${path('계속')}</li>
     <li>"이 프로젝트에서 Google 애널리틱스 사용 설정" 스위치를 <b>꺼서</b> 끕니다 → ${path('프로젝트 만들기')}</li>
