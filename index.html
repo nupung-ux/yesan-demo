@@ -341,10 +341,10 @@
       <p>처음이면 왼쪽 "처음이라면 담당자 등록하기"에서 이름과 비밀번호를 정합니다. 비밀번호를 잊으면 관리자에게 초기화를 요청하세요.</p>
       <h4>1. 예산 등록</h4>
       <ul>
-        <li>에듀파인 예산 구조대로 부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 넣습니다. <b>산출내역이 예산 이름</b>으로 화면에 쓰입니다.</li>
+        <li>에듀파인 예산 구조대로 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 넣습니다. <b>산출내역이 예산 이름</b>으로 화면에 쓰입니다.</li>
         <li><b>양식 다운로드 (xlsx)</b>로 양식을 받아 채운 뒤 <b>파일로 가져오기</b>를 하면 한 번에 들어갑니다. 엑셀에서 여러 행(6열)을 복사해 첫 칸에 붙여 넣어도 됩니다.</li>
         <li>행 끝의 ⧉ 로 행을 복사하면 비슷한 항목을 빠르게 넣을 수 있습니다. 마지막에 <b>등록(저장)</b>.</li>
-        <li><b>✨ AI로 읽기</b>(관리자가 Gemini 키를 넣은 학교): 에듀파인 예산 화면을 캡처해 붙여 넣으면 부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 읽어 표에 넣어 줍니다. 목록이 길면 여러 장을 넣고, 숫자는 꼭 한 번 확인하세요.</li>
+        <li><b>✨ AI로 읽기</b>(관리자가 Gemini 키를 넣은 학교): 에듀파인 예산 화면을 캡처해 붙여 넣으면 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 읽어 표에 넣어 줍니다. 목록이 길면 여러 장을 넣고, 숫자는 꼭 한 번 확인하세요.</li>
       </ul>
       <h4>2. 예산 배부</h4>
       <table>
@@ -389,7 +389,7 @@
       <h4>탭별 기능</h4>
       <table>
         <tr><th>학교 설정</th><td>학교 이름, 학교 마크(올리면 화면 맨 위에 표시), 선생님들께 공유할 주소, AI 도우미(Gemini API 키와 모델. 넣으면 품목과 예산 화면에 "AI로 읽기" 버튼이 생김), 학년별 학급 수(0이면 화면에 안 보임), 학년 비밀번호 사용 여부와 학년별 비밀번호, 관리자 비밀번호 변경</td></tr>
-        <tr><th>부서 관리</th><td>전담(예: 46과학)과 추가 부서(행정실, 급식실 등). 전담은 학년과 별도로 예산을 받습니다</td></tr>
+        <tr><th>전담 관리</th><td>전담(예: 과학전담, 영어전담). 전담은 학년과 별도로 예산을 받고, 예산 사용자 목록에 나타납니다</td></tr>
         <tr><th>사용자 관리</th><td>예산배정 담당자의 이름 수정, 비밀번호 초기화, 삭제 (등록은 첫 화면에서 본인이 합니다)</td></tr>
         <tr><th>품의 문구</th><td>품의 개요에서 고르는 구매처 목록과, 모든 예산에서 고를 수 있는 기본 품의 개요 문구. 자리표시자 버튼을 눌러 {용도}, {소요예산}, {산출내역}, {품목표} 같은 칸을 넣습니다</td></tr>
         <tr><th>데이터</th><td>백업, 변경 이력, 새 학년도 시작, 지난 학년도 보기, 자료 가져오기, 데이터 초기화, 에듀파인 반영</td></tr>
@@ -398,12 +398,12 @@
       <table>
         <tr><th>백업</th><td>전체 자료를 JSON 파일로 내려받습니다. 큰 작업 전에 항상 먼저 하세요</td></tr>
         <tr><th>변경 이력</th><td>언제, 어느 역할이, 무엇을 바꿨는지 최근 200건</td></tr>
-        <tr><th>새 학년도 시작</th><td>새 연도를 넣으면 올해 자료는 보관되고 빈 상태로 시작합니다. 학교 설정, 부서, 담당자, 기본 문구는 유지</td></tr>
+        <tr><th>새 학년도 시작</th><td>새 연도를 넣으면 올해 자료는 보관되고 빈 상태로 시작합니다. 학교 설정, 전담, 담당자, 기본 문구는 유지</td></tr>
         <tr><th>학년도 목록</th><td>지난 학년도를 "읽기 전용으로 보기"로 열람. 저장은 되지 않습니다</td></tr>
-        <tr><th>자료 가져오기</th><td>백업 파일(JSON)을 골라 "예산 데이터만" 또는 "전체(설정, 부서, 담당자 포함)"로 되돌립니다. 구글 시트 버전에서 옮겨 올 때도 이 기능을 씁니다</td></tr>
-        <tr><th>데이터 초기화</th><td>예산 데이터만(설정, 부서, 담당자 유지) 또는 전체. "초기화" 입력과 비밀번호 확인이 필요합니다</td></tr>
+        <tr><th>자료 가져오기</th><td>백업 파일(JSON)을 골라 "예산 데이터만" 또는 "전체(설정, 전담, 담당자 포함)"로 되돌립니다. 구글 시트 버전에서 옮겨 올 때도 이 기능을 씁니다</td></tr>
+        <tr><th>데이터 초기화</th><td>예산 데이터만(설정, 전담, 담당자 유지) 또는 전체. "초기화" 입력과 비밀번호 확인이 필요합니다</td></tr>
       </table>
-      <div class="tip">학년도가 바뀔 때 순서: 백업 → 새 학년도 시작 → (필요하면) 학급 수와 부서 수정 → 담당자에게 새 예산 등록 요청</div>
+      <div class="tip">학년도가 바뀔 때 순서: 백업 → 새 학년도 시작 → (필요하면) 학급 수와 전담 수정 → 담당자에게 새 예산 등록 요청</div>
       <h4>곤란할 때</h4>
       <ul>
         <li>관리자 비밀번호를 잊음: Firebase 콘솔 → Firestore Database → schools → school 문서에서 "관리자비밀번호해시" 값을 비우면 다음 접속 때 새로 정할 수 있습니다.</li>
@@ -485,7 +485,7 @@
           <tr><td><b>담임 · 전담</b><div class="hint" style="margin:0">예산 사용자</div></td><td>우리 반 예산과 잔액 확인 · 품의 만들기(견적서 파일 끌어놓기) · 품의 제목·개요 복사 · 품목 xlsx 다운로드 · 기안 완료 표시</td></tr>
           <tr><td><b>학년부장</b><div class="hint" style="margin:0">예산 사용자 → 학년 전체 탭</div></td><td>학년 예산을 반별로 분배 · 학년 공통 품의 · 각 학급에서 물품 담기</td></tr>
           <tr><td><b>예산배정 담당자</b></td><td>예산 등록(파일 가져오기) · 학년·전담에 배부 · 품의 제목 양식과 개요 문구 등록 · 배부·사용 현황 · 에듀파인 품의목록 반영</td></tr>
-          <tr><td><b>관리자</b><div class="hint" style="margin:0">왼쪽 맨 아래</div></td><td>학교·학급 설정 · 부서 · 담당자 관리 · 기본 개요 문구 · 백업·새 학년도·초기화</td></tr>
+          <tr><td><b>관리자</b><div class="hint" style="margin:0">왼쪽 맨 아래</div></td><td>학교·학급 설정 · 전담 · 담당자 관리 · 기본 개요 문구 · 백업·새 학년도·초기화</td></tr>
         </tbody>
       </table>
     </div>
@@ -495,7 +495,7 @@
   <section class="screen" id="sc-admin">
     <div class="tabs" id="adminTabs">
       <button class="on" data-tab="school" onclick="tab(this)">학교 설정</button>
-      <button data-tab="dept" onclick="tab(this)">부서 관리</button>
+      <button data-tab="dept" onclick="tab(this)">전담 관리</button>
       <button data-tab="users" onclick="tab(this)">사용자 관리</button>
       <button data-tab="phrase" onclick="tab(this)">품의 문구</button>
       <button data-tab="data" onclick="tab(this)">데이터</button>
@@ -550,23 +550,15 @@
       </div>
     </div>
 
-    <!-- 부서 관리 -->
+    <!-- 전담 관리 -->
     <div class="tab panel" id="tab-dept">
       <h3>전담</h3>
-      <div class="hint">학년과 별도로 예산을 받는 전담 교과·교사. 예: 46과학, 영어전담</div>
+      <div class="hint">학년과 별도로 예산을 받는 전담 교과나 교사. 예: 과학전담, 영어전담. 등록하면 예산 사용자 목록과 배부 대상에 나타납니다.</div>
       <div class="role" style="margin-top:8px"><div class="row">
         <input type="text" id="dNew1" placeholder="전담 이름" style="width:220px" onkeydown="if(event.key==='Enter')addDept('전담')">
         <button class="btn" onclick="addDept('전담')">추가</button>
       </div></div>
       <div class="chips" id="dList1"></div>
-
-      <h3 style="margin-top:26px">추가 부서</h3>
-      <div class="hint">행정실·급식실처럼 예산 등록 시 부서명으로 쓰이는 곳</div>
-      <div class="role" style="margin-top:8px"><div class="row">
-        <input type="text" id="dNew2" placeholder="부서 이름" style="width:220px" onkeydown="if(event.key==='Enter')addDept('추가부서')">
-        <button class="btn" onclick="addDept('추가부서')">추가</button>
-      </div></div>
-      <div class="chips" id="dList2"></div>
       <div class="actions"><button class="btn primary" onclick="saveDepts()">저장</button></div>
     </div>
 
@@ -618,7 +610,7 @@
       <div class="hint">이 프로그램의 백업 파일(JSON)이나, 구글 시트 버전에서 "파이어베이스용 자료 내보내기"로 만든 파일을 올립니다. 파일 속 학년도 자료가 들어가며 같은 번호의 자료는 덮어씁니다. "전체"를 고르면 파일 속 관리자·담당자 비밀번호가 그대로 적용됩니다.</div>
       <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <input type="file" id="impFile" accept=".json,application/json" style="flex:1;min-width:260px">
-        <select id="impMode"><option value="data">예산 데이터만</option><option value="all">전체 (설정·부서·담당자 포함)</option></select>
+        <select id="impMode"><option value="data">예산 데이터만</option><option value="all">전체 (설정·전담·담당자 포함)</option></select>
         <button class="btn" onclick="importData()">가져오기</button></div>
 
       <h3 style="margin-top:26px">데이터 초기화</h3>
@@ -627,7 +619,7 @@
         <button class="btn" onclick="resetData('data')">예산 데이터 초기화</button>
         <button class="btn text danger" onclick="resetData('all')">전체 초기화 (처음 설치 상태로)</button>
       </div>
-      <div class="hint">예산 데이터 초기화: 현재 학년도의 예산·배부·품의를 지우고 학교 설정·부서·담당자·기본 문구는 남깁니다.<br>전체 초기화: 관리자 비밀번호·담당자·부서까지 모두 지웁니다(학교 이름은 유지). 다음 접속 때 관리자 비밀번호를 새로 정합니다.</div>
+      <div class="hint">예산 데이터 초기화: 현재 학년도의 예산·배부·품의를 지우고 학교 설정·전담·담당자·기본 문구는 남깁니다.<br>전체 초기화: 관리자 비밀번호·담당자·전담까지 모두 지웁니다(학교 이름은 유지). 다음 접속 때 관리자 비밀번호를 새로 정합니다.</div>
 
       <h3 style="margin-top:26px">에듀파인 품의목록 반영</h3>
       <div id="edu_a" style="margin-top:8px"></div>
@@ -646,17 +638,17 @@
     <!-- 예산 등록 -->
     <div class="tab on panel" id="mtab-mb">
       <div class="hint">에듀파인 예산 구조 그대로 입력합니다. 산출내역이 예산 이름으로 쓰입니다. 이미 배부된 예산은 삭제할 수 없고, 예산액을 배부액보다 작게 줄일 수 없습니다.</div>
-      <div class="note" style="margin-top:10px">빠르게 입력하는 방법 — ① <b>양식 다운로드</b>로 받은 엑셀에 채워서 <b>파일로 가져오기</b>(또는 이 표 위에 끌어놓기) ② 행 끝의 <b>⧉</b>로 그 행을 아래에 복사한 뒤 산출내역·예산액만 고치기 ③ 엑셀에서 여러 행(부서~예산액 6열)을 복사해 첫 칸에 붙여넣기 ④ 이미 입력한 값은 자동완성으로 뜹니다</div>
+      <div class="note" style="margin-top:10px">빠르게 입력하는 방법 — ① <b>양식 다운로드</b>로 받은 엑셀에 채워서 <b>파일로 가져오기</b>(또는 이 표 위에 끌어놓기) ② 행 끝의 <b>⧉</b>로 그 행을 아래에 복사한 뒤 산출내역·예산액만 고치기 ③ 엑셀에서 여러 행(세부사업~예산액 5열)을 복사해 첫 칸에 붙여넣기 ④ 이미 입력한 값은 자동완성으로 뜹니다</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <button class="btn primary small" onclick="downloadBudgetForm()">양식 다운로드 (xlsx)</button>
         <button class="btn primary small" onclick="$('bFile').click()">파일로 가져오기 (xlsx·csv)</button>
         <input type="file" id="bFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="budgetFilePicked(this)">
         <button class="btn small ai aiOnly" onclick="aiOpen('budget')" title="에듀파인 예산 화면을 캡처해 붙여 넣으면 AI가 항목을 읽어 표에 넣어 줍니다">✨ AI로 읽기 (에듀파인 화면 캡처)</button>
-        <span class="hint" style="margin:0">양식의 열 순서: 부서 · 세부사업 · 세부항목명 · 원가통계비목 · 산출내역 · 예산액. 가져온 행은 표 아래에 추가되며 <b>등록(저장)</b>을 눌러야 반영됩니다.</span></div>
+        <span class="hint" style="margin:0">양식의 열 순서: 세부사업 · 세부항목명 · 원가통계비목 · 산출내역 · 예산액. 가져온 행은 표 아래에 추가되며 <b>등록(저장)</b>을 눌러야 반영됩니다.</span></div>
       <div class="dropz" id="bDrop" data-drop="예산 파일(xlsx·csv)을 여기에 놓으세요"><table class="edit" id="bTable"><thead><tr>
-        <th style="width:9%">부서</th><th style="width:10%">세부사업</th><th style="width:11%">세부항목명</th><th style="width:9%">원가통계비목</th><th>산출내역</th><th style="width:9%">예산액</th><th style="width:8%">배부</th><th style="width:8%">사용</th><th style="width:8%">잔액</th><th style="width:60px"></th>
+        <th style="width:13%">세부사업</th><th style="width:14%">세부항목명</th><th style="width:12%">원가통계비목</th><th>산출내역</th><th style="width:9%">예산액</th><th style="width:8%">배부</th><th style="width:8%">사용</th><th style="width:8%">잔액</th><th style="width:60px"></th>
       </tr></thead><tbody></tbody></table></div>
-      <datalist id="deptList"></datalist><datalist id="dl_세부사업"></datalist><datalist id="dl_세부항목명"></datalist><datalist id="dl_원가통계비목"></datalist>
+      <datalist id="dl_세부사업"></datalist><datalist id="dl_세부항목명"></datalist><datalist id="dl_원가통계비목"></datalist>
       <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" onclick="addBudgetRow()">행 추가</button></div>
       <div class="actions"><button class="btn primary" onclick="saveBudgets()">등록(저장)</button></div>
     </div>
@@ -676,7 +668,7 @@
       <div id="aSingle">
       <div class="sect"><h3>배부할 예산 <span class="hint" style="margin:0;display:inline;font-weight:400">행을 클릭해서 고르세요</span></h3>
         <input type="hidden" id="aBudget" value="">
-        <div style="overflow-x:auto;max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r)"><table class="list" id="aBudgetTable" style="margin:0;font-size:14px"><thead><tr><th style="width:32px"></th><th>산출내역</th><th>부서</th><th>세부사업</th><th>세부항목명</th><th>원가통계비목</th><th style="text-align:right">예산액</th><th style="text-align:right">배부</th><th style="text-align:right">잔여</th></tr></thead><tbody></tbody></table></div>
+        <div style="overflow-x:auto;max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r)"><table class="list" id="aBudgetTable" style="margin:0;font-size:14px"><thead><tr><th style="width:32px"></th><th>산출내역</th><th>세부사업</th><th>세부항목명</th><th>원가통계비목</th><th style="text-align:right">예산액</th><th style="text-align:right">배부</th><th style="text-align:right">잔여</th></tr></thead><tbody></tbody></table></div>
         <div class="hint" id="aBudgetInfo"></div>
       </div>
 
@@ -940,7 +932,6 @@
       <span class="hint" style="margin:0">캡처는 Ctrl+V로 바로 붙여 넣을 수 있습니다. 읽은 결과는 넣기 전에 확인할 수 있습니다.</span>
     </div>
   </div>
-  <div id="aiDeptWrap" style="display:none;gap:8px;align-items:center;margin-top:8px"><label class="f" style="margin:0">부서 (캡처에 부서가 없으면 여기 적은 부서로 채웁니다)</label><input type="text" id="aiDept" style="width:200px" placeholder="예: 교무기획부"></div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><button class="btn primary" id="aiReadBtn" onclick="aiRead()">읽기</button><span class="hint" id="aiMsg" style="margin:0"></span></div>
   <div id="aiResult" style="display:none;margin-top:10px">
     <div style="overflow-x:auto;max-height:40vh;overflow-y:auto"><table class="list" id="aiTable"><thead></thead><tbody></tbody></table></div>
@@ -2051,15 +2042,14 @@ async function loadManager(){
   M = await call('managerGetAll', mgr.id, mgr.pw);
   bDraft = M.budgets.map(b=>({...b}));
   if(!bDraft.length) bDraft.push({});
-  $('deptList').innerHTML = M.부서목록.map(d=>`<option value="${esc(d)}">`).join('');
   renderBudgets(); renderAllocForm(); renderGroups();
 }
 
 // 예산 등록
 function renderBudgets(){
-  const cols = ['부서','세부사업','세부항목명','원가통계비목','산출내역'];
+  const cols = ['세부사업','세부항목명','원가통계비목','산출내역'];
   $('bTable').querySelector('tbody').innerHTML = bDraft.map((b,i)=>`<tr>
-    ${cols.map(c=>`<td><input type="text" ${c==='부서'?'list="deptList"':(c==='산출내역'?'':`list="dl_${c}"`)} value="${esc(b[c]||'')}" oninput="bDraft[${i}].${c}=this.value" onpaste="bPaste(event)"></td>`).join('')}
+    ${cols.map(c=>`<td><input type="text" ${c==='산출내역'?'':`list="dl_${c}"`} value="${esc(b[c]||'')}" oninput="bDraft[${i}].${c}=this.value" onpaste="bPaste(event)"></td>`).join('')}
     <td class="num"><input type="text" inputmode="numeric" value="${b.예산액?won(b.예산액):''}" oninput="bDraft[${i}].예산액=this.value.replace(/[^0-9]/g,'')" onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''" onpaste="bPaste(event)"></td>
     <td class="num amt" style="color:var(--ink-3);font-size:13px">${b.배부있음?won(b.배부합계):''}</td><td class="num amt" style="color:var(--ink-3);font-size:13px">${b.배부있음?won(b.사용합계):''}</td><td class="num amt" style="font-size:13px;font-weight:600;${b.배부있음&&(b.예산액-b.사용합계)<0?'color:var(--danger)':''}">${b.배부있음?won(b.예산액-b.사용합계):''}</td>
     <td style="white-space:nowrap"><button class="btn text" title="이 행을 아래에 복사" onclick="dupBudgetRow(${i})">⧉</button><button class="btn text danger" title="${b.배부있음?'배부된 예산은 삭제할 수 없습니다':'행 삭제'}" ${b.배부있음?'disabled':''} onclick="bDraft.splice(${i},1);renderBudgets()">×</button></td></tr>`).join('');
@@ -2070,12 +2060,12 @@ function renderBudgets(){
   });
 }
 function dupBudgetRow(i){
-  const src=bDraft[i]; const copy={부서:src.부서,세부사업:src.세부사업,세부항목명:src.세부항목명,원가통계비목:src.원가통계비목,산출내역:'',예산액:''};
+  const src=bDraft[i]; const copy={세부사업:src.세부사업,세부항목명:src.세부항목명,원가통계비목:src.원가통계비목,산출내역:'',예산액:''};
   bDraft.splice(i+1,0,copy); renderBudgets();
   const rows=$('bTable').querySelectorAll('tbody tr'); rows[i+1].querySelectorAll('input')[4].focus();
 }
 // 엑셀 붙여넣기: 탭·줄바꿈으로 나눠 여러 셀에 채운다
-const B_COLS=['부서','세부사업','세부항목명','원가통계비목','산출내역','예산액'];
+const B_COLS=['세부사업','세부항목명','원가통계비목','산출내역','예산액'];
 function bPaste(e){
   const text=(e.clipboardData||window.clipboardData).getData('text');
   if(!/[\t\n]/.test(text)) return;
@@ -2093,9 +2083,9 @@ function bPaste(e){
 function addBudgetRow(){ bDraft.push({}); renderBudgets(); const ins=$('bTable').querySelectorAll('tbody tr:last-child input'); ins[0]?.focus(); }
 // 예산 양식 다운로드 / 파일 가져오기
 function downloadBudgetForm(){
-  const rows=[B_COLS, ['연구기획부','교과활동지원','학교자율과제운영','교육운영비','1학년교육과정운영비',2582000], ['연구기획부','교과활동지원','학교자율과제운영','교육운영비','2학년교육과정운영비',2534000]];
-  const ws=XLSX.utils.aoa_to_sheet(rows); ws['!cols']=[{wch:14},{wch:16},{wch:18},{wch:14},{wch:28},{wch:14}];
-  ['F2','F3'].forEach(ref=>{ if(ws[ref]) ws[ref].z='#,##0'; });
+  const rows=[B_COLS, ['교과활동지원','학교자율과제운영','교육운영비','1학년교육과정운영비',2582000], ['교과활동지원','학교자율과제운영','교육운영비','2학년교육과정운영비',2534000]];
+  const ws=XLSX.utils.aoa_to_sheet(rows); ws['!cols']=[{wch:16},{wch:18},{wch:14},{wch:28},{wch:14}];
+  ['E2','E3'].forEach(ref=>{ if(ws[ref]) ws[ref].z='#,##0'; });
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '예산'); XLSX.writeFile(wb, '예산등록_양식.xlsx');
 }
 async function budgetFilePicked(inp){
@@ -2108,10 +2098,10 @@ async function budgetFilePicked(inp){
     let hi=A.findIndex(r=>r.includes('산출내역')&&r.some(v=>v.includes('예산')));
     let idx;
     if(hi>=0){ const H=A[hi]; idx=B_COLS.map(c=>H.findIndex(h=>h===c||h.includes(c)||(c==='예산액'&&h.includes('예산')))); }
-    else { hi=-1; idx=[0,1,2,3,4,5]; }   // 머리글이 없으면 양식 순서로 간주
+    else { hi=-1; idx=[0,1,2,3,4]; }   // 머리글이 없으면 양식 순서로 간주
     const rows=A.slice(hi+1).map(r=>{ const o={}; B_COLS.forEach((c,i)=>{ const v=idx[i]>=0?r[idx[i]]:''; o[c]= c==='예산액'? String(v).replace(/[^0-9]/g,'') : v; }); return o; })
       .filter(o=>o.산출내역||o.예산액);
-    if(!rows.length) throw new Error('읽을 행이 없습니다. 양식(부서·세부사업·세부항목명·원가통계비목·산출내역·예산액)을 확인하세요.');
+    if(!rows.length) throw new Error('읽을 행이 없습니다. 양식(세부사업·세부항목명·원가통계비목·산출내역·예산액)을 확인하세요.');
     bDraft=bDraft.filter(b=>b.id||b.산출내역||b.예산액).concat(rows);
     renderBudgets(); toast(`${rows.length}행을 표에 추가했습니다. 확인 후 등록(저장)을 누르세요.`);
   }catch(e){ toast('파일 읽기 실패: '+e.message, true); }
@@ -2126,9 +2116,9 @@ function renderBudgetTable(){
   const cur=$('aBudget').value;
   $('aBudgetTable').querySelector('tbody').innerHTML = M.budgets.map(b=>`<tr class="pick ${cur===b.id?'sel':''}" style="${b.잔여<=0?'color:var(--ink-3)':''}" onclick="aPickBudget('${b.id}')">
     <td><input type="radio" name="aBudgetPick" ${cur===b.id?'checked':''} onclick="event.stopPropagation();aPickBudget('${b.id}')"></td>
-    <td><b>${esc(b.산출내역)}</b></td><td>${esc(b.부서)}</td><td>${esc(b.세부사업)}</td><td>${esc(b.세부항목명)}</td><td>${esc(b.원가통계비목)}</td>
+    <td><b>${esc(b.산출내역)}</b></td><td>${esc(b.세부사업)}</td><td>${esc(b.세부항목명)}</td><td>${esc(b.원가통계비목)}</td>
     <td class="amt" style="text-align:right">${won(b.예산액)}</td><td class="amt" style="text-align:right;color:var(--ink-3)">${won(b.배부합계)}</td><td class="amt" style="text-align:right;font-weight:600">${won(b.잔여)}</td></tr>`).join('')
-    || '<tr><td colspan="9" class="empty">등록된 예산이 없습니다. 예산 등록 탭에서 먼저 등록하세요.</td></tr>';
+    || '<tr><td colspan="8" class="empty">등록된 예산이 없습니다. 예산 등록 탭에서 먼저 등록하세요.</td></tr>';
 }
 function aPickBudget(id){ $('aBudget').value = ($('aBudget').value===id) ? '' : id; renderBudgetTable(); if($('aFull').checked) aFullToggle(); else aRecalc(); }
 function renderAllocForm(){
@@ -3134,10 +3124,9 @@ async function openChangeAdminPw(){
 function renderDepts(){
   const html = kind => deptDraft.filter(d=>d.구분===kind).map((d,i)=>`<span class="chip">${esc(d.이름)}<button title="삭제" onclick="removeDept('${kind}',${i})">×</button></span>`).join('') || '<span class="empty" style="padding:4px 0">없음</span>';
   $('dList1').innerHTML = html('전담');
-  $('dList2').innerHTML = html('추가부서');
 }
 function addDept(kind){
-  const inp = $(kind==='전담'?'dNew1':'dNew2');
+  const inp = $('dNew1');
   const name = inp.value.trim(); if(!name) return;
   if(deptDraft.some(d=>d.구분===kind && d.이름===name)) return toast('이미 있는 이름입니다', true);
   deptDraft.push({구분:kind, 이름:name}); inp.value=''; renderDepts();
@@ -3150,7 +3139,7 @@ function removeDept(kind, idx){
 async function saveDepts(){
   admin.departments = await call('adminSaveDepartments', adminPw, deptDraft);
   deptDraft = admin.departments.map(d=>({...d})); renderDepts();
-  toast('부서를 저장했습니다'); await init();
+  toast('전담을 저장했습니다'); await init();
 }
 
 // 담당자
@@ -3365,13 +3354,13 @@ const AI_KINDS = {
       + '1) 가장 바깥(왼쪽) 줄: 세부사업 (예: 교과활동지원). 이 줄의 금액은 합계이므로 행으로 넣지 않습니다.\n'
       + '2) 한 단계 들여쓴 줄, 보통 앞에 [초] [중] [고] 같은 꼬리표가 붙음: 세부항목명 (예: [초]학교자율과제운영 → "학교자율과제운영", 꼬리표는 뺍니다). 이 줄의 금액은 소계이므로 행으로 넣지 않습니다.\n'
       + '3) 가장 안쪽 줄(문서 아이콘이 있는 줄): 첫째 칸이 원가통계비목(예: 교육운영비, 운영수당, 학습준비물, 업무추진비, 여비, 일반수용비, 공공요금, 시설비, 자산취득비, 급식비), 둘째 칸이 산출내역(예: 1학년 교육과정운영비, 수업보결수당, 학습준비물 구입), 마지막 칸이 예산액입니다. 이 줄들만 한 줄에 한 행씩 추출합니다.\n'
-      + '각 행에는 그 줄이 속한 위 두 단계의 세부사업(project)과 세부항목명(item)을 함께 적습니다. 예: {"dept":"","project":"교과활동지원","item":"학교자율과제운영","costType":"교육운영비","basis":"1학년 교육과정운영비","amount":2582000}. '
-      + 'dept(부서)는 화면에 있으면 적고 없으면 빈 문자열. amount는 쉼표 없는 정수. 머리글, 합계, 소계는 제외. 세부사업이 여러 개면 각각 같은 규칙으로. 복사한 글도 같은 규칙으로 읽습니다.',
+      + '각 행에는 그 줄이 속한 위 두 단계의 세부사업(project)과 세부항목명(item)을 함께 적습니다. 예: {"project":"교과활동지원","item":"학교자율과제운영","costType":"교육운영비","basis":"1학년 교육과정운영비","amount":2582000}. '
+      + 'dept는 빈 문자열로 두세요. amount는 쉼표 없는 정수. 머리글, 합계, 소계는 제외. 세부사업이 여러 개면 각각 같은 규칙으로. 복사한 글도 같은 규칙으로 읽습니다.',
     schema: { type:'OBJECT', properties:{ rows:{ type:'ARRAY', items:{ type:'OBJECT', properties:{ dept:{type:'STRING'}, project:{type:'STRING'}, item:{type:'STRING'}, costType:{type:'STRING'}, basis:{type:'STRING'}, amount:{type:'NUMBER'} }, required:['basis','amount'] } } }, required:['rows'] },
-    cols: ['부서','세부사업','세부항목명','원가통계비목','산출내역','예산액'],
+    cols: ['세부사업','세부항목명','원가통계비목','산출내역','예산액'],
     toRows: out => (out.rows||[]).map(r => {
       const tag = v => String(v||'').replace(/^\s*\[[^\]]{1,4}\]\s*/, '').trim();   // [초] [중] 같은 꼬리표 제거
-      const o = { 부서:String(r.dept||'').trim(), 세부사업:tag(r.project), 세부항목명:tag(r.item), 원가통계비목:String(r.costType||'').trim(), 산출내역:String(r.basis||'').trim(), 예산액:String(Math.max(0, Math.round(Number(r.amount)||0))), 선택:true };
+      const o = { 세부사업:tag(r.project), 세부항목명:tag(r.item), 원가통계비목:String(r.costType||'').trim(), 산출내역:String(r.basis||'').trim(), 예산액:String(Math.max(0, Math.round(Number(r.amount)||0))), 선택:true };
       // 한 칸씩 밀려 읽힌 경우(원가통계비목이 비고 세부항목명 자리에 비목 이름이 온 경우) 되돌리기
       if(!o.원가통계비목 && AI_COST_TYPES.test(o.세부항목명)){ o.원가통계비목 = o.세부항목명; o.세부항목명 = o.세부사업; o.세부사업 = ''; }
       return o; }).filter(r=>r.산출내역||r.예산액!=='0'),
@@ -3382,7 +3371,6 @@ function aiOpen(kind){
   AI.kind = kind; AI.imgs = []; AI.rows = []; AI.shipping = 0;
   const K = AI_KINDS[kind];
   $('aimTitle').textContent = K.title; $('aimHint').textContent = K.hint; $('aiText').value = ''; $('aiText').placeholder = K.placeholder;
-  $('aiDeptWrap').style.display = kind==='budget' ? 'flex' : 'none'; $('aiDept').value = '';
   $('aiResult').style.display = 'none'; $('aiMsg').textContent = ''; $('aiApply').textContent = K.apply; $('aiApply').disabled = true;
   aiRenderImgs(); $('aiModal').classList.add('on'); setTimeout(()=>$('aiText').focus(), 50);
 }
@@ -3413,7 +3401,6 @@ async function aiRead(){
   try{
     const out = await geminiJson(parts, K.schema); AI.model = out.__model || '';
     AI.rows = K.toRows(out); AI.shipping = Math.max(0, Math.round(Number(out.shipping)||0));
-    if(AI.kind==='budget' && $('aiDept').value.trim()) AI.rows.forEach(r=>{ if(!r.부서) r.부서 = $('aiDept').value.trim(); });
     if(!AI.rows.length) throw new Error('읽어 낸 항목이 없습니다. 글이나 그림에 목록이 보이는지 확인하고 다시 시도하세요.');
     aiRenderResult(); $('aiMsg').style.color = 'var(--ok)'; $('aiMsg').textContent = `${AI.rows.length}건을 읽었습니다${AI.model?` (${AI.model})`:''}. 내용을 확인하고 틀린 것은 체크를 풀거나 넣은 뒤 표에서 고치세요.`;
   }catch(e){ $('aiMsg').style.color = 'var(--danger)'; $('aiMsg').textContent = e.message || String(e); }
@@ -3437,7 +3424,7 @@ function aiApply(){
     renderItems(); if(iMode!=='class'){ autoVendor(iDraft); genBody(true); }
     toast(`${add.length}건을 품목에 넣었습니다. 수량과 단가를 확인하고 저장을 누르세요.`);
   } else {
-    const add = rows.map(r=>({ 부서:r.부서, 세부사업:r.세부사업, 세부항목명:r.세부항목명, 원가통계비목:r.원가통계비목, 산출내역:r.산출내역, 예산액:r.예산액 }));
+    const add = rows.map(r=>({ 세부사업:r.세부사업, 세부항목명:r.세부항목명, 원가통계비목:r.원가통계비목, 산출내역:r.산출내역, 예산액:r.예산액 }));
     bDraft = bDraft.filter(b=>b.id||b.산출내역||b.예산액).concat(add);
     renderBudgets(); toast(`${add.length}행을 표에 추가했습니다. 확인하고 고친 뒤 등록(저장)을 누르세요.`);
   }
@@ -3547,9 +3534,9 @@ async function seedTestSchool(code){
   const CLS = {1:2, 2:2, 3:2, 4:3, 5:2, 6:2};
   const st = {}; Object.keys(CLS).forEach(g => { st['학급수_'+g] = CLS[g]; });
   await A.adminSaveSettings(PW, st);
-  await A.adminSaveDepartments(PW, [{구분:'전담', 이름:'과학전담'}, {구분:'전담', 이름:'영어전담'}, {구분:'추가부서', 이름:'행정실'}]);
+  await A.adminSaveDepartments(PW, [{구분:'전담', 이름:'과학전담'}, {구분:'전담', 이름:'영어전담'}]);
   const m = await A.registerManager('김담당', PW);
-  const B = (부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액) => ({부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액});
+  const B = (부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액) => ({세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액});
   const G = [1,2,3,4,5,6];
   await A.managerSaveBudgets(m.id, PW, [
     B('교무기획부', '자율·자치활동', '학급운영비', '교육운영비', '학급운영비', 3000000),

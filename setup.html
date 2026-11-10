@@ -253,7 +253,7 @@ const firebaseConfig = {
   <ol class="todo">
     <li>프로그램 주소${state.url?` (<a href="${esc(state.url)}" target="_blank" rel="noopener">${esc(state.url)}</a>)`:''}를 엽니다 → 학교 이름, 학년도, 관리자 비밀번호(4자 이상)를 넣고 ${path('시작하기')}</li>
     <li>왼쪽 맨 아래 ${path('관리자')} → 비밀번호 → ${path('학교 설정')}: 학년별 학급 수를 넣고 저장. 학교 마크도 올릴 수 있습니다.</li>
-    <li>${path('부서 관리')}: 전담(예: 과학전담)과 추가 부서를 등록합니다.</li>
+    <li>${path('전담 관리')}: 학년과 별도로 예산을 받는 전담(예: 과학전담)을 등록합니다.</li>
     <li>예산을 배부할 담당 선생님은 첫 화면 왼쪽 ${path('처음이라면 담당자 등록하기')}로 이름과 비밀번호를 정합니다.</li>
     <li>선생님들께 주소를 알려 줍니다. 왼쪽 ${path('📖 사용 설명서')} 버튼에 역할별 설명이 있고, 미리 눌러 보고 싶으면 <a href="./" target="_blank" rel="noopener">연습 사이트</a>를 쓰면 됩니다.</li>
     <li>(선택) <b>AI 도우미</b>: ${path('관리자','학교 설정','AI 도우미')}에 Gemini API 키를 넣으면 품의 품목(장바구니 글, 캡처)과 예산 등록(에듀파인 화면 캡처)을 AI가 읽어 주는 버튼이 생깁니다. 키는 <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a>에서 개인 구글 계정으로 무료로 받을 수 있고, 받는 방법과 주의할 점은 그 칸의 "키 받는 방법과 주의할 점"에 있습니다.</li>
