@@ -522,7 +522,7 @@
       <div class="hint">구글 Gemini API 키를 넣으면 품의 품목(장바구니 글이나 캡처)과 예산 등록(에듀파인 화면 캡처)을 AI가 읽어 채워 줍니다. 비워 두면 AI 버튼이 보이지 않습니다.</div>
       <div class="grid c2" style="margin-top:10px">
         <div><label class="f">Gemini API 키</label><div style="display:flex;gap:6px"><input type="password" id="sAiKey" style="flex:1" placeholder="AIza…" autocomplete="off"><button class="btn small" type="button" onclick="const i=$('sAiKey');i.type=i.type==='password'?'text':'password'">보기</button></div></div>
-        <div><label class="f">모델 이름 <span class="hint" style="margin:0;display:inline">(비우면 gemini-2.5-flash)</span></label><input type="text" id="sAiModel" style="width:100%" placeholder="gemini-2.5-flash"></div>
+        <div><label class="f">모델 이름 <span class="hint" style="margin:0;display:inline">(보통 비워 둡니다. 비우면 이 키로 쓸 수 있는 최신 flash 모델을 자동으로 찾아 씁니다)</span></label><input type="text" id="sAiModel" style="width:100%" placeholder="비워 두면 자동"></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px"><button class="btn small" onclick="aiTestKey()">연결 확인</button><span class="hint" id="sAiMsg" style="margin:0"></span></div>
       <details style="margin-top:8px"><summary class="hint" style="cursor:pointer;margin:0">키 받는 방법과 주의할 점</summary>
@@ -3238,33 +3238,79 @@ async function loadLog(){
 
 // ───────── AI 도우미 (Gemini) ─────────
 // 관리자가 학교 설정에 넣은 Gemini API 키로, 선생님 브라우저에서 바로 Gemini에 묻는다 (서버 없음).
-const AI_DEFAULT_MODEL = 'gemini-2.5-flash';
+const AI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+// 모델 이름은 구글이 자주 바꾸므로 고정하지 않는다. 키로 쓸 수 있는 모델 목록을 받아 최신 flash 계열부터 차례로 시도한다.
+const AI_FALLBACK = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-flash-latest'];   // 목록 조회가 안 될 때만 쓰는 예비 순서
 function aiKey(){ return (boot && boot.ai && boot.ai.키) || ''; }
-function aiModel(){ return (boot && boot.ai && boot.ai.모델) || AI_DEFAULT_MODEL; }
+function aiModel(){ return ((boot && boot.ai && boot.ai.모델) || '').trim(); }   // 관리자가 지정한 모델 (비우면 자동)
 function aiEnabled(){ return !!aiKey(); }
 function aiToggleButtons(){ document.querySelectorAll('.aiOnly').forEach(e => { e.style.display = aiEnabled() ? '' : 'none'; }); }
+const aiState = { models: null, modelsKey: '', working: '' };   // 조회한 모델 목록과 마지막으로 성공한 모델 (이 화면에서만 기억)
+/** 이 키로 쓸 수 있는 모델 목록 (글+그림 → 글 생성이 되는 것만). 최신 버전, flash, 정식 버전 순으로 정렬 */
+async function aiListModels(key){
+  if(aiState.models && aiState.modelsKey === key) return aiState.models;
+  const names = []; let token = '';
+  for(let i=0;i<5;i++){
+    const r = await fetch(`${AI_BASE}/models?pageSize=200${token ? '&pageToken='+encodeURIComponent(token) : ''}`, { headers:{ 'x-goog-api-key': key } });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok){ const msg=(j.error&&j.error.message)||''; if(r.status===400 && /api key/i.test(msg)) throw new Error('API 키가 올바르지 않습니다. 관리자 → 학교 설정에서 키를 확인하세요.'); if(r.status===403) throw new Error('이 주소에서는 키를 쓸 수 없게 제한되어 있거나 권한이 없습니다. (키 제한 설정 확인) ' + msg); throw new Error('모델 목록을 받지 못했습니다: ' + (msg || ('HTTP '+r.status))); }
+    (j.models||[]).forEach(m => { const nm = String(m.name||'').replace(/^models\//,''); const methods = m.supportedGenerationMethods || m.supported_generation_methods || []; if(nm && methods.includes('generateContent')) names.push(nm); });
+    token = j.nextPageToken || ''; if(!token) break;
+  }
+  const bad = /embedding|aqa|tts|image|imagen|veo|audio|live|learnlm|gemma|robotics|computer-use|deep-research|thinking-exp/i;
+  const ver = nm => { const m = nm.match(/gemini-(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : 0; };
+  const kind = nm => /flash-lite/.test(nm) ? 1 : /flash/.test(nm) ? 0 : /pro/.test(nm) ? 2 : 3;
+  const pre = nm => /preview|exp|latest/.test(nm) ? 1 : 0;
+  const list = names.filter(nm => /^gemini-/.test(nm) && !bad.test(nm))
+    .sort((a,b) => (pre(a)-pre(b)) || (ver(b)-ver(a)) || (kind(a)-kind(b)) || a.localeCompare(b));
+  aiState.models = list; aiState.modelsKey = key;
+  return list;
+}
+/** 시도할 모델 순서: 관리자가 지정한 모델 → 마지막으로 성공한 모델 → 목록에서 고른 최신 flash 계열 (최대 4개) */
+async function aiModelCandidates(key, model){
+  const out = []; const push = m => { if(m && !out.includes(m)) out.push(m); };
+  push(model); if(!model) push(aiState.working);
+  if(!model){
+    let list = [];
+    try{ list = await aiListModels(key); }catch(e){ if(/API 키|제한/.test(e.message)) throw e; }
+    (list.length ? list : AI_FALLBACK).forEach(push);
+  }
+  return out.slice(0, 5);
+}
+function aiMapError(status, msg, model){
+  if(status===400 && /api key/i.test(msg)) return new Error('API 키가 올바르지 않습니다. 관리자 → 학교 설정에서 키를 확인하세요.');
+  if(status===403) return new Error('이 주소에서는 키를 쓸 수 없게 제한되어 있거나 권한이 없습니다. (키 제한 설정 확인) ' + msg);
+  if(status===429) return new Error(`무료 사용량(분당 또는 하루 요청 수)을 넘었습니다 (${model}). 잠시 뒤 다시 하거나 내일 다시 시도하세요.`);
+  if(status===404) return new Error(`모델 이름(${model})을 찾을 수 없습니다.`);
+  return new Error('Gemini 오류: ' + msg);
+}
 async function geminiJson(parts, schema, key, model){
   key = key || aiKey(); model = (model || aiModel()).trim();
   if(!key) throw new Error('관리자가 학교 설정에 Gemini API 키를 넣어야 AI 기능을 쓸 수 있습니다.');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
-  let r;
-  try{
-    r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({ contents:[{ role:'user', parts }], generationConfig:{ temperature:0, response_mime_type:'application/json', response_schema: schema } }) });
-  }catch(e){ throw new Error('Gemini에 연결하지 못했습니다. 인터넷 연결을 확인하세요.'); }
-  const j = await r.json().catch(()=>({}));
-  if(!r.ok){
-    const msg = (j.error && j.error.message) || r.statusText || ('HTTP ' + r.status);
-    if(r.status===400 && /api key/i.test(msg)) throw new Error('API 키가 올바르지 않습니다. 관리자 → 학교 설정에서 키를 확인하세요.');
-    if(r.status===403) throw new Error('이 주소에서는 키를 쓸 수 없게 제한되어 있거나 권한이 없습니다. (키 제한 설정 확인) ' + msg);
-    if(r.status===429) throw new Error('무료 사용량(분당 또는 하루 요청 수)을 넘었습니다. 잠시 뒤 다시 하거나 내일 다시 시도하세요.');
-    if(r.status===404) throw new Error(`모델 이름(${model})을 찾을 수 없습니다. 관리자 → 학교 설정에서 모델 이름을 확인하세요.`);
-    throw new Error('Gemini 오류: ' + msg);
+  const tried = []; let lastErr = null;
+  for(const m of await aiModelCandidates(key, model)){
+    tried.push(m);
+    let r;
+    try{
+      r = await fetch(`${AI_BASE}/models/${encodeURIComponent(m)}:generateContent`, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents:[{ role:'user', parts }], generationConfig:{ temperature:0, response_mime_type:'application/json', response_schema: schema } }) });
+    }catch(e){ throw new Error('Gemini에 연결하지 못했습니다. 인터넷 연결을 확인하세요.'); }
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok){
+      const msg = (j.error && j.error.message) || r.statusText || ('HTTP ' + r.status);
+      lastErr = aiMapError(r.status, msg, m);
+      // 모델이 없거나(404) 이 모델이 요청을 못 받으면(400 not found/supported, 429 한도) 다음 모델로
+      if(r.status===404 || r.status===429 || (r.status===400 && /not found|not supported|deprecated/i.test(msg))) continue;
+      throw lastErr;
+    }
+    const cand = (j.candidates||[])[0] || {};
+    const text = ((cand.content||{}).parts||[]).map(p=>p.text||'').join('');
+    if(!text){ lastErr = new Error('AI가 답을 주지 않았습니다' + (cand.finishReason ? ` (${cand.finishReason})` : '') + '. 다시 시도해 보세요.'); continue; }
+    try{ const out = JSON.parse(text); aiState.working = m; out.__model = m; return out; }
+    catch(e){ lastErr = new Error('AI 답을 읽지 못했습니다. 다시 시도해 보세요.'); continue; }
   }
-  const cand = (j.candidates||[])[0] || {};
-  const text = ((cand.content||{}).parts||[]).map(p=>p.text||'').join('');
-  if(!text) throw new Error('AI가 답을 주지 않았습니다' + (cand.finishReason ? ` (${cand.finishReason})` : '') + '. 다시 시도해 보세요.');
-  try{ return JSON.parse(text); }catch(e){ throw new Error('AI 답을 읽지 못했습니다. 다시 시도해 보세요.'); }
+  if(model) throw new Error((lastErr ? lastErr.message : '') + ' 관리자 → 학교 설정의 모델 이름을 비우면 쓸 수 있는 모델을 자동으로 찾습니다.');
+  throw new Error((lastErr ? lastErr.message + ' ' : '') + `시도한 모델: ${tried.join(', ')}`);
 }
 /** 그림 파일/Blob → Gemini inline_data 부분 (긴 변 1600px 이하 JPEG 로 줄임) */
 function aiImagePart(file){
@@ -3284,12 +3330,16 @@ function aiImagePart(file){
   });
 }
 async function aiTestKey(){
-  const key = $('sAiKey').value.trim(), model = $('sAiModel').value.trim() || AI_DEFAULT_MODEL; const m = $('sAiMsg');
+  const key = $('sAiKey').value.trim(), model = $('sAiModel').value.trim(); const m = $('sAiMsg');
   if(!key){ m.style.color='var(--danger)'; m.textContent='키를 먼저 넣으세요.'; return; }
-  m.style.color='var(--ink-3)'; m.textContent='확인 중…';
+  m.style.color='var(--ink-3)'; m.textContent='확인 중… (쓸 수 있는 모델을 찾아 연결해 봅니다)';
+  aiState.models = null; aiState.working = '';
   try{
     const out = await geminiJson([{ text: '답으로 {"ok": true} 만 주세요.' }], { type:'OBJECT', properties:{ ok:{ type:'BOOLEAN' } }, required:['ok'] }, key, model);
-    m.style.color='var(--ok)'; m.textContent = out && out.ok ? `연결됐습니다 (${model}). 저장을 눌러 주세요.` : '응답은 왔지만 모양이 다릅니다. 모델 이름을 확인하세요.';
+    const list = aiState.models || [];
+    m.style.color='var(--ok)';
+    m.innerHTML = (out && out.ok ? `연결됐습니다. 이번에 쓴 모델: <b>${esc(out.__model||model)}</b>. 저장을 눌러 주세요.` : '응답은 왔지만 모양이 다릅니다. 다른 모델을 지정해 보세요.')
+      + (list.length ? `<br>이 키로 쓸 수 있는 모델(최신 flash 순): ${list.slice(0,6).map(esc).join(', ')}${list.length>6?' 외 '+(list.length-6)+'개':''}. 모델 이름을 비워 두면 이 순서로 자동 시도합니다.` : '');
   }catch(e){ m.style.color='var(--danger)'; m.textContent = e.message || String(e); }
 }
 
@@ -3323,7 +3373,6 @@ function aiOpen(kind){
   const K = AI_KINDS[kind];
   $('aimTitle').textContent = K.title; $('aimHint').textContent = K.hint; $('aiText').value = ''; $('aiText').placeholder = K.placeholder;
   $('aiDeptWrap').style.display = kind==='budget' ? 'flex' : 'none'; $('aiDept').value = '';
-  $('aiReplaceWrap').style.display = kind==='items' ? 'flex' : 'none'; $('aiReplace').checked = false; $('aiShip').checked = true;
   $('aiResult').style.display = 'none'; $('aiMsg').textContent = ''; $('aiApply').textContent = K.apply; $('aiApply').disabled = true;
   aiRenderImgs(); $('aiModal').classList.add('on'); setTimeout(()=>$('aiText').focus(), 50);
 }
@@ -3352,11 +3401,11 @@ async function aiRead(){
   const parts = [{ text: K.prompt + (text ? '\n\n[복사한 글]\n' + text.slice(0, 20000) : '') }, ...AI.imgs.map(im=>im.part)];
   $('aiMsg').style.color = 'var(--ink-3)'; $('aiMsg').textContent = 'AI가 읽는 중입니다… (보통 5~15초)'; $('aiReadBtn').disabled = true;
   try{
-    const out = await geminiJson(parts, K.schema);
+    const out = await geminiJson(parts, K.schema); AI.model = out.__model || '';
     AI.rows = K.toRows(out); AI.shipping = Math.max(0, Math.round(Number(out.shipping)||0));
     if(AI.kind==='budget' && $('aiDept').value.trim()) AI.rows.forEach(r=>{ if(!r.부서) r.부서 = $('aiDept').value.trim(); });
     if(!AI.rows.length) throw new Error('읽어 낸 항목이 없습니다. 글이나 그림에 목록이 보이는지 확인하고 다시 시도하세요.');
-    aiRenderResult(); $('aiMsg').style.color = 'var(--ok)'; $('aiMsg').textContent = `${AI.rows.length}건을 읽었습니다. 내용을 확인하고 틀린 것은 체크를 풀거나 넣은 뒤 표에서 고치세요.`;
+    aiRenderResult(); $('aiMsg').style.color = 'var(--ok)'; $('aiMsg').textContent = `${AI.rows.length}건을 읽었습니다${AI.model?` (${AI.model})`:''}. 내용을 확인하고 틀린 것은 체크를 풀거나 넣은 뒤 표에서 고치세요.`;
   }catch(e){ $('aiMsg').style.color = 'var(--danger)'; $('aiMsg').textContent = e.message || String(e); }
   finally{ $('aiReadBtn').disabled = false; }
 }
