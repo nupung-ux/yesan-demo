@@ -204,6 +204,16 @@
   .pchip.sel{border-color:#d9a400;background:#fff6d6}
   .pchip .st{font-size:12px;color:var(--ink-3)}
   .pchip .st.done{color:var(--navy);font-weight:600}
+  /* 학년 공통 품의 담기: 우리 반 예산과 구분되는 초록 계열 */
+  .panel.collect{background:#f3faf5;border-color:#bfe3c9}
+  .panel.collect h3{color:#1f6f45}
+  .badge{display:inline-block;border-radius:4px;padding:1px 7px;font-size:12px;font-weight:700;vertical-align:middle;margin-right:7px;line-height:1.6}
+  .badge.cls{background:var(--navy-tint);color:var(--navy)}
+  .badge.common{background:#d7efe0;color:#1f6f45}
+  .pchip.ccard{border:1px dashed #8fcfa8;background:#fff}
+  .pchip.ccard:hover{border-color:#2f855a}
+  .pchip.ccard.sel{border:2px solid #2f855a;background:#e4f4ea;padding:7px 11px}
+  .panel.mode-class{border-color:#8fcfa8;box-shadow:inset 4px 0 0 #2f855a;background:#fbfefc}
   .tot-row td{font-weight:600;border-top:2px solid var(--line)}
   .desc{white-space:pre-wrap;font-size:16px;font-weight:500;color:#1a3160;background:#fff6d6;border-left:4px solid #d9a400;padding:10px 14px;border-radius:0 var(--r) var(--r) 0;margin-top:8px;line-height:1.55}
   .desc::before{content:'예산 담당자 안내';display:block;font-size:12px;font-weight:700;color:#8a6a00;margin-bottom:3px;letter-spacing:.02em}
@@ -301,7 +311,7 @@
         <li>견적서가 읽히지 않으면 안내창이 뜹니다. 쇼핑몰에서 견적서를 엑셀(또는 이마트몰은 PDF)로 저장한 파일을 쓰세요.</li>
       </ul>
       <h4>3. 학년 공통 품의에 우리 반 물품 담기</h4>
-      <p>학년부장이 "각 학급에서 물품 담기"로 만든 공통 품의가 있으면 예산 표 아래에 <b>학년 공통 품의에 물품 담기</b> 목록이 나옵니다. 열어서 우리 반 물품만 넣고(견적서 끌어놓기도 됩니다) 저장한 뒤 <b>담기 완료</b>에 체크하세요. 반당 한도가 정해져 있으면 함께 표시됩니다. 금액은 학년 공통 예산에서 나가므로 우리 반 잔액은 줄지 않습니다.</p>
+      <p>학년부장이 "각 학급에서 물품 담기"로 만든 공통 품의가 있으면 예산 표 아래에 초록색 칸으로 <b>학년 공통 품의에 우리 반 물품 담기</b> 목록이 나옵니다. 우리 반 예산(파란 "우리 반" 표시)과는 다른 것입니다. 열어서 우리 반 물품만 넣고(견적서 끌어놓기도 됩니다) 저장한 뒤 <b>담기 완료</b>에 체크하세요. 반당 한도가 정해져 있으면 함께 표시됩니다. 금액은 학년 공통 예산에서 나가므로 우리 반 잔액은 줄지 않습니다.</p>
       <p>예산배정 담당자가 "담당자가 취합해 품의"로 배부한 예산도 같은 방식입니다. 물품만 담아 두면 담당자가 모아서 기안합니다.</p>
     </section>
 
@@ -766,9 +776,9 @@
     </div>
 
       <!-- 학급에서 공통 품의에 물품 담기 -->
-      <div class="panel" id="uCollect" style="display:none">
-        <h3>학년 공통 품의에 물품 담기</h3>
-        <div class="hint">학년부장이 "각 학급에서 물품 담기"로 만든 공통 품의입니다. 우리 반 물품을 담고 저장한 뒤 "담기 완료"에 체크하세요. 금액은 학년 공통 예산에서 나갑니다.</div>
+      <div class="panel collect" id="uCollect" style="display:none">
+        <h3>🧺 학년 공통 품의에 우리 반 물품 담기</h3>
+        <div class="hint">위의 우리 반 예산과는 다른 것입니다. 학년부장(또는 예산배정 담당자)이 만든 <b>학년 공통 품의</b>에 우리 반이 필요한 물품만 담는 곳이고, 금액은 학년 공통 예산에서 나가 우리 반 잔액은 줄지 않습니다. 담고 저장한 뒤 "담기 완료"에 체크하세요.</div>
         <div class="plist" id="uCList"></div>
       </div>
     <div class="panel" id="uPumuiPanel" style="display:none">
@@ -2373,35 +2383,36 @@ function renderUserTable(){
   const th=$('uTable').querySelector('thead'), tb=$('uTable').querySelector('tbody');
   $('uEmpty').style.display = U.allocs.length?'none':'block';
   if(U.isGrade && uCls===0){
-    $('uBudgetTitle').textContent = `${U.target}학년 예산`;
+    $('uBudgetTitle').innerHTML = `<span class="badge common">학년 공통</span>${U.target}학년 예산`;
     $('uBudgetHint').textContent = '행을 클릭하면 학년 공통 품의를 관리합니다. 반별로 나눠 쓰려면 [분배]를 누르세요.';
     let cls=''; for(let c=1;c<=U.학급수;c++) cls+=`<th style="text-align:right">${c}반</th>`;
     th.innerHTML=`<tr><th>예산</th><th style="text-align:right">학년 배정<div class="hint" style="margin:0;font-size:12px">아래 작은 숫자는 잔액</div></th><th style="text-align:right">공통</th>${cls}<th style="text-align:right">공통 잔액</th><th></th></tr>`;
     const cell=(bat,use)=>`<td class="amt" style="text-align:right;color:${bat?'inherit':'var(--ink-3)'}">${won(bat||0)}${bat?`<div class="hint" style="margin:0;font-size:12px">${won((bat||0)-(use||0))}</div>`:''}</td>`;
     tb.innerHTML = U.allocs.map(a=>{ let cs=''; for(let c=1;c<=U.학급수;c++) cs+=cell(a.반별[c],a.사용[c]);
-      return `<tr class="pick ${uAlloc===a.배부id?'sel':''}" onclick="uPickAlloc('${a.배부id}')"><td><b>${esc(a.예산명)}</b><div class="hint" style="margin:0">${esc(a.세부사업)} · ${esc(a.담당자)}</div></td>
+      return `<tr class="pick ${iMode==='common'&&uAlloc===a.배부id?'sel':''}" onclick="uPickAlloc('${a.배부id}')"><td><b>${esc(a.예산명)}</b><div class="hint" style="margin:0">${esc(a.세부사업)} · ${esc(a.담당자)}</div></td>
       <td class="amt" style="text-align:right">${won(a.배부액)}<div class="hint" style="margin:0;font-size:12px">잔액 ${won(a.배부액-Object.values(a.사용).reduce((t,v)=>t+v,0))}</div></td>${cell(a.반별[0],a.사용[0])}${cs}
       <td class="amt" style="text-align:right;font-weight:600">${won((a.반별[0]||0)-(a.사용[0]||0))}</td>
       <td class="ops"><button class="btn small" onclick="event.stopPropagation();openDist('${a.배부id}')">분배</button></td></tr>`; }).join('');
   } else {
-    $('uBudgetTitle').textContent = U.isGrade ? `${U.target}학년 ${uCls}반 예산` : `${esc(U.label)} 예산`;
+    $('uBudgetTitle').innerHTML = U.isGrade ? `<span class="badge cls">우리 반</span>${U.target}학년 ${uCls}반 예산` : `${esc(U.label)} 예산`;
     $('uBudgetHint').textContent = '행을 클릭하면 품의를 관리합니다.';
     th.innerHTML=`<tr><th>예산</th><th style="text-align:right">배정액</th><th style="text-align:right">사용액</th><th style="text-align:right">예정액</th><th style="text-align:right">원인행위(참고)</th><th style="text-align:right">잔액</th></tr>`;
     const rows = U.allocs.filter(a=>uCls===0 || (a.반별[uCls]||0)>0 || a.품의.some(p=>p.반===uCls));
     tb.innerHTML = rows.map(a=>{ const 원=a.원인[uCls]||0, 사=a.사용[uCls]||0; const warn = 원>0 && 원!==사;
-      return `<tr class="pick ${uAlloc===a.배부id?'sel':''}" onclick="uPickAlloc('${a.배부id}')"><td><b>${esc(a.예산명)}</b><div class="hint" style="margin:0">${esc(a.세부사업)} · ${esc(a.담당자)}</div></td>
+      return `<tr class="pick ${iMode==='common'&&uAlloc===a.배부id?'sel':''}" onclick="uPickAlloc('${a.배부id}')"><td><b>${esc(a.예산명)}</b><div class="hint" style="margin:0">${esc(a.세부사업)} · ${esc(a.담당자)}</div></td>
       <td class="amt" style="text-align:right">${won(a.반별[uCls]||0)}</td><td class="amt ${warn?'warnCell':''}" style="text-align:right">${won(사)}</td>
       <td class="amt" style="text-align:right;color:var(--ink-3)">${won(a.예정[uCls]||0)}</td><td class="amt ${warn?'warnCell':''}" style="text-align:right;color:var(--ink-3)">${원?won(원):'-'}</td>
       <td class="amt" style="text-align:right;font-weight:600">${won(rem(a))}</td></tr>`; }).join('');
     if(!rows.length && U.allocs.length) tb.innerHTML=`<tr><td colspan="6" class="empty">이 반에 배정된 예산이 없습니다. 학년 전체 탭에서 분배하세요.</td></tr>`;
   }
 }
-function uPickAlloc(id){ uAlloc=id; uP=null; iMode='common'; renderUserTable(); renderPumuiPanel(U.allocs.find(a=>a.배부id===id)); }
+function uPickAlloc(id){ uAlloc=id; uP=null; iMode='common'; renderUserTable(); renderCollect(); renderPumuiPanel(U.allocs.find(a=>a.배부id===id)); }
 function renderPumuiPanel(a){
   iMode='common';
   $('uPumuiPanel').style.display='block'; $('uPList').style.display='flex'; $('uAllocDesc').style.display = a.설명?'block':'none';
   document.querySelector('#uPumuiPanel .btn.primary.small').style.display='inline-block';
-  $('uAllocName').textContent = `${a.예산명} — ${uCls?U.target+'학년 '+uCls+'반':(U.isGrade?U.target+'학년 공통':U.label)} · 잔액 ${won(rem(a))}원`;
+  $('uPumuiPanel').classList.remove('mode-class');
+  $('uAllocName').innerHTML = (uCls ? '<span class="badge cls">우리 반 품의</span>' : (U.isGrade ? '<span class="badge common">학년 공통 품의</span>' : '')) + `${esc(a.예산명)} — ${uCls?U.target+'학년 '+uCls+'반':(U.isGrade?U.target+'학년 공통':esc(U.label))} · 잔액 ${won(rem(a))}원`;
   $('uAllocDesc').style.display = a.설명?'block':'none'; $('uAllocDesc').textContent=a.설명;
   const list = a.품의.filter(p=>p.반===uCls);
   $('uPList').innerHTML = list.map(p=>`<div class="pchip ${uP===p.id?'sel':''}" onclick="openPumui('${p.id}')"><div>${p.차수}차 · ${esc(p.제목||'(제목 없음)')}${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':(p.학급담기?' <span class="cls-tag">학급 담기</span>':'')}</div><div class="st ${p.상태==='기안완료'?'done':''}">${p.상태==='기안완료'?'기안 완료':'작성 중'} · ${won(p.반영액)}원${p.원인행위액?` (원인행위 ${won(p.원인행위액)})`:(p.조정합계!==null&&p.조정합계!==undefined?' (합계 수정)':'')}</div></div>`).join('')
@@ -2918,15 +2929,17 @@ function renderCollect(){
   if(!list.length){ box.style.display='none'; return; }
   box.style.display='block';
   $('uCList').innerHTML = list.map(({a,p})=>{ const amt=p.품목.filter(i=>i.반===uCls).reduce((t,i)=>t+i.수량*i.예상단가,0); const done=p.담기완료.includes(uCls); const over=p.반당한도&&amt>p.반당한도;
-    return `<div class="pchip ${iMode==='class'&&uP===p.id?'sel':''}" style="min-width:260px" onclick="openClassEditor('${a.배부id}','${p.id}')"><div><b>${esc(a.예산명)}</b>${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':''}</div><div>${esc(p.제목||`${p.차수}차 (제목 없음)`)}</div>
+    return `<div class="pchip ccard ${iMode==='class'&&uP===p.id?'sel':''}" style="min-width:260px" onclick="openClassEditor('${a.배부id}','${p.id}')"><div><b>${esc(a.예산명)}</b>${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':''}</div><div>${esc(p.제목||`${p.차수}차 (제목 없음)`)}</div>
       <div class="st ${done?'done':''}">${done?'담기 완료':'담는 중'} · 우리 반 ${won(amt)}원${p.반당한도?` / 한도 ${won(p.반당한도)}원`:''}${over?' <span style="color:var(--danger)">초과</span>':''}</div></div>`; }).join('');
 }
 function openClassEditor(allocId, pumuiId){
   const a=U.allocs.find(x=>x.배부id===allocId); const p=a&&a.품의.find(x=>x.id===pumuiId); if(!p) return;
   uAlloc=allocId; uP=pumuiId; iMode='class';
+  renderUserTable();
   $('uPumuiPanel').style.display='block'; $('uPList').style.display='none'; $('uAllocDesc').style.display='none';
   document.querySelector('#uPumuiPanel .btn.primary.small').style.display='none';
-  $('uAllocName').textContent = `학년 공통 품의에 물품 담기 — ${a.예산명} · ${p.제목||p.차수+'차'} · ${U.target}학년 ${uCls}반${p.반당한도?` (한도 ${won(p.반당한도)}원)`:''}`;
+  $('uPumuiPanel').classList.add('mode-class');
+  $('uAllocName').innerHTML = `<span class="badge common">학년 공통 품의</span>우리 반 물품 담기 — ${esc(a.예산명)} · ${esc(p.제목||p.차수+'차')} · ${U.target}학년 ${uCls}반${p.반당한도?` (한도 ${won(p.반당한도)}원)`:''}`;
   $('uEditor').style.display='block'; setEditorMode('class', p); $('cpBox').style.display='none';
   $('cDone').checked = p.담기완료.includes(uCls);
   iDraft = p.품목.filter(i=>i.반===uCls).map(i=>({...i}));
