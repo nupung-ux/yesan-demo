@@ -213,6 +213,13 @@
   .pchip.ccard{border:1px dashed #8fcfa8;background:#fff}
   .pchip.ccard:hover{border-color:#2f855a}
   .pchip.ccard.sel{border:2px solid #2f855a;background:#e4f4ea;padding:7px 11px}
+  .btn.ai{border-color:#c4b5fd;color:#5b21b6;background:#f5f3ff}
+  .btn.ai:hover{background:#ede9fe}
+  .aizone{border:2px dashed #c4b5fd;border-radius:10px;background:#faf8ff;padding:12px;margin-top:10px}
+  .aizone textarea{min-height:110px;background:#fff}
+  .aithumb{position:relative;display:inline-block}
+  .aithumb img{height:84px;border:1px solid var(--line);border-radius:6px;background:#fff}
+  .aithumb button{position:absolute;top:-6px;right:-6px;border:1px solid var(--line);background:#fff;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;line-height:1}
   .panel.mode-class{border-color:#8fcfa8;box-shadow:inset 4px 0 0 #2f855a;background:#fbfefc}
   .tot-row td{font-weight:600;border-top:2px solid var(--line)}
   .desc{white-space:pre-wrap;font-size:16px;font-weight:500;color:#1a3160;background:#fff6d6;border-left:4px solid #d9a400;padding:10px 14px;border-radius:0 var(--r) var(--r) 0;margin-top:8px;line-height:1.55}
@@ -301,7 +308,7 @@
         <li>예산 표에서 쓸 예산 행을 클릭 → <b>새 품의 만들기</b></li>
         <li><b>① 품의서</b>: 왼쪽 양식 칸에서 담당자가 정한 제목 양식을 고르면 제목이 채워집니다. <b>복사</b>를 눌러 에듀파인 제목에 그대로 붙여 넣으세요. (제목을 그대로 써야 나중에 에듀파인 집행액이 자동으로 맞춰집니다)</li>
         <li>품의 개요: 문구(물품, 업추비 등)를 고르고 용도와 구매처를 넣으면 개요가 만들어집니다. 필요하면 바로 고친 뒤 <b>개요 복사</b>.</li>
-        <li><b>② 품목 입력</b>: 내용, 수량, 예상단가는 필수이고 합계는 자동입니다. 내용을 쓰고 어느 칸에서든 Enter를 누르면 다음 행이 생깁니다. 엑셀에서 복사해 첫 칸에 붙여 넣어도 되고, <b>견적서 파일을 이 칸에 끌어다 놓으면</b>(여러 개 가능) 품목이 바로 들어옵니다. 지마켓, 아이스크림몰, 학교장터, 아람과학사, 이마트몰, YES24 견적서와 에듀파인 품목내역 양식을 읽습니다.</li>
+        <li><b>② 품목 입력</b>: 내용, 수량, 예상단가는 필수이고 합계는 자동입니다. 내용을 쓰고 어느 칸에서든 Enter를 누르면 다음 행이 생깁니다. 엑셀에서 복사해 첫 칸에 붙여 넣어도 되고, <b>견적서 파일을 이 칸에 끌어다 놓으면</b>(여러 개 가능) 품목이 바로 들어옵니다. 지마켓, 아이스크림몰, 학교장터, 아람과학사, 이마트몰, YES24 견적서와 에듀파인 품목내역 양식을 읽습니다. <b>✨ AI로 읽기</b> 버튼이 보이는 학교(관리자가 Gemini 키를 넣은 경우)는 쇼핑몰 장바구니 화면의 글을 복사해 붙여 넣거나 화면 캡처를 붙여 넣기(Ctrl+V)만 해도 품목을 읽어 줍니다. 읽은 결과는 확인 후 넣습니다.</li>
         <li><b>에듀파인 업로드 양식</b> 버튼으로 xlsx를 내려받아 에듀파인 품의의 품목 업로드에 넣으면 물품이 한 번에 등록됩니다.</li>
         <li>에듀파인에 기안을 올렸으면 <b>기안 완료</b>에 체크하고 <b>저장</b>. 이때부터 사용액과 잔액에 반영됩니다.</li>
       </ol>
@@ -337,6 +344,7 @@
         <li>에듀파인 예산 구조대로 부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 넣습니다. <b>산출내역이 예산 이름</b>으로 화면에 쓰입니다.</li>
         <li><b>양식 다운로드 (xlsx)</b>로 양식을 받아 채운 뒤 <b>파일로 가져오기</b>를 하면 한 번에 들어갑니다. 엑셀에서 여러 행(6열)을 복사해 첫 칸에 붙여 넣어도 됩니다.</li>
         <li>행 끝의 ⧉ 로 행을 복사하면 비슷한 항목을 빠르게 넣을 수 있습니다. 마지막에 <b>등록(저장)</b>.</li>
+        <li><b>✨ AI로 읽기</b>(관리자가 Gemini 키를 넣은 학교): 에듀파인 예산 화면을 캡처해 붙여 넣으면 부서, 세부사업, 세부항목명, 원가통계비목, 산출내역, 예산액을 읽어 표에 넣어 줍니다. 목록이 길면 여러 장을 넣고, 숫자는 꼭 한 번 확인하세요.</li>
       </ul>
       <h4>2. 예산 배부</h4>
       <table>
@@ -380,7 +388,7 @@
       <h3>관리자</h3>
       <h4>탭별 기능</h4>
       <table>
-        <tr><th>학교 설정</th><td>학교 이름, 학교 마크(올리면 화면 맨 위에 표시), 선생님들께 공유할 주소, 학년별 학급 수(0이면 화면에 안 보임), 학년 비밀번호 사용 여부와 학년별 비밀번호, 관리자 비밀번호 변경</td></tr>
+        <tr><th>학교 설정</th><td>학교 이름, 학교 마크(올리면 화면 맨 위에 표시), 선생님들께 공유할 주소, AI 도우미(Gemini API 키와 모델. 넣으면 품목과 예산 화면에 "AI로 읽기" 버튼이 생김), 학년별 학급 수(0이면 화면에 안 보임), 학년 비밀번호 사용 여부와 학년별 비밀번호, 관리자 비밀번호 변경</td></tr>
         <tr><th>부서 관리</th><td>전담(예: 46과학)과 추가 부서(행정실, 급식실 등). 전담은 학년과 별도로 예산을 받습니다</td></tr>
         <tr><th>사용자 관리</th><td>예산배정 담당자의 이름 수정, 비밀번호 초기화, 삭제 (등록은 첫 화면에서 본인이 합니다)</td></tr>
         <tr><th>품의 문구</th><td>품의 개요에서 고르는 구매처 목록과, 모든 예산에서 고를 수 있는 기본 품의 개요 문구. 자리표시자 버튼을 눌러 {용도}, {소요예산}, {산출내역}, {품목표} 같은 칸을 넣습니다</td></tr>
@@ -414,6 +422,8 @@
       <p>배정액보다 많이 기안 완료한 상태입니다. 저장할 때 경고를 보고 진행한 것이니 담당자와 상의하세요.</p>
       <h4>견적서가 안 읽혀요.</h4>
       <p>지마켓, 아이스크림몰, 아람과학사는 견적서를 엑셀로 저장한 파일, 학교장터와 YES24는 xlsx 파일, 이마트몰은 PDF로 저장한 파일만 됩니다. 에듀파인 품목내역 양식(내용, 규격, 수량, 예상단가)으로 된 엑셀은 어느 쇼핑몰 것이든 읽힙니다.</p>
+      <h4>"AI로 읽기" 버튼이 안 보여요.</h4>
+      <p>관리자가 학교 설정에 Gemini API 키를 넣은 학교에서만 보입니다. 키가 있는데 "무료 사용량을 넘었습니다"가 뜨면 그날 한도를 다 쓴 것이니 다음 날 다시 되고, 견적서 가져오기와 직접 입력은 그대로 됩니다.</p>
       <h4>비밀번호를 잊었어요.</h4>
       <p>담당자는 관리자에게 초기화를 요청하세요. 학년 비밀번호는 관리자의 학교 설정에서 볼 수 있습니다. 관리자 비밀번호는 관리자 탭의 "곤란할 때"를 보세요.</p>
       <h4>다른 선생님이 저장한 내용이 안 보여요.</h4>
@@ -508,6 +518,21 @@
           <div class="hint">png 또는 jpg 파일. 올리면 바로 저장되고, 화면 맨 위 학교 이름 왼쪽에 표시됩니다.</div>
         </div>
       </div>
+      <h3 style="margin:22px 0 8px">AI 도우미 (Gemini)</h3>
+      <div class="hint">구글 Gemini API 키를 넣으면 품의 품목(장바구니 글이나 캡처)과 예산 등록(에듀파인 화면 캡처)을 AI가 읽어 채워 줍니다. 비워 두면 AI 버튼이 보이지 않습니다.</div>
+      <div class="grid c2" style="margin-top:10px">
+        <div><label class="f">Gemini API 키</label><div style="display:flex;gap:6px"><input type="password" id="sAiKey" style="flex:1" placeholder="AIza…" autocomplete="off"><button class="btn small" type="button" onclick="const i=$('sAiKey');i.type=i.type==='password'?'text':'password'">보기</button></div></div>
+        <div><label class="f">모델 이름 <span class="hint" style="margin:0;display:inline">(비우면 gemini-2.5-flash)</span></label><input type="text" id="sAiModel" style="width:100%" placeholder="gemini-2.5-flash"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px"><button class="btn small" onclick="aiTestKey()">연결 확인</button><span class="hint" id="sAiMsg" style="margin:0"></span></div>
+      <details style="margin-top:8px"><summary class="hint" style="cursor:pointer;margin:0">키 받는 방법과 주의할 점</summary>
+        <ol class="hint" style="margin:6px 0 0;padding-left:20px">
+          <li>aistudio.google.com 에 개인 구글 계정으로 접속 → "Get API key" → "API 키 만들기" → 키를 복사해 위 칸에 넣고 저장합니다.</li>
+          <li>무료 등급으로 충분합니다. 결제 수단을 등록하지 않으면 한도를 넘어도 비용이 생기지 않고, 그날은 AI 읽기만 쉬었다가 다음 날 다시 됩니다.</li>
+          <li>이 키는 선생님들 브라우저에서 바로 쓰이므로 프로그램을 여는 사람은 누구나 볼 수 있습니다. 다른 곳에서 못 쓰게 하려면 Google Cloud 콘솔 → API 및 서비스 → 사용자 인증 정보 → 이 키 → 애플리케이션 제한사항 "웹사이트"에 우리 프로그램 주소(https://계정이름.github.io/*)를 넣으세요.</li>
+        </ol>
+      </details>
+
       <h3 style="margin:22px 0 8px">학급 구성 (학년별 학급 수)</h3>
       <div class="grid c3" id="sClasses"></div>
       <div class="hint">0이면 해당 학년은 화면에 나타나지 않습니다.</div>
@@ -626,6 +651,7 @@
         <button class="btn primary small" onclick="downloadBudgetForm()">양식 다운로드 (xlsx)</button>
         <button class="btn primary small" onclick="$('bFile').click()">파일로 가져오기 (xlsx·csv)</button>
         <input type="file" id="bFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="budgetFilePicked(this)">
+        <button class="btn small ai aiOnly" onclick="aiOpen('budget')" title="에듀파인 예산 화면을 캡처해 붙여 넣으면 AI가 항목을 읽어 표에 넣어 줍니다">✨ AI로 읽기 (에듀파인 화면 캡처)</button>
         <span class="hint" style="margin:0">양식의 열 순서: 부서 · 세부사업 · 세부항목명 · 원가통계비목 · 산출내역 · 예산액. 가져온 행은 표 아래에 추가되며 <b>등록(저장)</b>을 눌러야 반영됩니다.</span></div>
       <div class="dropz" id="bDrop" data-drop="예산 파일(xlsx·csv)을 여기에 놓으세요"><table class="edit" id="bTable"><thead><tr>
         <th style="width:9%">부서</th><th style="width:10%">세부사업</th><th style="width:11%">세부항목명</th><th style="width:9%">원가통계비목</th><th>산출내역</th><th style="width:9%">예산액</th><th style="width:8%">배부</th><th style="width:8%">사용</th><th style="width:8%">잔액</th><th style="width:60px"></th>
@@ -827,6 +853,7 @@
             <button class="btn small" onclick="addItemRow()">행 추가</button>
             <button class="btn small" onclick="$('qFile').click()" title="지마켓 · 아이스크림몰 · 학교장터 · 아람과학사 · 이마트몰 · YES24 · 에듀파인 품목내역 양식">견적서 가져오기</button>
             <input type="file" id="qFile" accept=".xls,.xlsx,.htm,.html,.pdf" multiple style="display:none" onchange="quoteFilePicked(this)">
+            <button class="btn small ai aiOnly" onclick="aiOpen('items')" title="장바구니 화면의 글을 복사해 붙여 넣거나 캡처 그림을 넣으면 AI가 품목을 읽어 줍니다">✨ AI로 읽기 (장바구니 글, 캡처)</button>
             <span id="adjWrap" style="display:flex;gap:8px;align-items:center;font-size:14px;margin-left:6px">
               <label style="display:flex;gap:6px;align-items:center;cursor:pointer;white-space:nowrap" title="실제 품의 금액이 품목 합계와 다를 때 합계를 직접 지정합니다. 이 금액이 사용액에 반영됩니다."><input type="checkbox" id="pAdjOn" onchange="adjToggle()"> 품목 합계 수정</label>
               <input type="text" inputmode="numeric" id="pAdj" style="width:130px;display:none;text-align:right" placeholder="금액" onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''"></span>
@@ -898,6 +925,31 @@
     <label style="display:flex;gap:6px;align-items:center;cursor:pointer;white-space:nowrap"><input type="checkbox" id="qmReplace"> 기존 품목을 지우고 넣기</label>
   </div>
   <div class="actions"><button class="btn" onclick="$('qModal').classList.remove('on');quoteNext()">취소</button><button class="btn primary" onclick="applyQuote()">품목에 추가</button></div>
+</div></div>
+
+<!-- AI 읽기 모달 (품목 / 예산 공용) -->
+<div class="modal-bg" id="aiModal"><div class="modal" style="max-width:900px">
+  <h3 id="aimTitle">✨ AI로 읽기</h3>
+  <div class="hint" id="aimHint"></div>
+  <div class="aizone" id="aiZone" onclick="if(event.target===this)$('aiText').focus()">
+    <div id="aiImgs" style="display:none;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+    <textarea id="aiText" style="width:100%" placeholder=""></textarea>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px">
+      <button class="btn small" type="button" onclick="$('aiFile').click()">그림 파일 고르기</button>
+      <input type="file" id="aiFile" accept="image/*" multiple style="display:none" onchange="aiAddFiles(this.files);this.value=''">
+      <span class="hint" style="margin:0">캡처는 Ctrl+V로 바로 붙여 넣을 수 있습니다. 읽은 결과는 넣기 전에 확인할 수 있습니다.</span>
+    </div>
+  </div>
+  <div id="aiDeptWrap" style="display:none;gap:8px;align-items:center;margin-top:8px"><label class="f" style="margin:0">부서 (캡처에 부서가 없으면 여기 적은 부서로 채웁니다)</label><input type="text" id="aiDept" style="width:200px" placeholder="예: 교무기획부"></div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><button class="btn primary" id="aiReadBtn" onclick="aiRead()">읽기</button><span class="hint" id="aiMsg" style="margin:0"></span></div>
+  <div id="aiResult" style="display:none;margin-top:10px">
+    <div style="overflow-x:auto;max-height:40vh;overflow-y:auto"><table class="list" id="aiTable"><thead></thead><tbody></tbody></table></div>
+    <div style="margin-top:8px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:14px">
+      <label id="aiShipWrap" style="display:none;gap:6px;align-items:center;cursor:pointer;white-space:nowrap"><input type="checkbox" id="aiShip" checked> 배송비 <span id="aiShipAmt"></span>도 품목에 추가</label>
+      <label id="aiReplaceWrap" style="display:flex;gap:6px;align-items:center;cursor:pointer;white-space:nowrap"><input type="checkbox" id="aiReplace"> 기존 품목을 지우고 넣기</label>
+    </div>
+  </div>
+  <div class="actions"><button class="btn" onclick="aiClose()">취소</button><button class="btn primary" id="aiApply" onclick="aiApply()" disabled>추가</button></div>
 </div></div>
 
 <!-- 학급 분배 모달 -->
@@ -1140,7 +1192,7 @@ async function getBootstrap() {
   const s = await settings_();
   const depts = (await col_('부서')).sort((a, b) => num_(a.순서) - num_(b.순서));
   return {
-    학교코드: SID, 학교명: s.학교명, 학교마크: s.학교마크 || '', 학년도: YEAR, 읽기전용: READONLY, 현재학년도: s.학년도,
+    학교코드: SID, 학교명: s.학교명, 학교마크: s.학교마크 || '', ai: { 키: s.gemini키 || '', 모델: s.gemini모델 || '' }, 학년도: YEAR, 읽기전용: READONLY, 현재학년도: s.학년도,
     관리자설정됨: !!s.관리자비밀번호해시,
     학년비밀번호사용: s.학년비밀번호사용 === 'Y',
     grades: gradesOf_(s),
@@ -1204,6 +1256,7 @@ async function adminSaveSettings(pw, patch) {
     if (k === '학년비밀번호사용') { yp[k] = v === 'Y' ? 'Y' : 'N'; return; }
     if (/^학년비밀번호_([1-6]|전담)$/.test(k)) { yp[k] = String(v || ''); return; }
     if (k === '학교명' || k === '구매처목록') sp[k] = String(v || '');
+    if (k === 'gemini키' || k === 'gemini모델') sp[k] = String(v || '').trim();
   });
   if (Object.keys(sp).length) await FS.update(schoolPath_(), sp);
   if (Object.keys(yp).length) await FS.set(yearPath_(), Object.assign(await yearDoc_(), yp));
@@ -1277,7 +1330,7 @@ async function adminResetData(pw, mode) {
     await batch_(ops);
     const s = await school_();
     const salt = newId_() + newId_();
-    await FS.set(schoolPath_(), { 학교명: s.학교명, 학교마크: s.학교마크 || '', 학년도: YEAR, 관리자비밀번호해시: '', 솔트: salt, 구매처목록: '지마켓,아이스크림몰,학교장터,쿠팡', 생성일: s.생성일 || now_() });
+    await FS.set(schoolPath_(), { 학교명: s.학교명, 학교마크: s.학교마크 || '', gemini키: s.gemini키 || '', gemini모델: s.gemini모델 || '', 학년도: YEAR, 관리자비밀번호해시: '', 솔트: salt, 구매처목록: '지마켓,아이스크림몰,학교장터,쿠팡', 생성일: s.생성일 || now_() });
     await FS.set(yearPath_(), Object.assign({}, DEFAULT_YEAR_SETTINGS));
     await FS.batch(DEFAULT_PHRASES.map((p, i) => opSet_('문구', { id: newId_(), 범위: '관리자', 이름: p.이름, 본문템플릿: p.본문템플릿, 순서: i + 1 })));
     CACHE = {};
@@ -1350,7 +1403,7 @@ async function adminImport(pw, data, mode) {
     const cur = await school_();
     const src = data.school || {};
     const merged = Object.assign({}, cur);
-    ['학교명', '구매처목록', '관리자비밀번호해시', '솔트', '학교마크'].forEach(k => { if (src[k] !== undefined && src[k] !== '') merged[k] = src[k]; });
+    ['학교명', '구매처목록', '관리자비밀번호해시', '솔트', '학교마크', 'gemini키', 'gemini모델'].forEach(k => { if (src[k] !== undefined && src[k] !== '') merged[k] = src[k]; });
     ops.push({ op: 'set', name: '__school', path: schoolPath_(), data: merged });
   }
   ops.push(logOp_('관리자', '가져오기', `${years.join(',')}학년도`, `${mode === 'all' ? '전체' : '예산 데이터'} ${count}건`));
@@ -1917,6 +1970,7 @@ async function initCore(){
   document.title = '예산 관리 프로그램' + (TEST ? (DEMO ? ' (연수용)' : ' (테스트)') : '') + (boot.학교명 ? ' - ' + boot.학교명 : '') + (boot.읽기전용 ? ` (${boot.학년도}학년도 읽기 전용)` : '');
   $('helpTestLink').innerHTML = TEST ? '지금 보고 있는 화면이 테스트 페이지입니다. 위쪽 "샘플 자료로 되돌리기"를 누르면 처음 상태로 돌아갑니다.' : `연습해 보고 싶으면 <a href="${testUrl()}" target="_blank" rel="noopener">테스트 페이지</a>에서 마음껏 눌러 보세요. 실제 자료와 상관없는 연습용 자료가 들어 있고, 언제든 처음 상태로 되돌릴 수 있습니다.`;
   setFavicon(boot.학교마크);
+  aiToggleButtons();
   $('hdYear').textContent = boot.학년도 ? boot.학년도+'학년도' : '';
   $('roBanner').style.display = boot.읽기전용 ? 'block' : 'none';
   if(boot.읽기전용) $('roBanner').innerHTML = `${boot.학년도}학년도 자료를 <b>읽기 전용</b>으로 보고 있습니다. 저장은 되지 않습니다. <a href="${shareUrl()}">현재 학년도(${boot.현재학년도})로 돌아가기</a>`;
@@ -3003,6 +3057,7 @@ async function openAdmin(){
 function renderAdmin(){
   const s = admin.settings;
   $('sSchool').value = s.학교명||''; $('sYear').value = s.학년도||''; $('shareUrl').textContent = shareUrl(); setLogoUI(s.학교마크||'');
+  $('sAiKey').value = s.gemini키||''; $('sAiModel').value = s.gemini모델||''; $('sAiMsg').textContent = '';
   $('sClasses').innerHTML = [1,2,3,4,5,6].map(g=>`<div><label class="f">${g}학년</label><input type="number" min="0" max="20" id="sc_${g}" value="${s['학급수_'+g]||0}" style="width:100%"></div>`).join('');
   $('sUsePw').checked = s.학년비밀번호사용==='Y';
   $('sPwBox').innerHTML = [1,2,3,4,5,6,'전담'].map(g=>`<div><label class="f">${g==='전담'?'전담':g+'학년'}</label><input type="text" id="spw_${g}" value="${esc(s['학년비밀번호_'+g]||'')}" style="width:100%" placeholder="비우면 통과"></div>`).join('');
@@ -3059,7 +3114,7 @@ async function removeLogo(){
   setLogoUI(''); toast('학교 마크를 지웠습니다');
 }
 async function saveSchool(){
-  const patch = { 학교명:$('sSchool').value.trim(), 학년도:$('sYear').value.trim(), 학년비밀번호사용: $('sUsePw').checked?'Y':'N' };
+  const patch = { 학교명:$('sSchool').value.trim(), 학년도:$('sYear').value.trim(), 학년비밀번호사용: $('sUsePw').checked?'Y':'N', gemini키: $('sAiKey').value.trim(), gemini모델: $('sAiModel').value.trim() };
   [1,2,3,4,5,6].forEach(g=>patch['학급수_'+g]=$('sc_'+g).value);
   [1,2,3,4,5,6,'전담'].forEach(g=>patch['학년비밀번호_'+g]=$('spw_'+g).value.trim());
   admin.settings = await call('adminSaveSettings', adminPw, patch);
@@ -3180,6 +3235,156 @@ async function loadLog(){
   const list = await call('adminGetChangeLog', adminPw, 200);
   $('logTable').querySelector('tbody').innerHTML = list.map(l=>`<tr><td style="white-space:nowrap;color:var(--ink-3)">${esc(l.일시)}</td><td>${esc(l.역할)}</td><td>${esc(l.작업)}</td><td>${esc(l.대상)}</td><td>${esc(l.요약)}</td></tr>`).join('') || '<tr><td class="empty">이력이 없습니다.</td></tr>';
 }
+
+// ───────── AI 도우미 (Gemini) ─────────
+// 관리자가 학교 설정에 넣은 Gemini API 키로, 선생님 브라우저에서 바로 Gemini에 묻는다 (서버 없음).
+const AI_DEFAULT_MODEL = 'gemini-2.5-flash';
+function aiKey(){ return (boot && boot.ai && boot.ai.키) || ''; }
+function aiModel(){ return (boot && boot.ai && boot.ai.모델) || AI_DEFAULT_MODEL; }
+function aiEnabled(){ return !!aiKey(); }
+function aiToggleButtons(){ document.querySelectorAll('.aiOnly').forEach(e => { e.style.display = aiEnabled() ? '' : 'none'; }); }
+async function geminiJson(parts, schema, key, model){
+  key = key || aiKey(); model = (model || aiModel()).trim();
+  if(!key) throw new Error('관리자가 학교 설정에 Gemini API 키를 넣어야 AI 기능을 쓸 수 있습니다.');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  let r;
+  try{
+    r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ contents:[{ role:'user', parts }], generationConfig:{ temperature:0, response_mime_type:'application/json', response_schema: schema } }) });
+  }catch(e){ throw new Error('Gemini에 연결하지 못했습니다. 인터넷 연결을 확인하세요.'); }
+  const j = await r.json().catch(()=>({}));
+  if(!r.ok){
+    const msg = (j.error && j.error.message) || r.statusText || ('HTTP ' + r.status);
+    if(r.status===400 && /api key/i.test(msg)) throw new Error('API 키가 올바르지 않습니다. 관리자 → 학교 설정에서 키를 확인하세요.');
+    if(r.status===403) throw new Error('이 주소에서는 키를 쓸 수 없게 제한되어 있거나 권한이 없습니다. (키 제한 설정 확인) ' + msg);
+    if(r.status===429) throw new Error('무료 사용량(분당 또는 하루 요청 수)을 넘었습니다. 잠시 뒤 다시 하거나 내일 다시 시도하세요.');
+    if(r.status===404) throw new Error(`모델 이름(${model})을 찾을 수 없습니다. 관리자 → 학교 설정에서 모델 이름을 확인하세요.`);
+    throw new Error('Gemini 오류: ' + msg);
+  }
+  const cand = (j.candidates||[])[0] || {};
+  const text = ((cand.content||{}).parts||[]).map(p=>p.text||'').join('');
+  if(!text) throw new Error('AI가 답을 주지 않았습니다' + (cand.finishReason ? ` (${cand.finishReason})` : '') + '. 다시 시도해 보세요.');
+  try{ return JSON.parse(text); }catch(e){ throw new Error('AI 답을 읽지 못했습니다. 다시 시도해 보세요.'); }
+}
+/** 그림 파일/Blob → Gemini inline_data 부분 (긴 변 1600px 이하 JPEG 로 줄임) */
+function aiImagePart(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const sc = Math.min(1, 1600 / Math.max(img.naturalWidth||1, img.naturalHeight||1));
+      const w = Math.max(1, Math.round((img.naturalWidth||1)*sc)), h = Math.max(1, Math.round((img.naturalHeight||1)*sc));
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img, 0, 0, w, h);
+      const dataUrl = c.toDataURL('image/jpeg', 0.9);
+      res({ part: { inline_data: { mime_type: 'image/jpeg', data: dataUrl.split(',')[1] } }, thumb: dataUrl, w, h });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('그림을 읽지 못했습니다')); };
+    img.src = url;
+  });
+}
+async function aiTestKey(){
+  const key = $('sAiKey').value.trim(), model = $('sAiModel').value.trim() || AI_DEFAULT_MODEL; const m = $('sAiMsg');
+  if(!key){ m.style.color='var(--danger)'; m.textContent='키를 먼저 넣으세요.'; return; }
+  m.style.color='var(--ink-3)'; m.textContent='확인 중…';
+  try{
+    const out = await geminiJson([{ text: '답으로 {"ok": true} 만 주세요.' }], { type:'OBJECT', properties:{ ok:{ type:'BOOLEAN' } }, required:['ok'] }, key, model);
+    m.style.color='var(--ok)'; m.textContent = out && out.ok ? `연결됐습니다 (${model}). 저장을 눌러 주세요.` : '응답은 왔지만 모양이 다릅니다. 모델 이름을 확인하세요.';
+  }catch(e){ m.style.color='var(--danger)'; m.textContent = e.message || String(e); }
+}
+
+// ── 읽기 창 (품목 / 예산 공용)
+const AI = { kind:'', imgs:[], rows:[], shipping:0 };
+const AI_KINDS = {
+  items: {
+    title: '✨ AI로 품목 읽기', hint: '쇼핑몰 장바구니나 주문 화면에서 글을 드래그해 복사한 것을 붙여 넣거나, 화면을 캡처해 붙여 넣으세요(Ctrl+V). 그림 파일을 골라도 됩니다. 여러 장이면 모두 한 번에 읽습니다.',
+    placeholder: '여기에 Ctrl+V — 장바구니 글 또는 캡처 그림', apply: '품목에 추가',
+    prompt: '다음은 한국 쇼핑몰(지마켓, 쿠팡, 네이버, 아이스크림몰, 학교장터 등)의 장바구니, 주문, 견적 화면에서 복사한 글 또는 캡처한 그림입니다. 구매할 물품 목록을 추출하세요. '
+      + 'name: 상품명(옵션이 있으면 상품명 뒤에 괄호로). spec: 규격이나 모델명(없으면 빈 문자열). unit: 단위(개, 세트, 권, 박스 등. 모르면 "개"). qty: 수량(정수). unitPrice: 개당 단가(원, 정수. 합계만 있으면 합계를 수량으로 나눔). vendor: 쇼핑몰 이름(모르면 빈 문자열). '
+      + '배송비, 할인, 쿠폰, 포인트, 합계 줄은 품목에 넣지 말고 shipping(배송비 총액, 원, 없으면 0)에만 적으세요. 광고나 추천 상품은 제외하세요. 금액은 쉼표와 "원"을 뺀 숫자만.',
+    schema: { type:'OBJECT', properties:{ items:{ type:'ARRAY', items:{ type:'OBJECT', properties:{ name:{type:'STRING'}, spec:{type:'STRING'}, unit:{type:'STRING'}, qty:{type:'NUMBER'}, unitPrice:{type:'NUMBER'}, vendor:{type:'STRING'} }, required:['name','qty','unitPrice'] } }, shipping:{ type:'NUMBER' } }, required:['items'] },
+    cols: ['내용','규격','단위','수량','예상단가','구매처'],
+    toRows: out => (out.items||[]).map(it => ({ 내용:String(it.name||'').trim(), 규격:String(it.spec||'').trim(), 단위:String(it.unit||'개').trim()||'개', 수량:Math.max(0, Math.round(Number(it.qty)||0)), 예상단가:Math.max(0, Math.round(Number(it.unitPrice)||0)), 구매처:String(it.vendor||'').trim(), 선택:true })).filter(r=>r.내용),
+  },
+  budget: {
+    title: '✨ AI로 예산 읽기', hint: '에듀파인 예산 화면을 캡처해 붙여 넣으세요(Ctrl+V). 목록이 길면 여러 장을 캡처해 모두 넣으면 됩니다. 화면 글을 복사해 붙여 넣어도 됩니다.',
+    placeholder: '여기에 Ctrl+V — 에듀파인 화면 캡처 또는 복사한 글', apply: '예산 표에 추가',
+    prompt: '다음은 한국 학교 에듀파인(K-에듀파인) 세출 예산 편성 화면을 캡처한 그림 또는 복사한 글입니다. 예산 항목을 행 단위로 추출하세요. '
+      + 'dept: 부서(화면에 없으면 빈 문자열). project: 세부사업. item: 세부항목명(세부항목 또는 목 이름). costType: 원가통계비목. basis: 산출내역(항목을 설명하는 이름. 산출 근거 문장이 길면 항목명에 해당하는 앞부분만). amount: 예산액(원, 정수, 쉼표 없이). '
+      + '머리글, 합계, 소계, 계 행은 제외하세요. 같은 세부사업 안에 여러 산출내역이 있으면 각각 한 행으로. 읽을 수 없는 칸은 빈 문자열.',
+    schema: { type:'OBJECT', properties:{ rows:{ type:'ARRAY', items:{ type:'OBJECT', properties:{ dept:{type:'STRING'}, project:{type:'STRING'}, item:{type:'STRING'}, costType:{type:'STRING'}, basis:{type:'STRING'}, amount:{type:'NUMBER'} }, required:['basis','amount'] } } }, required:['rows'] },
+    cols: ['부서','세부사업','세부항목명','원가통계비목','산출내역','예산액'],
+    toRows: out => (out.rows||[]).map(r => ({ 부서:String(r.dept||'').trim(), 세부사업:String(r.project||'').trim(), 세부항목명:String(r.item||'').trim(), 원가통계비목:String(r.costType||'').trim(), 산출내역:String(r.basis||'').trim(), 예산액:String(Math.max(0, Math.round(Number(r.amount)||0))), 선택:true })).filter(r=>r.산출내역||r.예산액!=='0'),
+  },
+};
+function aiOpen(kind){
+  if(!aiEnabled()) return toast('관리자가 학교 설정에 Gemini API 키를 넣으면 쓸 수 있습니다', true);
+  AI.kind = kind; AI.imgs = []; AI.rows = []; AI.shipping = 0;
+  const K = AI_KINDS[kind];
+  $('aimTitle').textContent = K.title; $('aimHint').textContent = K.hint; $('aiText').value = ''; $('aiText').placeholder = K.placeholder;
+  $('aiDeptWrap').style.display = kind==='budget' ? 'flex' : 'none'; $('aiDept').value = '';
+  $('aiReplaceWrap').style.display = kind==='items' ? 'flex' : 'none'; $('aiReplace').checked = false; $('aiShip').checked = true;
+  $('aiResult').style.display = 'none'; $('aiMsg').textContent = ''; $('aiApply').textContent = K.apply; $('aiApply').disabled = true;
+  aiRenderImgs(); $('aiModal').classList.add('on'); setTimeout(()=>$('aiText').focus(), 50);
+}
+function aiClose(){ $('aiModal').classList.remove('on'); }
+function aiRenderImgs(){
+  $('aiImgs').innerHTML = AI.imgs.map((im,i)=>`<span class="aithumb"><img src="${im.thumb}" alt=""><button type="button" title="빼기" onclick="AI.imgs.splice(${i},1);aiRenderImgs()">✕</button></span>`).join('');
+  $('aiImgs').style.display = AI.imgs.length ? 'flex' : 'none';
+}
+async function aiAddFiles(files){
+  for(const f of Array.from(files||[])){
+    if(!/^image\//.test(f.type)) { toast('그림 파일만 넣을 수 있습니다 (png, jpg). 엑셀이나 PDF 견적서는 "견적서 가져오기"를 쓰세요', true); continue; }
+    try{ AI.imgs.push(await aiImagePart(f)); }catch(e){ toast(e.message, true); }
+  }
+  aiRenderImgs();
+}
+function aiPaste(e){
+  const items = Array.from((e.clipboardData||{}).items||[]);
+  const imgs = items.filter(it=>it.kind==='file' && /^image\//.test(it.type)).map(it=>it.getAsFile()).filter(Boolean);
+  if(imgs.length){ e.preventDefault(); aiAddFiles(imgs); return; }
+  // 글은 textarea 기본 동작으로 들어간다 (textarea 바깥에 붙여 넣었으면 직접 넣어 준다)
+  if(e.target !== $('aiText')){ const t = (e.clipboardData||{}).getData('text') || ''; if(t){ e.preventDefault(); $('aiText').value = ($('aiText').value ? $('aiText').value + '\n' : '') + t; } }
+}
+async function aiRead(){
+  const K = AI_KINDS[AI.kind]; const text = $('aiText').value.trim();
+  if(!text && !AI.imgs.length) return toast('글을 붙여 넣거나 그림을 넣어 주세요', true);
+  const parts = [{ text: K.prompt + (text ? '\n\n[복사한 글]\n' + text.slice(0, 20000) : '') }, ...AI.imgs.map(im=>im.part)];
+  $('aiMsg').style.color = 'var(--ink-3)'; $('aiMsg').textContent = 'AI가 읽는 중입니다… (보통 5~15초)'; $('aiReadBtn').disabled = true;
+  try{
+    const out = await geminiJson(parts, K.schema);
+    AI.rows = K.toRows(out); AI.shipping = Math.max(0, Math.round(Number(out.shipping)||0));
+    if(AI.kind==='budget' && $('aiDept').value.trim()) AI.rows.forEach(r=>{ if(!r.부서) r.부서 = $('aiDept').value.trim(); });
+    if(!AI.rows.length) throw new Error('읽어 낸 항목이 없습니다. 글이나 그림에 목록이 보이는지 확인하고 다시 시도하세요.');
+    aiRenderResult(); $('aiMsg').style.color = 'var(--ok)'; $('aiMsg').textContent = `${AI.rows.length}건을 읽었습니다. 내용을 확인하고 틀린 것은 체크를 풀거나 넣은 뒤 표에서 고치세요.`;
+  }catch(e){ $('aiMsg').style.color = 'var(--danger)'; $('aiMsg').textContent = e.message || String(e); }
+  finally{ $('aiReadBtn').disabled = false; }
+}
+function aiRenderResult(){
+  const K = AI_KINDS[AI.kind];
+  $('aiTable').querySelector('thead').innerHTML = `<tr><th style="width:36px"><input type="checkbox" checked onchange="AI.rows.forEach(r=>r.선택=this.checked);aiRenderResult()"></th>${K.cols.map(c=>`<th>${c}</th>`).join('')}</tr>`;
+  $('aiTable').querySelector('tbody').innerHTML = AI.rows.map((r,i)=>`<tr><td><input type="checkbox" ${r.선택?'checked':''} onchange="AI.rows[${i}].선택=this.checked"></td>${K.cols.map(c=>`<td class="${/수량|예산단가|예산액|예상단가/.test(c)?'num':''}">${/예상단가|예산액/.test(c)?won(r[c]):esc(r[c])}</td>`).join('')}</tr>`).join('');
+  $('aiShipWrap').style.display = (AI.kind==='items' && AI.shipping>0) ? 'flex' : 'none'; $('aiShipAmt').textContent = AI.shipping ? won(AI.shipping)+'원' : '';
+  $('aiResult').style.display = 'block'; $('aiApply').disabled = false;
+}
+function aiApply(){
+  const rows = AI.rows.filter(r=>r.선택); if(!rows.length) return toast('넣을 항목을 체크하세요', true);
+  if(AI.kind==='items'){
+    const cls = iMode==='class' ? uCls : 0;
+    const add = rows.map(r=>({ 내용:r.내용, 규격:r.규격, 단위:r.단위, 수량:r.수량, 예상단가:r.예상단가, 구매처:r.구매처, 출처:'AI', 반:cls }));
+    if($('aiShip').checked && AI.shipping) add.push({ 내용:'배송비', 규격:'', 단위:'건', 수량:1, 예상단가:AI.shipping, 구매처:add[0]?add[0].구매처:'', 출처:'AI', 반:cls });
+    iDraft = $('aiReplace').checked ? add : itemsFilled().concat(add);
+    if(!iDraft.length) iDraft.push({반:cls});
+    renderItems(); if(iMode!=='class'){ autoVendor(iDraft); genBody(true); }
+    toast(`${add.length}건을 품목에 넣었습니다. 수량과 단가를 확인하고 저장을 누르세요.`);
+  } else {
+    const add = rows.map(r=>({ 부서:r.부서, 세부사업:r.세부사업, 세부항목명:r.세부항목명, 원가통계비목:r.원가통계비목, 산출내역:r.산출내역, 예산액:r.예산액 }));
+    bDraft = bDraft.filter(b=>b.id||b.산출내역||b.예산액).concat(add);
+    renderBudgets(); toast(`${add.length}행을 표에 추가했습니다. 확인하고 고친 뒤 등록(저장)을 누르세요.`);
+  }
+  aiClose();
+}
+document.addEventListener('paste', e => { if($('aiModal').classList.contains('on')) aiPaste(e); });
 
 const APP_VERSION = '2026-11-03';   // 빌드 날짜 (설치 안내 페이지가 이 값을 읽어 최신 버전을 표시)
 // ───────── 브라우저 탭 아이콘 ─────────
