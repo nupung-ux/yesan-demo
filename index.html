@@ -3240,7 +3240,7 @@ async function loadLog(){
 // 관리자가 학교 설정에 넣은 Gemini API 키로, 선생님 브라우저에서 바로 Gemini에 묻는다 (서버 없음).
 const AI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 // 모델 이름은 구글이 자주 바꾸므로 고정하지 않는다. 키로 쓸 수 있는 모델 목록을 받아 최신 flash 계열부터 차례로 시도한다.
-const AI_FALLBACK = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-flash-latest'];   // 목록 조회가 안 될 때만 쓰는 예비 순서
+const AI_FALLBACK = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-flash-latest'];   // 목록 조회가 안 될 때만 쓰는 예비 순서
 function aiKey(){ return (boot && boot.ai && boot.ai.키) || ''; }
 function aiModel(){ return ((boot && boot.ai && boot.ai.모델) || '').trim(); }   // 관리자가 지정한 모델 (비우면 자동)
 function aiEnabled(){ return !!aiKey(); }
@@ -3346,6 +3346,7 @@ async function aiTestKey(){
 
 // ── 읽기 창 (품목 / 예산 공용)
 const AI = { kind:'', imgs:[], rows:[], shipping:0 };
+const AI_COST_TYPES = /^(교육운영비|운영수당|학습준비물|업무추진비|여비|일반수용비|공공요금|공공요금 및 제세|시설비|자산취득비|급식비|복리후생비|연구개발비|행사비|지급수수료|임차료|기타)$/;
 const AI_KINDS = {
   items: {
     title: '✨ AI로 품목 읽기', hint: '쇼핑몰 장바구니나 주문 화면에서 글을 드래그해 복사한 것을 붙여 넣거나, 화면을 캡처해 붙여 넣으세요(Ctrl+V). 그림 파일을 골라도 됩니다. 여러 장이면 모두 한 번에 읽습니다.',
@@ -3358,14 +3359,22 @@ const AI_KINDS = {
     toRows: out => (out.items||[]).map(it => ({ 내용:String(it.name||'').trim(), 규격:String(it.spec||'').trim(), 단위:String(it.unit||'개').trim()||'개', 수량:Math.max(0, Math.round(Number(it.qty)||0)), 예상단가:Math.max(0, Math.round(Number(it.unitPrice)||0)), 구매처:String(it.vendor||'').trim(), 선택:true })).filter(r=>r.내용),
   },
   budget: {
-    title: '✨ AI로 예산 읽기', hint: '에듀파인 예산 화면을 캡처해 붙여 넣으세요(Ctrl+V). 목록이 길면 여러 장을 캡처해 모두 넣으면 됩니다. 화면 글을 복사해 붙여 넣어도 됩니다.',
+    title: '✨ AI로 예산 읽기', hint: '에듀파인 세출예산 편성 화면(세부사업 → [초]세부항목 → 원가통계비목과 산출내역이 나무 모양으로 펼쳐진 화면)을 캡처해 붙여 넣으세요(Ctrl+V). 목록이 길면 여러 장을 캡처해 모두 넣으면 됩니다. 화면 글을 복사해 붙여 넣어도 됩니다.',
     placeholder: '여기에 Ctrl+V — 에듀파인 화면 캡처 또는 복사한 글', apply: '예산 표에 추가',
-    prompt: '다음은 한국 학교 에듀파인(K-에듀파인) 세출 예산 편성 화면을 캡처한 그림 또는 복사한 글입니다. 예산 항목을 행 단위로 추출하세요. '
-      + 'dept: 부서(화면에 없으면 빈 문자열). project: 세부사업. item: 세부항목명(세부항목 또는 목 이름). costType: 원가통계비목. basis: 산출내역(항목을 설명하는 이름. 산출 근거 문장이 길면 항목명에 해당하는 앞부분만). amount: 예산액(원, 정수, 쉼표 없이). '
-      + '머리글, 합계, 소계, 계 행은 제외하세요. 같은 세부사업 안에 여러 산출내역이 있으면 각각 한 행으로. 읽을 수 없는 칸은 빈 문자열.',
+    prompt: '다음은 한국 학교 K-에듀파인 세출예산 편성 화면을 캡처한 그림 또는 복사한 글입니다. 화면은 나무 모양(트리)으로 세 단계입니다.\n'
+      + '1) 가장 바깥(왼쪽) 줄: 세부사업 (예: 교과활동지원). 이 줄의 금액은 합계이므로 행으로 넣지 않습니다.\n'
+      + '2) 한 단계 들여쓴 줄, 보통 앞에 [초] [중] [고] 같은 꼬리표가 붙음: 세부항목명 (예: [초]학교자율과제운영 → "학교자율과제운영", 꼬리표는 뺍니다). 이 줄의 금액은 소계이므로 행으로 넣지 않습니다.\n'
+      + '3) 가장 안쪽 줄(문서 아이콘이 있는 줄): 첫째 칸이 원가통계비목(예: 교육운영비, 운영수당, 학습준비물, 업무추진비, 여비, 일반수용비, 공공요금, 시설비, 자산취득비, 급식비), 둘째 칸이 산출내역(예: 1학년 교육과정운영비, 수업보결수당, 학습준비물 구입), 마지막 칸이 예산액입니다. 이 줄들만 한 줄에 한 행씩 추출합니다.\n'
+      + '각 행에는 그 줄이 속한 위 두 단계의 세부사업(project)과 세부항목명(item)을 함께 적습니다. 예: {"dept":"","project":"교과활동지원","item":"학교자율과제운영","costType":"교육운영비","basis":"1학년 교육과정운영비","amount":2582000}. '
+      + 'dept(부서)는 화면에 있으면 적고 없으면 빈 문자열. amount는 쉼표 없는 정수. 머리글, 합계, 소계는 제외. 세부사업이 여러 개면 각각 같은 규칙으로. 복사한 글도 같은 규칙으로 읽습니다.',
     schema: { type:'OBJECT', properties:{ rows:{ type:'ARRAY', items:{ type:'OBJECT', properties:{ dept:{type:'STRING'}, project:{type:'STRING'}, item:{type:'STRING'}, costType:{type:'STRING'}, basis:{type:'STRING'}, amount:{type:'NUMBER'} }, required:['basis','amount'] } } }, required:['rows'] },
     cols: ['부서','세부사업','세부항목명','원가통계비목','산출내역','예산액'],
-    toRows: out => (out.rows||[]).map(r => ({ 부서:String(r.dept||'').trim(), 세부사업:String(r.project||'').trim(), 세부항목명:String(r.item||'').trim(), 원가통계비목:String(r.costType||'').trim(), 산출내역:String(r.basis||'').trim(), 예산액:String(Math.max(0, Math.round(Number(r.amount)||0))), 선택:true })).filter(r=>r.산출내역||r.예산액!=='0'),
+    toRows: out => (out.rows||[]).map(r => {
+      const tag = v => String(v||'').replace(/^\s*\[[^\]]{1,4}\]\s*/, '').trim();   // [초] [중] 같은 꼬리표 제거
+      const o = { 부서:String(r.dept||'').trim(), 세부사업:tag(r.project), 세부항목명:tag(r.item), 원가통계비목:String(r.costType||'').trim(), 산출내역:String(r.basis||'').trim(), 예산액:String(Math.max(0, Math.round(Number(r.amount)||0))), 선택:true };
+      // 한 칸씩 밀려 읽힌 경우(원가통계비목이 비고 세부항목명 자리에 비목 이름이 온 경우) 되돌리기
+      if(!o.원가통계비목 && AI_COST_TYPES.test(o.세부항목명)){ o.원가통계비목 = o.세부항목명; o.세부항목명 = o.세부사업; o.세부사업 = ''; }
+      return o; }).filter(r=>r.산출내역||r.예산액!=='0'),
   },
 };
 function aiOpen(kind){
