@@ -2412,6 +2412,8 @@ function renderGroups(){
   const normal = M.groups.filter(g=>!g.담당자품의), collect = M.groups.filter(g=>g.담당자품의);
   $('gList').innerHTML = normal.map(groupCard).join('') || '<div class="panel empty">학년, 전담이 각자 품의하도록 배부한 예산이 없습니다.' + (collect.length?' 담당자가 모아서 품의하는 예산은 "담당자 품의" 탭에 있습니다.':'') + '</div>';
   $('cList').innerHTML = collect.map(groupCard).join('') || '<div class="panel empty">담당자가 모아서 품의하도록 배부한 예산이 없습니다. 예산 배부의 "누가 품의하나요"에서 "담당자가 모아서 품의"를 고르면 여기에 나타납니다.</div>';
+  // 열려 있던 취합 품의서의 배부가 삭제됐으면 닫는다
+  if($('gCollect').style.display!=='none' && !(CG && collect.some(g=>g.그룹id===CG.그룹id))){ $('gCollect').style.display='none'; CG=null; }
   const todo = collect.filter(g=>!(g.취합.length && g.취합.every(c=>c.상태==='기안완료'))).length;
   $('mcCount').textContent = collect.length ? `(${todo ? '작성 중 '+todo : '모두 완료'})` : '';
 }
