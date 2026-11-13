@@ -371,7 +371,7 @@
       </ul>
       <h4>2. 예산 배부</h4>
       <table>
-        <tr><th>예산 하나를 여러 대상에게</th><td>한 예산을 여러 학년, 전담에. 모두 같은 금액 / 대상마다 다른 금액(학년별로 직접 입력) / 총액을 똑같이 나눔 / 인원 × 인당 금액 중 선택. "잔여 전액"으로 남은 금액을 모두 배부할 수 있습니다</td></tr>
+        <tr><th>예산 하나를 여러 대상에게</th><td>한 예산을 여러 학년, 전담에. 모두 같은 금액 / 대상마다 다른 금액(학년별로 직접 입력) / 총액을 학급 수대로 나눔(6학급 학년과 4학급 학년이 6:4) / 인원 × 인당 금액 중 선택. 총액을 학급 수대로 나눌 때는 "잔여 전액"으로 남은 금액을 모두 배부할 수 있습니다</td></tr>
         <tr><th>학년별 예산을 한꺼번에</th><td>"1학년…", "2학년…"처럼 학년별로 등록된 예산을 한 번에. 이름에서 학년을 읽어 대상을 자동으로 맞춥니다</td></tr>
       </table>
       <ul>
@@ -697,12 +697,13 @@
         <div class="choice four">
           <label><input type="radio" name="aMethod" value="금액" checked onchange="aMethodChange()"><span><b>모두 같은 금액</b><small>대상마다 같은 금액</small></span></label>
           <label><input type="radio" name="aMethod" value="개별" onchange="aMethodChange()"><span><b>대상마다 다른 금액</b><small>학년별로 금액을 직접 입력</small></span></label>
-          <label><input type="radio" name="aMethod" value="총액균등" onchange="aMethodChange()"><span><b>총액을 똑같이 나눔</b><small>총액 ÷ 대상 수</small></span></label>
+          <label><input type="radio" name="aMethod" value="총액균등" onchange="aMethodChange()"><span><b>총액을 학급 수대로 나눔</b><small>총액 ÷ 학급 수 (6학급 학년은 4학급 학년의 1.5배)</small></span></label>
           <label><input type="radio" name="aMethod" value="인당" onchange="aMethodChange()"><span><b>인원 × 인당 금액</b><small>업무추진비 등</small></span></label>
         </div>
         <div id="aAmtBox" style="margin-top:12px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
           <span><label class="f" id="aAmtLabel">대상별 배부 금액</label><input type="number" id="aAmt" min="0" step="1000" style="width:160px" oninput="aRecalc()"> 원</span>
-          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;padding-bottom:8px"><input type="checkbox" id="aFull" onchange="aFullToggle()"> 잔여 전액</label>
+          <label id="aFullWrap" style="display:flex;gap:6px;align-items:center;cursor:pointer;padding-bottom:8px"><input type="checkbox" id="aFull" onchange="aFullToggle()"> 잔여 전액</label>
+          <span class="hint" id="aShareHint" style="display:none;margin:0;padding-bottom:8px">대상 옆 학급 수는 기본값(학년 = 학급 수, 전담 = 1)이며 고칠 수 있습니다.</span>
         </div>
         <div id="aHeadBox" style="margin-top:12px;display:none">
           <label class="f">인당 금액</label><input type="number" id="aPerHead" min="0" step="1000" style="width:160px" oninput="aRecalc()"> 원
@@ -2173,7 +2174,7 @@ function aPickBudget(id){ $('aBudget').value = ($('aBudget').value===id) ? '' : 
 function renderAllocForm(){
   $('aBudget').value=''; renderBudgetTable();
   let t = '';
-  const chip = (v, label, heads) => `<label><input type="checkbox" class="aT" value="${v}" data-label="${esc(label)}" onchange="aRecalc()"> ${esc(label)} <span class="hd" style="display:none">× <input type="number" min="0" value="${heads}" oninput="aRecalc()">명</span><span class="am" style="display:none"><input type="text" inputmode="numeric" placeholder="금액" oninput="aEachInput(this)" onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''"> 원</span></label>`;
+  const chip = (v, label, heads) => `<label><input type="checkbox" class="aT" value="${v}" data-label="${esc(label)}" onchange="aRecalc()"> ${esc(label)} <span class="hd" style="display:none">× <input type="number" min="0" value="${heads}" oninput="aRecalc()"><span class="hdU">명</span></span><span class="am" style="display:none"><input type="text" inputmode="numeric" placeholder="금액" oninput="aEachInput(this)" onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''"> 원</span></label>`;
   M.grades.forEach(g=>t+=chip(g.학년, g.학년+'학년', g.학급수));
   M.전담.forEach(d=>t+=chip(d.id, d.이름, 1));
   $('aTargets').innerHTML = t || '<span class="empty">학급 구성·전담이 없습니다. 관리자 설정을 확인하세요.</span>';
@@ -2275,8 +2276,12 @@ function aMethodChange(){
   $('aHeadBox').style.display = per?'block':'none';
   $('aEvenBox').style.display = per?'none':'block';
   $('aEachHint').style.display = each?'inline':'none';
-  $('aAmtLabel').textContent = m==='총액균등' ? '배부 총액' : '대상별 배부 금액';
-  document.querySelectorAll('#aTargets .hd').forEach(e=>e.style.display=per?'inline':'none');
+  const share = m==='총액균등';
+  $('aAmtLabel').textContent = share ? '배부 총액' : '대상별 배부 금액';
+  $('aFullWrap').style.display = share ? 'flex' : 'none'; $('aShareHint').style.display = share ? 'inline' : 'none';
+  if(!share && $('aFull').checked){ $('aFull').checked = false; $('aAmt').disabled = false; }
+  document.querySelectorAll('#aTargets .hd').forEach(e=>e.style.display=(per||share)?'inline':'none');
+  document.querySelectorAll('#aTargets .hdU').forEach(e=>e.textContent=share?'학급':'명');
   document.querySelectorAll('#aTargets .am').forEach(e=>e.style.display=each?'inline':'none');
   aRecalc();
 }
@@ -2291,7 +2296,9 @@ function aAmounts(sel){
   const m = aMethod(), amt = Number($('aAmt').value)||0, ph = Number($('aPerHead').value)||0;
   if(m==='인당') return sel.map(t=>t.인원*ph);
   if(m==='개별') return sel.map(t=>t.금액);
-  if(m==='총액균등'){ if(!sel.length) return []; const per=Math.floor(amt/sel.length); const out=sel.map(()=>per); out[0]+=amt-per*sel.length; return out; }
+  if(m==='총액균등'){ // 학급 수 비율로 나눔. 나머지(끝수)는 첫 대상에 더한다
+    const units=sel.reduce((t,x)=>t+x.인원,0); if(!sel.length || units<=0) return sel.map(()=>0);
+    const per=Math.floor(amt/units); const out=sel.map(x=>per*x.인원); const i0=out.findIndex(v=>v>0); if(i0>=0) out[i0]+=amt-per*units; return out; }
   return sel.map(()=>amt);
 }
 function aSelected(){
@@ -2312,7 +2319,7 @@ function aRecalc(){
   const sel = aSelected(); const per = aMethod()==='인당', ph = Number($('aPerHead').value)||0;
   const amts = aAmounts(sel);
   let total=0, rows='';
-  sel.forEach((t,i)=>{ const v = amts[i]; total+=v; rows+=`<tr><td>${esc(t.라벨)}${per?` (${t.인원}명 × ${won(ph)})`:''}</td><td class="amt" style="text-align:right">${won(v)}원</td></tr>`; });
+  sel.forEach((t,i)=>{ const v = amts[i]; total+=v; rows+=`<tr><td>${esc(t.라벨)}${per?` (${t.인원}명 × ${won(ph)})`:(aMethod()==='총액균등'?` (${t.인원}학급)`:'')}</td><td class="amt" style="text-align:right">${won(v)}원</td></tr>`; });
   if(rows) rows = `<table>${rows}</table>`;
   aSummary();
   const over = b && total > b.잔여;
@@ -2387,7 +2394,7 @@ function groupCard(g){
     <div class="kv" style="margin-top:10px">
       <span class="k">배부·사용</span><span><table class="list" style="margin:0;font-size:13px"><thead><tr><th>대상</th><th style="text-align:right">배부</th><th style="text-align:right">사용</th><th style="text-align:right">예정</th><th style="text-align:right">잔액</th></tr></thead><tbody>
         ${g.대상들.map(t=>`<tr><td>${esc(t.라벨)}${g.배부방식==='인당'?` (${t.인원}명)`:''}</td><td class="amt" style="text-align:right">${won(t.배부액)}</td><td class="amt" style="text-align:right">${won(t.사용)}</td><td class="amt" style="text-align:right;color:var(--ink-3)">${won(t.예정)}</td><td class="amt" style="text-align:right;font-weight:600;${t.배부액-t.사용<0?'color:var(--danger)':''}">${won(t.배부액-t.사용)}</td></tr>`).join('')}
-        </tbody></table><span style="color:var(--ink-3)">합계 ${won(g.합계)}원, 사용 ${won(g.사용합계||0)}원${g.배부방식==='인당'?`, 인당 ${won(g.인당금액)}원`:(g.배부방식==='총액균등'?', 총액 균등':'')}${g.균등분배여부==='Y'?', 학급 균등분배':''}</span></span>
+        </tbody></table><span style="color:var(--ink-3)">합계 ${won(g.합계)}원, 사용 ${won(g.사용합계||0)}원${g.배부방식==='인당'?`, 인당 ${won(g.인당금액)}원`:(g.배부방식==='총액균등'?', 총액을 학급 수대로':'')}${g.균등분배여부==='Y'?', 학급 균등분배':''}</span></span>
       ${g.설명?`<span class="k">설명</span><span style="white-space:pre-wrap">${esc(g.설명)}</span>`:''}
       ${g.담당자품의
         ? `<span class="k">품의 제목</span><span>${c0.제목?esc(c0.제목):'<span style="color:var(--ink-3)">아직 없음 (취합 품의서에서 작성)</span>'}</span>`
