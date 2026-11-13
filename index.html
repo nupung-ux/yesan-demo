@@ -339,7 +339,7 @@
       </ul>
       <h4>3. 학년 공통 품의에 우리 반 물품 담기</h4>
       <p>학년부장이 "각 학급에서 물품 담기"로 만든 공통 품의가 있으면 예산 표 아래에 초록색 칸으로 <b>학년 공통 품의에 우리 반 물품 담기</b> 목록이 나옵니다. 우리 반 예산(파란 "우리 반" 표시)과는 다른 것입니다. 열어서 우리 반 물품만 넣고(견적서 끌어놓기도 됩니다) 저장한 뒤 <b>담기 완료</b>에 체크하세요. 반당 한도가 정해져 있으면 함께 표시됩니다. 금액은 학년 공통 예산에서 나가므로 우리 반 잔액은 줄지 않습니다.</p>
-      <p>예산배정 담당자가 "담당자가 취합해 품의"로 배부한 예산도 같은 방식입니다. 물품만 담아 두면 담당자가 모아서 기안합니다.</p>
+      <p>예산배정 담당자가 "담당자가 모아서 품의"로 배부한 예산(학습준비물 등)은 새 품의를 만들지 않고 물품만 담습니다. 기본은 학년에서 한꺼번에 담는 것이고, 학년부장이 학년 전체 탭의 품의에서 "각 학급에서 물품 담기"를 켜고 반당 한도를 정하면 각 반 화면에 담기 칸이 나타납니다.</p>
     </section>
 
     <section data-h="grade">
@@ -732,7 +732,7 @@
           <label><input type="radio" name="aWho" value="grade" checked onchange="aWhoChange()"><span><b>학년, 전담이 각자 품의</b><small>받은 예산 안에서 학년(반)과 전담이 직접 품의서를 만듭니다</small></span></label>
           <label><input type="radio" name="aWho" value="manager" onchange="aWhoChange()"><span><b>담당자가 모아서 품의</b><small>학습준비물처럼 학년(반)과 전담은 물품만 담고, 담당자가 모아 한 번에 기안합니다</small></span></label>
         </div>
-        <div class="note" id="aWhoHint" style="display:none;margin:10px 0 0">대상마다 물품 담기용 품의가 자동으로 만들어지고, 학년과 전담은 새 품의를 만들 수 없습니다. 물품이 담기면 배부 현황의 <b>취합 품의서</b>에서 제목, 개요, 업로드 양식을 한 번에 만듭니다. 학급 균등분배는 쓰지 않습니다.</div>
+        <div class="note" id="aWhoHint" style="display:none;margin:10px 0 0">대상마다 물품 담기용 품의가 자동으로 만들어지고, 학년과 전담은 새 품의를 만들 수 없습니다. 학년에서는 물품을 한꺼번에 담거나, 학년부장이 "각 학급에서 물품 담기"를 켜고 반당 한도를 정해 반별로 담게 할 수 있습니다. 물품이 담기면 배부 현황의 <b>취합 품의서</b>에서 제목, 개요, 업로드 양식을 한 번에 만듭니다. 학급 균등분배는 쓰지 않습니다.</div>
       </div>
 
       <div class="astep"><div class="astep-h"><span class="num"></span><h3>학년에 알려 줄 내용</h3>
@@ -1564,7 +1564,7 @@ async function allocateOps_(id, req) {
       const tl = targetLabel_(r.대상, depts);
       const t0 = titles.length ? titles[0].replace(PH_CLS_RE, isGrade ? r.대상 + '학년' : tl).replace(/\{예산명\}/g, budget.산출내역 || '') : '';
       ops.push(opSet_('품의', { id: newId_(), 배부id: aid, 대상: r.대상, 반: 0, 차수: 1, 제목: t0, 작성자: '담당자 취합', 상태: '작성중', 원인행위액: 0, 에듀파인품의번호: '', 생성일: ts, 수정일시: ts,
-        조정합계: '', 학급담기: 'Y', 반당한도: '', 담기완료: [], 취합그룹: gid, 품목: [] }));
+        조정합계: '', 학급담기: 'N', 반당한도: '', 담기완료: [], 취합그룹: gid, 품목: [] }));   // 학급 물품 담기는 학년부장이 필요할 때 켠다
     }
   });
   ops.push(logOp_('담당자', '배부', budget.산출내역, rowsToAdd.map(r => targetLabel_(r.대상, depts) + ' ' + r.배부액.toLocaleString()).join(', ')));
@@ -1693,6 +1693,17 @@ async function userCreatePumui(allocId, 반, 작성자, opts) {
     조정합계: '', 학급담기: (opts.학급담기 && num_(반) === 0) ? 'Y' : 'N', 반당한도: opts.학급담기 ? num_(opts.반당한도) : '', 담기완료: [], 취합그룹: '', 품목: [] };
   await putDoc_('품의', p);
   return p.id;
+}
+/** 학년 공통 품의(반 0)의 "각 학급에서 물품 담기"를 켜고 끈다. 반당 한도 포함 */
+async function userSetClassCollect(pumuiId, on, limit, who) {
+  guardWrite_();
+  const p = await FS.get(docPath_('품의', pumuiId));
+  if (!p) throw new Error('품의를 찾을 수 없습니다.');
+  if (num_(p.반) !== 0 || !/^[1-6]$/.test(String(p.대상))) throw new Error('학년 공통 품의에서만 설정할 수 있습니다.');
+  if (p.상태 === '기안완료') throw new Error('기안 완료된 품의는 바꿀 수 없습니다.');
+  await patchDoc_('품의', pumuiId, { 학급담기: on ? 'Y' : 'N', 반당한도: on ? (num_(limit) || '') : '', 수정일시: now_() });
+  CACHE = {};
+  return true;
 }
 async function userSavePumui(pumuiId, patch, who) {
   guardWrite_();
@@ -1863,7 +1874,7 @@ async function getUploadHistory(auth) {
 const API = { getBootstrap, verifyGradePassword, adminSetPassword, adminLogin, adminChangePassword, adminSetLogo, adminSaveSettings, adminSaveDepartments, adminRenameManager, adminResetManagerPassword,
   adminDeleteManager, adminSavePhrases, adminGetChangeLog, adminResetData, adminNewYear, adminArchives, adminBackup, adminImport, registerManager, loginManager, managerGetAll, managerSaveBudgets,
   managerAllocate, managerAllocateBatch, managerUpdateGroup, managerSetCollectTitle, managerFinalizeCollect, managerDeleteGroup, userGetAll, userSaveDistribution, userCreatePumui, userSavePumui,
-  userSaveClassItems, userDeletePumui, edufineMatch, edufineApply, getUploadHistory, createSchool, openSchool, schoolExists, testDeleteAll };
+  userSaveClassItems, userSetClassCollect, userDeletePumui, edufineMatch, edufineApply, getUploadHistory, createSchool, openSchool, schoolExists, testDeleteAll };
 // ═══════════════════════ CORE END ═══════════════════════
 
 // ───────── 상태 ─────────
@@ -2491,7 +2502,7 @@ function renderUserTable(){
 }
 function uPickAlloc(id){
   const a = U.allocs.find(x=>x.배부id===id);
-  if(a && a.담당자품의 && U.isGrade && uCls>0){ const p = a.품의.find(x=>x.반===0 && x.취합그룹); if(p){ openClassEditor(id, p.id); renderCollect(); return; } }
+  if(a && a.담당자품의 && U.isGrade && uCls>0){ const p = a.품의.find(x=>x.반===0 && x.취합그룹 && x.학급담기 && x.상태!=='기안완료'); if(p){ openClassEditor(id, p.id); renderCollect(); return; } }
   uAlloc=id; uP=null; iMode='common'; renderUserTable(); renderCollect(); renderPumuiPanel(a);
 }
 function renderPumuiPanel(a){
@@ -2504,7 +2515,9 @@ function renderPumuiPanel(a){
   const list = a.품의.filter(p=>p.반===uCls);
   $('uPList').innerHTML = list.map(p=>`<div class="pchip ${uP===p.id?'sel':''}" onclick="openPumui('${p.id}')"><div>${p.차수}차 · ${esc(p.제목||'(제목 없음)')}${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':(p.학급담기?' <span class="cls-tag">학급 담기</span>':'')}</div><div class="st ${p.상태==='기안완료'?'done':''}">${p.상태==='기안완료'?'기안 완료':'작성 중'} · ${won(p.반영액)}원${p.원인행위액?` (원인행위 ${won(p.원인행위액)})`:(p.조정합계!==null&&p.조정합계!==undefined?' (합계 수정)':'')}</div></div>`).join('')
     || '<span class="empty" style="padding:4px 0">아직 품의가 없습니다. [새 품의 만들기]를 누르세요.</span>';
-  if(a.담당자품의) $('uPList').insertAdjacentHTML('afterbegin', '<div class="note" style="margin:0 0 6px;flex-basis:100%">예산배정 담당자가 모아서 품의하는 예산입니다. 여기서는 새 품의를 만들지 않고, 아래 품의를 열어 필요한 물품만 담아 주세요.</div>');
+  if(a.담당자품의) $('uPList').innerHTML = (uCls>0)
+    ? '<div class="note" style="margin:0;flex-basis:100%">예산배정 담당자가 모아서 품의하는 예산입니다. 지금은 학년에서 한꺼번에 물품을 담고 있습니다. 반별로 담으려면 학년부장이 학년 전체 탭의 품의에서 "각 학급에서 물품 담기"를 켜야 합니다.</div>'
+    : '<div class="note" style="margin:0 0 6px;flex-basis:100%">예산배정 담당자가 모아서 품의하는 예산입니다. 새 품의는 만들지 않고, 아래 품의를 열어 필요한 물품만 담아 주세요.</div>' + (list.length ? $('uPList').innerHTML : '');
   if(uP){ const p=list.find(x=>x.id===uP); if(p) renderEditor(a,p); else { uP=null; $('uEditor').style.display='none'; } }
   else $('uEditor').style.display='none';
   $('uPumuiPanel').scrollIntoView({behavior:'smooth',block:'start'});
@@ -2540,13 +2553,27 @@ function setEditorMode(mode, p){
 function renderCpBox(p){
   if(!(U.isGrade && uCls===0)){ $('cpBox').style.display='none'; return; }
   $('cpBox').style.display='block';
+  const locked = p.상태==='기안완료' || READONLY;
   const st = p.학급담기 ? Array.from({length:U.학급수},(_,i)=>i+1).map(c=>{ const amt=p.품목.filter(i=>i.반===c).reduce((t,i)=>t+i.수량*i.예상단가,0); const done=p.담기완료.includes(c); const over=p.반당한도&&amt>p.반당한도;
       return `<span style="display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:${done?'var(--navy-tint)':'#fff'};${over?'color:var(--danger)':''}">${c}반 ${won(amt)}${done?' ✓':''}</span>`; }).join(' ') : '';
-  if(!p.학급담기){ $('cpBox').style.display='none'; return; }
-  $('cpBox').innerHTML = `<div style="border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:10px;background:var(--paper)">
-    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px"><b>${p.취합그룹?'담당자 취합 — 각 학급에서 물품 담기':'각 학급에서 물품 담기'}</b>${p.반당한도?`<span>반당 한도 ${won(p.반당한도)}원</span>`:''}
-      <span class="hint" style="margin:0">${p.취합그룹?'각 반 담임이 담은 물품이 아래 표에 반 표시와 함께 모입니다. 학년 공통 물품은 여기서 직접 넣고, 기안은 예산배정 담당자가 합니다.':'각 반 담임이 자기 반 화면에서 담은 물품이 아래 표에 반 표시와 함께 나타납니다. 저장하면 함께 기안됩니다.'}</span></div>
-    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${st}</div></div>`;
+  $('cpBox').innerHTML = `<div style="border:1px solid #bfe3c9;border-radius:var(--r);padding:10px 12px;margin-bottom:10px;background:#f3faf5">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:14px">
+      <label style="display:flex;gap:6px;align-items:center;cursor:pointer;font-weight:600"><input type="checkbox" id="ccOn" ${p.학급담기?'checked':''} ${locked?'disabled':''} onchange="$('ccLimitWrap').style.display=this.checked?'inline-flex':'none'"> 각 학급에서 물품 담기</label>
+      <span id="ccLimitWrap" style="display:${p.학급담기?'inline-flex':'none'};gap:6px;align-items:center">반당 한도 <input type="text" inputmode="numeric" id="ccLimit" value="${p.반당한도?won(p.반당한도):''}" placeholder="없으면 비움" style="width:120px;text-align:right" ${locked?'disabled':''} onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''"> 원</span>
+      ${locked?'':`<button class="btn small" onclick="applyClassCollect()">적용</button>`}
+    </div>
+    <div class="hint" style="margin:6px 0 0">${p.학급담기
+      ? '각 반 담임이 자기 반 화면에서 담은 물품이 아래 표에 반 표시와 함께 모입니다. 학년 공통 물품은 여기서 직접 넣을 수 있습니다.' + (p.취합그룹?' 기안은 예산배정 담당자가 합니다.':'')
+      : '꺼져 있으면 학년에서 물품을 한꺼번에 넣습니다. 반마다 따로 고르게 하려면 켜고 반당 한도를 정한 뒤 적용을 누르세요.'}</div>
+    ${st?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${st}</div>`:''}</div>`;
+}
+async function applyClassCollect(){
+  const on=$('ccOn').checked, limit=Number($('ccLimit').value.replace(/[^0-9]/g,''))||0;
+  const p = U.allocs.find(a=>a.배부id===uAlloc).품의.find(x=>x.id===uP);
+  if(!on && p && p.품목.some(i=>i.반>0) && !confirm('이미 반에서 담은 물품이 있습니다. 끄면 반에서는 더 담거나 고칠 수 없고, 담긴 물품은 그대로 남습니다. 끌까요?')) return;
+  await call('userSetClassCollect', uP, on, limit, U.label);
+  toast(on ? `각 학급에서 물품 담기를 켰습니다${limit?` (반당 한도 ${won(limit)}원)`:''}` : '각 학급에서 물품 담기를 껐습니다');
+  await loadUser();
 }
 function renderEditor(a,p){
   $('uEditor').style.display='block';
@@ -3621,6 +3648,7 @@ async function seedTestSchool(code){
   await A.userSavePumui(pc, { 제목: '4학년 교육과정운영비 물품 구입', 상태: '작성중', 품목: [], 학급담기: true, 반당한도: 100000 }, '');
   await A.userSaveClassItems(pc, 1, [{내용:'과학 실험 키트', 규격:'', 수량:5, 예상단가:15000}], true, '');
   const col = al('학년 체험학습 재료비');
+  if (col && col.품의 && col.품의[0]) await A.userSetClassCollect(col.품의[0].id, true, 150000, '4학년');
   if (col && col.품의 && col.품의[0]) await A.userSaveClassItems(col.품의[0].id, 1, [{내용:'클레이 세트', 규격:'12색', 수량:25, 예상단가:4000}], true, '');
   // 전담: 기안 완료 품의 1건
   const sci = M.전담.find(d => d.이름 === '과학전담');
