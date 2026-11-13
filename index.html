@@ -381,10 +381,10 @@
         <li>"이전 배부에서 설명, 제목, 문구 불러오기"로 지난 설정을 다시 쓸 수 있습니다.</li>
       </ul>
       <h4>3. 배부 현황</h4>
-      <p>배부한 예산별로 대상, 배부액, 사용액, 예정액, 잔액을 봅니다. 설명, 제목, 문구는 <b>수정</b>으로 고치고, 금액을 바꾸려면 삭제 후 다시 배부합니다(품의가 있으면 삭제되지 않습니다).</p>
-      <h4>4. 취합 품의서 (담당자가 취합해 품의한 예산)</h4>
+      <p>학년과 전담이 각자 품의하도록 배부한 예산별로 대상, 배부액, 사용액, 예정액, 잔액을 봅니다(담당자가 모아서 품의하는 예산은 담당자 품의 탭에 따로 나옵니다). 설명, 제목, 문구는 <b>수정</b>으로 고치고, 금액을 바꾸려면 삭제 후 다시 배부합니다(품의가 있으면 삭제되지 않습니다).</p>
+      <h4>4. 담당자 품의 탭 (담당자가 모아서 품의하는 예산)</h4>
       <ol>
-        <li>배부 현황에서 <b>취합 품의서 열기</b> → 제목을 쓰고 <b>제목 저장</b>. 저장한 제목이 학년, 전담 화면의 담기 목록에 나타납니다.</li>
+        <li><b>담당자 품의</b> 탭에서 <b>취합 품의서 열기</b> → 제목을 쓰고(배부할 때는 제목 양식을 정하지 않습니다) <b>제목 저장</b>. 저장한 제목이 학년, 전담 화면의 담기 목록에 나타납니다.</li>
         <li>각 학년, 반, 전담이 물품을 담으면 <b>담긴 물품</b>에 모입니다. 담기 완료 여부도 함께 보입니다.</li>
         <li>개요를 만들어 복사하고 <b>에듀파인 업로드 양식</b>을 내려받아 기안합니다. 기안했으면 <b>기안 완료</b> 체크.</li>
       </ol>
@@ -653,6 +653,7 @@
       <button class="on" data-tab="mb" onclick="mtab(this)">예산 등록</button>
       <button data-tab="ma" onclick="mtab(this)">예산 배부</button>
       <button data-tab="mg" onclick="mtab(this)">배부 현황</button>
+      <button data-tab="mc" onclick="mtab(this)">담당자 품의 <span id="mcCount" style="font-weight:400;color:var(--ink-3)"></span></button>
       <button data-tab="me" onclick="mtab(this)">에듀파인 반영</button>
     </div>
 
@@ -733,7 +734,7 @@
           <label><input type="radio" name="aWho" value="grade" checked onchange="aWhoChange()"><span><b>학년, 전담이 각자 품의</b><small>받은 예산 안에서 학년(반)과 전담이 직접 품의서를 만듭니다</small></span></label>
           <label><input type="radio" name="aWho" value="manager" onchange="aWhoChange()"><span><b>담당자가 모아서 품의</b><small>학습준비물처럼 학년(반)과 전담은 물품만 담고, 담당자가 모아 한 번에 기안합니다</small></span></label>
         </div>
-        <div class="note" id="aWhoHint" style="display:none;margin:10px 0 0">대상마다 물품 담기용 품의가 자동으로 만들어지고, 학년과 전담은 새 품의를 만들 수 없습니다. 학년에서는 물품을 한꺼번에 담거나, 학년부장이 "각 학급에서 물품 담기"를 켜고 반당 한도를 정해 반별로 담게 할 수 있습니다. 물품이 담기면 배부 현황의 <b>취합 품의서</b>에서 제목, 개요, 업로드 양식을 한 번에 만듭니다. 학급 균등분배는 쓰지 않습니다.</div>
+        <div class="note" id="aWhoHint" style="display:none;margin:10px 0 0">대상마다 물품 담기용 품의가 자동으로 만들어지고, 학년과 전담은 새 품의를 만들 수 없습니다. 학년에서는 물품을 한꺼번에 담거나, 학년부장이 "각 학급에서 물품 담기"를 켜고 반당 한도를 정해 반별로 담게 할 수 있습니다. 물품이 담기면 <b>담당자 품의</b> 탭의 취합 품의서에서 제목, 개요, 업로드 양식을 한 번에 만듭니다. 학급 균등분배는 쓰지 않습니다.</div>
       </div>
 
       <div class="astep"><div class="astep-h"><span class="num"></span><h3>학년에 알려 줄 내용</h3>
@@ -741,11 +742,14 @@
         <label class="f">예산 설명</label>
         <textarea id="aDesc" style="min-height:64px" placeholder="이 예산의 용도, 기한, 유의사항. 학년 화면에 그대로 보입니다."></textarea>
 
+        <div id="aTitleWrap">
         <label class="f" style="margin-top:14px">품의 제목 양식</label>
         <div class="hint" style="margin-top:0">학년에서 골라 쓰는 제목입니다. <code>{학년·학급}</code>을 넣으면 "4학년 1반"(학년 공통이면 "4학년", 전담이면 전담 이름)으로 바뀌어 품의마다 제목이 달라지고, 에듀파인 반영 때 자동으로 맞춰집니다. 넣지 않아도 배부는 됩니다.</div>
         <div id="aTitlesBar"></div>
         <div class="tlist" id="aTitles"></div>
         <div style="margin-top:8px"><button class="btn small" onclick="addTitleRow('aTitles')">제목 추가</button></div>
+        </div>
+        <div class="hint" id="aTitleCollectHint" style="display:none;margin-top:12px">품의 제목은 여기서 정하지 않습니다. 배부한 뒤 "담당자 품의" 탭의 취합 품의서에서 직접 씁니다.</div>
 
         <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">품의 개요 문구 추가 (선택)</summary>
           <div class="hint">관리자 기본 문구 외에 이 예산에서만 쓸 본문 틀입니다. 비워 두면 기본 문구를 씁니다.</div>
@@ -761,6 +765,12 @@
     <!-- 배부 현황 -->
     <div class="tab" id="mtab-mg">
       <div id="gList"></div>
+    </div>
+
+    <!-- 담당자 품의 (담당자가 모아서 품의하는 예산) -->
+    <div class="tab" id="mtab-mc">
+      <div class="hint" style="margin:0 0 10px">"담당자가 모아서 품의"로 배부한 예산입니다. 학년과 전담이 담은 물품을 확인하고 품의서를 열어 제목과 개요를 만든 뒤 기안하세요.</div>
+      <div id="cList"></div>
       <div class="panel" id="gCollect" style="display:none;margin-top:14px;border:2px solid var(--navy)">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
           <h3>취합 품의서</h3>
@@ -2175,7 +2185,7 @@ function renderAllocForm(){
 function aMethod(){ return document.querySelector('input[name=aMethod]:checked').value; }
 function aModeIsBatch(){ return document.querySelector('input[name=aMode]:checked').value==='batch'; }
 function aIsCollect(){ return document.querySelector('input[name=aWho]:checked').value==='manager'; }
-function aWhoChange(){ const c=aIsCollect(); $('aWhoHint').style.display=c?'block':'none'; ['aEven','abEven'].forEach(id=>{ const e=$(id); e.disabled=c; if(c) e.checked=false; }); aSummary(); }
+function aWhoChange(){ const c=aIsCollect(); $('aWhoHint').style.display=c?'block':'none'; $('aTitleWrap').style.display=c?'none':'block'; $('aTitleCollectHint').style.display=c?'block':'none'; ['aEven','abEven'].forEach(id=>{ const e=$(id); e.disabled=c; if(c) e.checked=false; }); aSummary(); }
 function aEachInput(inp){ const cb=inp.closest('label').querySelector('.aT'); cb.checked = !!inp.value.replace(/[^0-9]/g,''); aRecalc(); }
 function aSummary(){
   if(!$('aSummary')) return;
@@ -2232,12 +2242,13 @@ async function allocateBatch(){
   if(!sel.length) return toast('배부할 예산을 선택하세요', true);
   if(sel.some(r=>!r.대상)) return toast('대상이 비어 있는 항목이 있습니다', true);
   if(sel.some(r=>r.금액<=0||r.금액>r.잔여)) return toast('금액이 0이거나 잔여를 넘는 항목이 있습니다', true);
-  const common = { 설명:$('aDesc').value, 균등분배:$('abEven').checked, 제목목록: readTitles('aTitles'), 문구목록: readPhrases('aPhrases'), 담당자품의: aIsCollect() };
+  const common = { 설명:$('aDesc').value, 균등분배:$('abEven').checked, 제목목록: aIsCollect()?[]:readTitles('aTitles'), 문구목록: readPhrases('aPhrases'), 담당자품의: aIsCollect() };
   if(!common.제목목록.length && !aIsCollect() && !confirm('품의 제목 양식이 없습니다. 없어도 배부는 되지만 학년에서 제목을 직접 써야 하고 에듀파인 자동 매칭이 어려워집니다. 그래도 배부할까요?')) return;
   if(!confirm(`${sel.length}건을 일괄 배부합니다. 진행할까요?`)) return;
   await call('managerAllocateBatch', mgr.id, mgr.pw, sel.map(r=>({예산id:r.예산id, 대상:r.대상, 금액:r.금액})), common);
+  const toTab = common.담당자품의 ? 'mc' : 'mg';
   toast(`${sel.length}건을 배부했습니다`); await loadManager();
-  document.querySelector('#mgrTabs [data-tab=mg]').click();
+  document.querySelector(`#mgrTabs [data-tab=${toTab}]`).click();
 }
 function aMethodChange(){
   const m = aMethod(), per = m==='인당', each = m==='개별';
@@ -2338,31 +2349,40 @@ async function allocate(){
   if(amts.some(v=>!(v>0))) return toast('금액이 비어 있는 대상이 있습니다. 금액을 넣거나 선택을 풀어 주세요', true);
   const req = { 예산id: bid, 배부방식: aMethod()==='개별'?'금액':aMethod(), 인당금액: Number($('aPerHead').value)||0,
     대상들: sel.map((t,i)=>({대상:t.대상, 금액: amts[i], 인원: t.인원})),
-    설명: $('aDesc').value, 균등분배: $('aEven').checked, 제목목록: readTitles('aTitles'), 문구목록: readPhrases('aPhrases'), 담당자품의: aIsCollect() };
+    설명: $('aDesc').value, 균등분배: $('aEven').checked, 제목목록: aIsCollect()?[]:readTitles('aTitles'), 문구목록: readPhrases('aPhrases'), 담당자품의: aIsCollect() };
   if(!req.제목목록.length && !aIsCollect() && !confirm('품의 제목 양식이 없습니다. 없어도 배부는 되지만 학년에서 제목을 직접 써야 하고 에듀파인 자동 매칭이 어려워집니다. 그래도 배부할까요?')) return;
   await call('managerAllocate', mgr.id, mgr.pw, req);
+  const toTab = req.담당자품의 ? 'mc' : 'mg';
   toast('배부했습니다'); await loadManager();
-  document.querySelector('#mgrTabs [data-tab=mg]').click();
+  document.querySelector(`#mgrTabs [data-tab=${toTab}]`).click();
 }
 
 // 배부 현황
-function renderGroups(){
-  if(!M.groups.length){ $('gList').innerHTML='<div class="panel empty">아직 배부한 예산이 없습니다.</div>'; return; }
-  $('gList').innerHTML = M.groups.map(g=>`<div class="card panel">
-    <div class="head"><h3>${esc(g.예산명)}</h3><span style="color:var(--ink-3);font-size:13px">${esc(String(g.수정일시).slice(0,16))}</span>
-      <span class="ops"><button class="btn small" onclick="openGroup('${g.그룹id}')">수정</button>
+function groupCard(g){
+  const c0 = g.취합[0]||{}; const cDone = g.담당자품의 && g.취합.length && g.취합.every(c=>c.상태==='기안완료');
+  return `<div class="card panel">
+    <div class="head"><h3>${esc(g.예산명)}</h3>${g.담당자품의?(cDone?'<span class="cls-tag">기안 완료</span>':'<span class="cls-tag" style="background:var(--warn-tint);color:var(--warn)">작성 중</span>'):''}<span style="color:var(--ink-3);font-size:13px">${esc(String(g.수정일시).slice(0,16))}</span>
+      <span class="ops">${g.담당자품의?`<button class="btn primary small" onclick="openCollect('${g.그룹id}')">취합 품의서 열기</button>`:''}<button class="btn small" onclick="openGroup('${g.그룹id}')">수정</button>
       <button class="btn small" ${g.품의있음?'disabled title="품의가 있어 삭제할 수 없습니다"':''} onclick="deleteGroup('${g.그룹id}','${esc(g.예산명)}')">삭제</button></span></div>
     <div class="kv" style="margin-top:10px">
       <span class="k">배부·사용</span><span><table class="list" style="margin:0;font-size:13px"><thead><tr><th>대상</th><th style="text-align:right">배부</th><th style="text-align:right">사용</th><th style="text-align:right">예정</th><th style="text-align:right">잔액</th></tr></thead><tbody>
         ${g.대상들.map(t=>`<tr><td>${esc(t.라벨)}${g.배부방식==='인당'?` (${t.인원}명)`:''}</td><td class="amt" style="text-align:right">${won(t.배부액)}</td><td class="amt" style="text-align:right">${won(t.사용)}</td><td class="amt" style="text-align:right;color:var(--ink-3)">${won(t.예정)}</td><td class="amt" style="text-align:right;font-weight:600;${t.배부액-t.사용<0?'color:var(--danger)':''}">${won(t.배부액-t.사용)}</td></tr>`).join('')}
         </tbody></table><span style="color:var(--ink-3)">합계 ${won(g.합계)}원, 사용 ${won(g.사용합계||0)}원${g.배부방식==='인당'?`, 인당 ${won(g.인당금액)}원`:(g.배부방식==='총액균등'?', 총액 균등':'')}${g.균등분배여부==='Y'?', 학급 균등분배':''}</span></span>
       ${g.설명?`<span class="k">설명</span><span style="white-space:pre-wrap">${esc(g.설명)}</span>`:''}
-      <span class="k">제목</span><span>${g.제목목록.length?g.제목목록.map(t=>`<div>${esc(t)} <span style="color:var(--ink-3)">→ ${esc(titlePreview(t))}</span></div>`).join(''):'<span style="color:var(--warn)">없음 (원인행위 매칭 불가)</span>'}</span>
+      ${g.담당자품의
+        ? `<span class="k">품의 제목</span><span>${c0.제목?esc(c0.제목):'<span style="color:var(--ink-3)">아직 없음 (취합 품의서에서 작성)</span>'}</span>`
+        : `<span class="k">제목</span><span>${g.제목목록.length?g.제목목록.map(t=>`<div>${esc(t)} <span style="color:var(--ink-3)">→ ${esc(titlePreview(t))}</span></div>`).join(''):'<span style="color:var(--warn)">없음 (학년에서 직접 작성)</span>'}</span>`}
       ${g.문구목록.length?`<span class="k">문구</span><span>${g.문구목록.map(p=>esc(p.이름)).join(', ')}</span>`:''}
-      ${g.품의있음?'<span class="k">품의</span><span>작성된 품의 있음</span>':''}
-      ${g.담당자품의?`<span class="k">취합 품의</span><span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${g.취합.map(c=>{ const doneAll=c.학급수?c.담기완료.length>=c.학급수:c.품목.length>0; return `<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:${doneAll?'var(--navy-tint)':'#fff'}">${esc(c.라벨)} ${c.품목.length}건 ${won(c.합계)}${c.학급수?` (${c.담기완료.length}/${c.학급수}반 완료)`:''}</span>`; }).join('')}
-        <button class="btn primary small" onclick="openCollect('${g.그룹id}')">취합 품의서 열기</button>${g.취합[0]&&g.취합[0].상태==='기안완료'?'<span class="cls-tag">기안 완료</span>':''}</div></span>`:''}
-    </div></div>`).join('');
+      ${g.품의있음&&!g.담당자품의?'<span class="k">품의</span><span>작성된 품의 있음</span>':''}
+      ${g.담당자품의?`<span class="k">담긴 물품</span><span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${g.취합.map(c=>{ const doneAll=c.학급수&&c.담기완료.length?c.담기완료.length>=c.학급수:c.품목.length>0; return `<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:${doneAll?'var(--navy-tint)':'#fff'}">${esc(c.라벨)} ${c.품목.length}건 ${won(c.합계)}${c.학급수&&c.담기완료.length?` (${c.담기완료.length}/${c.학급수}반 완료)`:''}</span>`; }).join('')}</div></span>`:''}
+    </div></div>`;
+}
+function renderGroups(){
+  const normal = M.groups.filter(g=>!g.담당자품의), collect = M.groups.filter(g=>g.담당자품의);
+  $('gList').innerHTML = normal.map(groupCard).join('') || '<div class="panel empty">학년, 전담이 각자 품의하도록 배부한 예산이 없습니다.' + (collect.length?' 담당자가 모아서 품의하는 예산은 "담당자 품의" 탭에 있습니다.':'') + '</div>';
+  $('cList').innerHTML = collect.map(groupCard).join('') || '<div class="panel empty">담당자가 모아서 품의하도록 배부한 예산이 없습니다. 예산 배부의 "누가 품의하나요"에서 "담당자가 모아서 품의"를 고르면 여기에 나타납니다.</div>';
+  const todo = collect.filter(g=>!(g.취합.length && g.취합.every(c=>c.상태==='기안완료'))).length;
+  $('mcCount').textContent = collect.length ? `(${todo ? '작성 중 '+todo : '모두 완료'})` : '';
 }
 
 // ───────── 담당자 취합 품의서 ─────────
@@ -2378,7 +2398,7 @@ function openCollect(gid){
   const done=g.취합.length && g.취합.every(c=>c.상태==='기안완료');
   $('cgName').textContent=`${g.예산명} — ${cLabels(g)} · 품목 ${items.length}건 · 합계 ${won(total)}원`;
   $('cgTitleSel').innerHTML=(titles.length?'<option value="">제목 양식 고르기</option>':'<option value="">제공된 제목 없음</option>')+titles.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  $('cgTitleSel').disabled=!titles.length;
+  $('cgTitleSel').disabled=!titles.length; $('cgTitleSel').style.display=titles.length?'':'none';
   $('cgTitle').value=curTitle||(titles[0]||'');
   $('cgItems').querySelector('tbody').innerHTML=items.map(i=>`<tr><td style="white-space:nowrap">${esc(i.대상)}${i.반?` <span class="cls-tag">${i.반}반</span>`:''}</td><td>${esc(i.내용)}</td><td>${esc(i.규격)}</td><td>${esc(i.단위||'개')}</td><td class="amt" style="text-align:right">${i.수량}</td><td class="amt" style="text-align:right">${won(i.예상단가)}</td><td class="amt" style="text-align:right">${won(i.수량*i.예상단가)}</td><td>${esc(i.구매처||'')}</td><td>${i.링크?`<a href="${esc(i.링크)}" target="_blank">열기</a>`:''}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">아직 담긴 물품이 없습니다.</td></tr>';
   $('cgTotal').textContent=won(total);
