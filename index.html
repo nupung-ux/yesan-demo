@@ -1879,6 +1879,9 @@ const $ = id => document.getElementById(id);
 const SKEY='yesan_session';
 function sessSave(o){ try{ o.school=SID; sessionStorage.setItem(SKEY, JSON.stringify(o)); }catch(e){} }
 function sessLoad(){ try{ const o=JSON.parse(sessionStorage.getItem(SKEY)||'null'); return (o && (!o.school || o.school===SID)) ? o : null; }catch(e){ return null; } }
+// 이 브라우저 탭을 닫기 전까지 한 번 입력한 담당자, 관리자 비밀번호를 기억 (다시 들어갈 때 묻지 않음)
+function keepLoad(){ try{ return JSON.parse(sessionStorage.getItem('yesan_keep_'+SID)||'{}')||{}; }catch(e){ return {}; } }
+function keepSet(kind, id, pw){ try{ const k=keepLoad(); if(kind==='mgr'){ k.mgr=k.mgr||{}; if(pw==null) delete k.mgr[id]; else k.mgr[id]=pw; } else { if(pw==null) delete k.admin; else k.admin=pw; } sessionStorage.setItem('yesan_keep_'+SID, JSON.stringify(k)); }catch(e){} }
 function sessClear(){ try{ sessionStorage.removeItem(SKEY); }catch(e){} }
 function busy(on){ $('busy').classList.toggle('on', on); }
 function toast(msg, err){ const t=$('toast'); t.textContent=msg; t.className='toast on'+(err?' err':''); clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast', err?8000:2600); }
@@ -2031,13 +2034,19 @@ async function managerGo(){
   const id = $('selManager').value;
   if(!id) return toast('담당자를 선택하세요', true);
   const name = $('selManager').selectedOptions[0].textContent;
-  const v = await modal(`${name} 비밀번호`, [{id:'pw',label:'비밀번호',type:'password'}], '들어가기');
+  let m = null, pw = (keepLoad().mgr||{})[id];
+  if(pw != null){ try{ m = await API.loginManager(id, pw); }catch(e){ m = null; keepSet('mgr', id, null); } }   // 기억한 비밀번호가 바뀌었으면 다시 묻는다
+  if(!m){
+    const v = await modal(`${name} 비밀번호`, [{id:'pw',label:'비밀번호',type:'password'}], '들어가기');
+    $('selManager').value = '';
+    if(!v) return;
+    try{ m = await call('loginManager', id, v.pw); }catch(e){ return; }
+    pw = v.pw; keepSet('mgr', id, pw);
+  }
   $('selManager').value = '';
-  if(!v) return;
-  let m; try{ m = await call('loginManager', id, v.pw); }catch(e){ return; }
-  mgr = { id: m.id, 이름: m.이름, pw: v.pw };
+  mgr = { id: m.id, 이름: m.이름, pw };
   await loadManager();
-  go('manager'); sessSave({role:'mgr', id:m.id, pw:v.pw});
+  go('manager'); sessSave({role:'mgr', id:m.id, pw});
   $('sideCur').textContent = `${m.이름} 담당자`;
 }
 
@@ -3071,10 +3080,14 @@ async function openAdmin(){
     adminPw = v.pw;
     admin = await call('adminLogin', adminPw);
   } else {
-    const v = await modal('관리자', [{id:'pw',label:'관리자 비밀번호',type:'password'}], '들어가기');
-    if(!v) return;
-    try { admin = await call('adminLogin', v.pw); } catch(e){ return; }
-    adminPw = v.pw;
+    let ok = false; const kp = keepLoad().admin;
+    if(kp != null){ try{ admin = await API.adminLogin(kp); adminPw = kp; ok = true; }catch(e){ keepSet('admin', null, null); } }
+    if(!ok){
+      const v = await modal('관리자', [{id:'pw',label:'관리자 비밀번호',type:'password'}], '들어가기');
+      if(!v) return;
+      try { admin = await call('adminLogin', v.pw); } catch(e){ return; }
+      adminPw = v.pw; keepSet('admin', null, adminPw);
+    }
   }
   try { renderAdmin(); } catch(e){ return toast('관리자 화면 표시 오류: '+e.message, true); }
   go('admin'); sessSave({role:'admin', pw:adminPw}); $('sideCur').textContent='관리자'; loadArchives();
