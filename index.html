@@ -175,6 +175,8 @@
   .ph-bar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:13px;cursor:pointer;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--navy)}
   .ph-bar button:hover{background:var(--navy-tint);border-color:var(--navy)}
   #mtab-ma{counter-reset:astep}
+  .astep.pop{animation:apop .35s ease}
+  @keyframes apop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   #aBudgetTable thead th, #aiTable thead th{position:sticky;top:0;z-index:1;background:var(--line-2);box-shadow:0 1px 0 var(--line)}
   .astep{counter-increment:astep;border:1px solid var(--line);border-radius:10px;background:#f8fafc;padding:16px 18px;margin-top:14px}
   .astep-h{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
@@ -690,7 +692,7 @@
         <div class="hint" id="aBudgetInfo"></div>
       </div>
 
-      <div class="astep"><div class="astep-h"><span class="num"></span><h3>누구에게 얼마씩</h3></div>
+      <div class="astep" id="aStep2" style="display:none"><div class="astep-h"><span class="num"></span><h3>누구에게 얼마씩</h3></div>
         <label class="f">금액 정하는 방법</label>
         <div class="choice four">
           <label><input type="radio" name="aMethod" value="금액" checked onchange="aMethodChange()"><span><b>모두 같은 금액</b><small>대상마다 같은 금액</small></span></label>
@@ -729,15 +731,15 @@
         </div>
       </div>
 
-      <div class="astep"><div class="astep-h"><span class="num"></span><h3>누가 품의하나요</h3></div>
+      <div class="astep" id="aStep3" style="display:none"><div class="astep-h"><span class="num"></span><h3>누가 품의하나요</h3><span class="r">하나를 고르세요</span></div>
         <div class="choice">
-          <label><input type="radio" name="aWho" value="grade" checked onchange="aWhoChange()"><span><b>학년, 전담이 각자 품의</b><small>받은 예산 안에서 학년(반)과 전담이 직접 품의서를 만듭니다</small></span></label>
+          <label><input type="radio" name="aWho" value="grade" onchange="aWhoChange()"><span><b>학년, 전담이 각자 품의</b><small>받은 예산 안에서 학년(반)과 전담이 직접 품의서를 만듭니다</small></span></label>
           <label><input type="radio" name="aWho" value="manager" onchange="aWhoChange()"><span><b>담당자가 모아서 품의</b><small>학습준비물처럼 학년(반)과 전담은 물품만 담고, 담당자가 모아 한 번에 기안합니다</small></span></label>
         </div>
         <div class="note" id="aWhoHint" style="display:none;margin:10px 0 0">대상마다 물품 담기용 품의가 자동으로 만들어지고, 학년과 전담은 새 품의를 만들 수 없습니다. 학년에서는 물품을 한꺼번에 담거나, 학년부장이 "각 학급에서 물품 담기"를 켜고 반당 한도를 정해 반별로 담게 할 수 있습니다. 물품이 담기면 <b>담당자 품의</b> 탭의 취합 품의서에서 제목, 개요, 업로드 양식을 한 번에 만듭니다. 학급 균등분배는 쓰지 않습니다.</div>
       </div>
 
-      <div class="astep"><div class="astep-h"><span class="num"></span><h3>학년에 알려 줄 내용</h3>
+      <div class="astep" id="aStep4" style="display:none"><div class="astep-h"><span class="num"></span><h3>학년에 알려 줄 내용</h3>
           <span class="r" style="font-size:13.5px">이전 배부에서 불러오기 <select id="aLoadFrom" onchange="loadFromGroup(this.value)" style="max-width:240px"><option value="">선택</option></select></span></div>
         <label class="f">예산 설명</label>
         <textarea id="aDesc" style="min-height:64px" placeholder="이 예산의 용도, 기한, 유의사항. 학년 화면에 그대로 보입니다."></textarea>
@@ -759,7 +761,8 @@
         </details>
       </div>
 
-      <div class="abar"><span id="aSummary" class="hint" style="margin:0"></span><button class="btn primary" id="aGoBtn" onclick="aModeIsBatch()?allocateBatch():allocate()">예산 배부하기</button></div>
+      <div class="hint" id="aNextHint" style="margin:14px 2px 0"></div>
+      <div class="abar" id="aBar" style="display:none"><span id="aSummary" class="hint" style="margin:0"></span><button class="btn primary" id="aGoBtn" onclick="aModeIsBatch()?allocateBatch():allocate()">예산 배부하기</button></div>
     </div>
 
     <!-- 배부 현황 -->
@@ -2178,17 +2181,32 @@ function renderAllocForm(){
   $('aPhrases').innerHTML='';
   $('aDesc').value=''; $('aAmt').value=''; $('aPerHead').value=''; $('aFull').checked=false; $('aEven').checked=false;
   $('aLoadFrom').innerHTML = '<option value="">선택</option>' + M.groups.map(g=>`<option value="${g.그룹id}">${esc(g.예산명)} (${esc(String(g.수정일시).slice(0,10))})</option>`).join('');
-  document.querySelector('input[name=aWho][value=grade]').checked=true; aWhoChange();
+  document.querySelectorAll('input[name=aWho]').forEach(r=>r.checked=false); aWhoChange();
   aMethodChange();
   aModeChange();
 }
 function aMethod(){ return document.querySelector('input[name=aMethod]:checked').value; }
 function aModeIsBatch(){ return document.querySelector('input[name=aMode]:checked').value==='batch'; }
-function aIsCollect(){ return document.querySelector('input[name=aWho]:checked').value==='manager'; }
+function aWhoPicked(){ return !!document.querySelector('input[name=aWho]:checked'); }
+function aIsCollect(){ const r=document.querySelector('input[name=aWho]:checked'); return !!r && r.value==='manager'; }
+/** 앞 단계를 마치면 다음 단계가 차례로 나타난다 */
+function aReveal(){
+  if(!M || !$('aStep2')) return;
+  const show = (id, on) => { const e=$(id); const was = e.style.display!=='none'; e.style.display = on ? (id==='aBar'?'flex':'block') : 'none'; if(on && !was){ e.classList.remove('pop'); void e.offsetWidth; e.classList.add('pop'); } };
+  let s1, s2;
+  if(aModeIsBatch()){ const sel=abDraft.filter(r=>r.선택); s1 = true; s2 = sel.length>0 && !sel.some(r=>!r.대상 || r.금액<=0 || r.금액>r.잔여); }
+  else { s1 = !!$('aBudget').value; const sel=aSelected(); const amts=aAmounts(sel); s2 = s1 && sel.length>0 && amts.every(v=>v>0); }
+  const s3 = s2 && aWhoPicked();
+  show('aStep2', s1 && !aModeIsBatch()); show('aStep3', s2); show('aStep4', s3); show('aBar', s3);
+  $('aNextHint').textContent = aModeIsBatch()
+    ? (!s2 ? '배부할 예산을 체크하고 대상과 금액을 확인하면 다음 단계가 나타납니다.' : (!s3 ? '누가 품의할지 고르면 다음 단계가 나타납니다.' : ''))
+    : (!s1 ? '위 표에서 배부할 예산을 고르면 다음 단계가 나타납니다.' : (!s2 ? '금액 정하는 방법을 고르고 대상과 금액을 넣으면 다음 단계가 나타납니다.' : (!s3 ? '누가 품의할지 고르면 다음 단계가 나타납니다.' : '')));
+}
 function aWhoChange(){ const c=aIsCollect(); $('aWhoHint').style.display=c?'block':'none'; $('aTitleWrap').style.display=c?'none':'block'; $('aTitleCollectHint').style.display=c?'block':'none'; ['aEven','abEven'].forEach(id=>{ const e=$(id); e.disabled=c; if(c) e.checked=false; }); aSummary(); }
 function aEachInput(inp){ const cb=inp.closest('label').querySelector('.aT'); cb.checked = !!inp.value.replace(/[^0-9]/g,''); aRecalc(); }
 function aSummary(){
   if(!$('aSummary')) return;
+  aReveal();
   if(aModeIsBatch()){ const sel=abDraft.filter(r=>r.선택); $('aSummary').textContent = sel.length ? `${sel.length}건 · 합계 ${won(sel.reduce((t,r)=>t+r.금액,0))}원 · ${aIsCollect()?'담당자가 모아서 품의':'학년, 전담이 각자 품의'}` : ''; return; }
   const b = M && M.budgets.find(x=>x.id===$('aBudget').value); const sel=aSelected(); const total=aAmounts(sel).reduce((t,v)=>t+v,0);
   $('aSummary').textContent = (b && sel.length) ? `${b.산출내역} → ${sel.length}곳 · 합계 ${won(total)}원 · ${aIsCollect()?'담당자가 모아서 품의':'학년, 전담이 각자 품의'}` : '';
@@ -2242,6 +2260,7 @@ async function allocateBatch(){
   if(!sel.length) return toast('배부할 예산을 선택하세요', true);
   if(sel.some(r=>!r.대상)) return toast('대상이 비어 있는 항목이 있습니다', true);
   if(sel.some(r=>r.금액<=0||r.금액>r.잔여)) return toast('금액이 0이거나 잔여를 넘는 항목이 있습니다', true);
+  if(!aWhoPicked()) return toast('누가 품의할지 고르세요', true);
   const common = { 설명:$('aDesc').value, 균등분배:$('abEven').checked, 제목목록: aIsCollect()?[]:readTitles('aTitles'), 문구목록: readPhrases('aPhrases'), 담당자품의: aIsCollect() };
   if(!common.제목목록.length && !aIsCollect() && !confirm('품의 제목 양식이 없습니다. 없어도 배부는 되지만 학년에서 제목을 직접 써야 하고 에듀파인 자동 매칭이 어려워집니다. 그래도 배부할까요?')) return;
   if(!confirm(`${sel.length}건을 일괄 배부합니다. 진행할까요?`)) return;
@@ -2345,6 +2364,7 @@ function readPhrases(boxId){ return [...$(boxId).querySelectorAll('.phrase')].ma
 async function allocate(){
   const bid = $('aBudget').value; if(!bid) return toast('배부할 예산을 선택하세요', true);
   const sel = aSelected(); if(!sel.length) return toast('배부 대상을 선택하세요', true);
+  if(!aWhoPicked()) return toast('누가 품의할지 고르세요', true);
   const amts = aAmounts(sel);
   if(amts.some(v=>!(v>0))) return toast('금액이 비어 있는 대상이 있습니다. 금액을 넣거나 선택을 풀어 주세요', true);
   const req = { 예산id: bid, 배부방식: aMethod()==='개별'?'금액':aMethod(), 인당금액: Number($('aPerHead').value)||0,
