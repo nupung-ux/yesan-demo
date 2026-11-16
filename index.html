@@ -805,7 +805,7 @@
         <div class="stepbox">
           <div class="steph"><span class="num">2</span><h3>담긴 물품</h3><span class="r">각 학년·반·전담에서 담은 물품입니다. 고치려면 해당 학년 화면에서 수정합니다.</span></div>
           <div style="overflow-x:auto"><table class="list" id="cgItems" style="font-size:14px"><thead><tr><th>대상</th><th>내용</th><th>규격</th><th>단위</th><th style="text-align:right">수량</th><th style="text-align:right">예상단가</th><th style="text-align:right">합계</th><th>구매처</th><th>링크</th></tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="6" style="text-align:right">합계</td><td class="amt" style="text-align:right" id="cgTotal">0</td><td colspan="2"></td></tr></tfoot></table></div>
-          <div style="margin-top:8px;display:flex;justify-content:flex-end;flex-direction:column;align-items:flex-end;gap:3px"><button class="btn soft" onclick="cgXlsx()">에듀파인 업로드 양식</button><span class="hint" style="margin:0">에듀파인 품의에 업로드하면 물품이 자동 등록됩니다</span></div>
+          <div style="margin-top:8px;display:flex;justify-content:flex-end;flex-direction:column;align-items:flex-end;gap:3px"><span style="display:flex;gap:8px"><button class="btn" onclick="cgXlsxFull()" title="대상(학년, 반), 구매처, 링크, 합계까지 들어간 전체 내역">⬇ 품목 내역 받기 (구매처, 링크 포함)</button><button class="btn soft" onclick="cgXlsx()">에듀파인 업로드 양식</button></span><span class="hint" style="margin:0">에듀파인 품의에 업로드하면 물품이 자동 등록됩니다</span></div>
         </div>
       </div>
     </div>
@@ -871,7 +871,7 @@
           <div class="steph"><span class="num">2</span><h3>품목 입력</h3><span class="r">합계는 수량 × 예상단가로 자동 계산 · 엑셀에서 복사해 붙여넣을 수 있습니다</span></div>
           <div class="hint warn" style="margin:-4px 0 10px">품목을 직접 입력하거나 견적서 파일을 이 칸 어디에나 끌어다 놓아서 추가하실 수 있습니다. 내용을 쓰고 어느 칸에서든 <b>Enter</b>를 누르면 다음 행이 생깁니다.</div>
           <div id="cpBox" style="display:none"></div>
-          <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:6px"><button class="btn small" onclick="deleteItems('sel')">선택 삭제</button><button class="btn small" onclick="deleteItems('all')">전체 삭제</button></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:6px"><button class="btn small" onclick="downloadItemsFull()" title="구매처와 링크, 합계까지 들어간 전체 내역을 엑셀로 받습니다 (에듀파인 업로드 양식과는 다른 파일)">⬇ 품목 내역 받기 (구매처, 링크 포함)</button><button class="btn small" onclick="deleteItems('sel')">선택 삭제</button><button class="btn small" onclick="deleteItems('all')">전체 삭제</button></div>
           <div style="overflow-x:auto"><table class="edit" id="iTable"><thead><tr>
             <th style="width:30px"><input type="checkbox" onchange="iSelAll(this.checked)" title="전체 선택"></th><th class="clsCol" style="width:52px">반</th><th>내용 <span style="color:var(--danger)">*</span></th><th style="width:16%">규격</th><th style="width:7%">단위</th><th style="width:7%">수량 <span style="color:var(--danger)">*</span></th><th style="width:11%">예상단가 <span style="color:var(--danger)">*</span></th><th style="width:10%">합계</th><th style="width:11%">구매처</th><th style="width:56px">링크</th><th style="width:32px"></th>
           </tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="7" style="text-align:right">품목 합계</td><td class="num amt" id="iTotal">0</td><td colspan="3"></td></tr></tfoot></table></div>
@@ -2820,6 +2820,26 @@ async function copyText(text, what){
   catch(e){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast(`${what}을 복사했습니다`); }
 }
 function downloadItemsXlsx(){ xlsxItems(itemsFilled(), titleValue()); }
+/** 구매처, 링크, 합계까지 들어간 전체 품목 내역 (보관, 구매용). 에듀파인 업로드 양식과는 별개 */
+function xlsxItemsFull(items, title, withTarget){
+  if(!items.length) return toast('품목이 없습니다', true);
+  const anyCls = items.some(it=>Number(it.반)>0);
+  const head = ['번호', ...(withTarget?['대상']:[]), ...(anyCls?['반']:[]), '내용','규격','단위','수량','예상단가','합계','구매처','링크'];
+  let total = 0;
+  const body = items.map((it,i)=>{ const sum=(Number(it.수량)||0)*(Number(it.예상단가)||0); total+=sum;
+    return [i+1, ...(withTarget?[it.대상||'']:[]), ...(anyCls?[Number(it.반)>0?it.반+'반':'공통']:[]), it.내용||'', it.규격||'', it.단위||'개', Number(it.수량)||0, Number(it.예상단가)||0, sum, it.구매처||'', it.링크||'']; });
+  const iSum = head.indexOf('합계'), iLink = head.indexOf('링크'), iQty = head.indexOf('수량');
+  const foot = head.map(()=> ''); foot[head.indexOf('내용')] = '합계'; foot[iSum] = total;
+  const ws = XLSX.utils.aoa_to_sheet([head, ...body, foot]);
+  ws['!cols'] = head.map(h=>({wch: h==='내용'?38 : h==='링크'?50 : h==='규격'||h==='구매처'||h==='대상'?16 : h==='번호'||h==='반'||h==='단위'?7 : 12}));
+  for(let r=1; r<=body.length+1; r++){ [iQty, iQty+1, iSum].forEach(c=>{ const cell=ws[XLSX.utils.encode_cell({r,c})]; if(cell && typeof cell.v==='number') cell.z='#,##0'; });
+    const lc=ws[XLSX.utils.encode_cell({r,c:iLink})]; if(lc && /^https?:\/\//.test(String(lc.v))) lc.l={Target:String(lc.v)}; }
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '품목내역');
+  const name = (title||'품목내역').replace(/[\\/:*?"<>|]/g,'_').slice(0,40);
+  XLSX.writeFile(wb, `품목내역_전체_${name}.xlsx`);
+}
+function downloadItemsFull(){ xlsxItemsFull(itemsFilled(), (iMode==='class' ? `${U.label} ${uCls}반 ` : '') + (titleValue() || (U.allocs.find(a=>a.배부id===uAlloc)||{}).예산명 || '')); }
+function cgXlsxFull(){ if(!CG) return; xlsxItemsFull(cItems(CG), $('cgTitle').value.trim()||CG.예산명, true); }
 function xlsxItems(items, title){
   if(!items.length) return toast('품목이 없습니다', true);
   const rows=[['내용','규격','단위','수량','예상단가'], ...items.map(it=>[it.내용||'', it.규격||'', it.단위||'개', it.수량||0, it.예상단가||0])];
