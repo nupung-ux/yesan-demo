@@ -333,7 +333,7 @@
         <li>예산 표에서 쓸 예산 행을 클릭 → <b>새 품의 만들기</b></li>
         <li><b>① 품의서</b>: 왼쪽 양식 칸에서 담당자가 정한 제목 양식을 고르면 제목이 채워집니다. <b>복사</b>를 눌러 에듀파인 제목에 그대로 붙여 넣으세요. (제목을 그대로 써야 나중에 에듀파인 집행액이 자동으로 맞춰집니다)</li>
         <li>품의 개요: 문구(물품, 업추비 등)를 고르고 용도와 구매처를 넣으면 개요가 만들어집니다. 필요하면 바로 고친 뒤 <b>개요 복사</b>.</li>
-        <li><b>② 품목 입력</b>: 내용, 수량, 예상단가는 필수이고 합계는 자동입니다. 내용을 쓰고 어느 칸에서든 Enter를 누르면 다음 행이 생깁니다. 엑셀에서 복사해 첫 칸에 붙여 넣어도 되고, <b>견적서 파일을 이 칸에 끌어다 놓으면</b>(여러 개 가능) 품목이 바로 들어옵니다. 지마켓, 아이스크림몰, 학교장터, 아람과학사, 이마트몰, YES24 견적서와 에듀파인 품목내역 양식을 읽습니다. <b>✨ AI로 읽기</b> 버튼이 보이는 학교(관리자가 Gemini 키를 넣은 경우)는 쇼핑몰 장바구니 화면의 글을 복사해 붙여 넣거나 화면 캡처를 붙여 넣기(Ctrl+V)만 해도 품목을 읽어 줍니다. 읽은 결과는 확인 후 넣습니다.</li>
+        <li><b>② 품목 입력</b>: 내용, 수량, 예상단가는 필수이고 합계는 자동입니다. 내용을 쓰고 어느 칸에서든 Enter를 누르면 다음 행이 생깁니다. 엑셀에서 복사해 첫 칸에 붙여 넣어도 되고, <b>견적서 파일을 이 칸에 끌어다 놓으면</b>(여러 개 가능) 품목이 바로 들어옵니다. 지마켓, 아이스크림몰, 학교장터, 아람과학사, 이마트몰, YES24, 키드키즈몰 견적서와 에듀파인 품목내역 양식을 읽습니다. <b>✨ AI로 읽기</b> 버튼이 보이는 학교(관리자가 Gemini 키를 넣은 경우)는 쇼핑몰 장바구니 화면의 글을 복사해 붙여 넣거나 화면 캡처를 붙여 넣기(Ctrl+V)만 해도 품목을 읽어 줍니다. 읽은 결과는 확인 후 넣습니다.</li>
         <li><b>에듀파인 업로드 양식</b> 버튼으로 xlsx를 내려받아 에듀파인 품의의 품목 업로드에 넣으면 물품이 한 번에 등록됩니다.</li>
         <li>에듀파인에 기안을 올렸으면 <b>기안 완료</b>에 체크하고 <b>저장</b>. 이때부터 사용액과 잔액에 반영됩니다.</li>
       </ol>
@@ -447,7 +447,7 @@
       <h4>잔액이 마이너스예요.</h4>
       <p>배정액보다 많이 기안 완료한 상태입니다. 저장할 때 경고를 보고 진행한 것이니 담당자와 상의하세요.</p>
       <h4>견적서가 안 읽혀요.</h4>
-      <p>지마켓, 아이스크림몰, 아람과학사는 견적서를 엑셀로 저장한 파일, 학교장터와 YES24는 xlsx 파일, 이마트몰은 PDF로 저장한 파일만 됩니다. 에듀파인 품목내역 양식(내용, 규격, 수량, 예상단가)으로 된 엑셀은 어느 쇼핑몰 것이든 읽힙니다.</p>
+      <p>지마켓, 아이스크림몰, 아람과학사, 키드키즈몰은 견적서를 엑셀로 저장한 파일, 학교장터와 YES24는 xlsx 파일, 이마트몰은 PDF로 저장한 파일만 됩니다. 에듀파인 품목내역 양식(내용, 규격, 수량, 예상단가)으로 된 엑셀은 어느 쇼핑몰 것이든 읽힙니다.</p>
       <h4>"AI로 읽기" 버튼이 안 보여요.</h4>
       <p>관리자가 학교 설정에 Gemini API 키를 넣은 학교에서만 보입니다. 키가 있는데 "무료 사용량을 넘었습니다"가 뜨면 그날 한도를 다 쓴 것이니 다음 날 다시 되고, 견적서 가져오기와 직접 입력은 그대로 됩니다.</p>
       <h4>비밀번호를 잊었어요.</h4>
@@ -877,7 +877,7 @@
           </tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="7" style="text-align:right">품목 합계</td><td class="num amt" id="iTotal">0</td><td colspan="3"></td></tr></tfoot></table></div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
             <button class="btn small" onclick="addItemRow()">행 추가</button>
-            <button class="btn small" onclick="$('qFile').click()" title="지마켓 · 아이스크림몰 · 학교장터 · 아람과학사 · 이마트몰 · YES24 · 에듀파인 품목내역 양식">견적서 가져오기</button>
+            <button class="btn small" onclick="$('qFile').click()" title="지마켓 · 아이스크림몰 · 학교장터 · 아람과학사 · 이마트몰 · YES24 · 키드키즈몰 · 에듀파인 품목내역 양식">견적서 가져오기</button>
             <input type="file" id="qFile" accept=".xls,.xlsx,.htm,.html,.pdf" multiple style="display:none" onchange="quoteFilePicked(this)">
             <button class="btn small ai aiOnly" onclick="aiOpen('items')" title="장바구니 화면의 글을 복사해 붙여 넣거나 캡처 그림을 넣으면 AI가 품목을 읽어 줍니다">✨ AI로 읽기 (장바구니 글, 캡처)</button>
             <span id="adjWrap" style="display:flex;gap:8px;align-items:center;font-size:14px;margin-left:6px">
@@ -923,7 +923,7 @@
   <div class="hint" id="qHelpMsg"></div>
   <p style="font-size:14px;margin:10px 0 6px">가져올 수 있는 견적서 파일</p>
   <table class="list" style="font-size:13px"><tbody>
-    <tr><td>지마켓 · 아이스크림몰 · 아람과학사</td><td>견적서를 "엑셀로 저장"한 파일(.xls)</td></tr>
+    <tr><td>지마켓 · 아이스크림몰 · 아람과학사 · 키드키즈몰</td><td>견적서를 "엑셀로 저장"한 파일(.xls)</td></tr>
     <tr><td>학교장터(S2B)</td><td>odz가 아닌 엑셀(xlsx)로 내려받은 견적서</td></tr>
     <tr><td>이마트몰</td><td>견적서 화면을 PDF로 저장한 파일</td></tr>
     <tr><td>YES24</td><td>견적서 xlsx 또는 에듀파인 견적 양식 xlsx</td></tr>
@@ -2920,6 +2920,7 @@ function parseXlsxQuote(buf){
     const A=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''}).map(r=>r.map(v=>String(v).trim()));
     if(A.some(r=>r.includes('서명')&&r.some(v=>v.includes('공급단가')))) return parseYes24(A);
     if(A.some(r=>r.includes('내용')&&r.includes('수량')&&r.includes('예상단가'))) return parseEdufineForm(A);
+    if(A.some(r=>r.includes('품명')&&r.includes('수량')&&r.includes('단가'))) return parseKidkids(A);
   }
   return parseS2B(buf);
 }
@@ -2930,6 +2931,21 @@ function parseYes24(A){
   for(let i=hi+1;i<A.length;i++){ const r=A[i]; if(/합계/.test(r.join(' '))) break; if(!r[cName]||!numOf(r[cQty])) continue;
     items.push({내용:(cType>=0&&r[cType]?`[${r[cType]}] `:'')+r[cName], 규격:cPub>=0?r[cPub]:'', 단위:'권', 수량:numOf(r[cQty]), 예상단가:numOf(r[cPrice]), 구매처:'YES24', 출처:'YES24'}); }
   return {items, ship:0, 출처:'YES24'};
+}
+// 키드키즈몰: 엑셀 첫 줄이 품명 규격 수량 단위 단가. 옵션은 품명 끝에 "선택 : 핑크"처럼 붙어 있어 규격으로 옮긴다
+function parseKidkids(A){
+  const hi=A.findIndex(r=>r.includes('품명')&&r.includes('수량')&&r.includes('단가'));
+  const H=A[hi]; const cName=H.indexOf('품명'), cSpec=H.indexOf('규격'), cQty=H.indexOf('수량'), cUnit=H.indexOf('단위'), cPrice=H.indexOf('단가');
+  const items=[]; let ship=0;
+  for(let i=hi+1;i<A.length;i++){ const r=A[i]; let name=r[cName]; if(!name) continue;
+    if(/^(합\s*계|총\s*계|총\s*금액)/.test(name)) continue;
+    if(/^배송비/.test(name)){ ship=Math.max(ship, numOf(r[cPrice])); continue; }
+    if(!numOf(r[cQty])) continue;
+    let spec=cSpec>=0?r[cSpec]:'';
+    if(!spec){ const k=name.lastIndexOf(' : '); if(k>0){ spec=name.slice(k+3).trim(); name=name.slice(0,k).replace(/\s*(색상\s*)?선택$/,'').trim(); } }
+    items.push({내용:name, 규격:spec, 단위:cUnit>=0&&r[cUnit]?r[cUnit]:'개', 수량:numOf(r[cQty]), 예상단가:numOf(r[cPrice]), 구매처:'키드키즈몰', 출처:'키드키즈몰'});
+  }
+  return {items, ship, 출처:'키드키즈몰'};
 }
 // 에듀파인 품목내역 양식(내용·규격·단위·수량·예상단가) — YES24 에듀파인 양식 등
 function parseEdufineForm(A){
@@ -3622,7 +3638,7 @@ function aiApply(){
 }
 document.addEventListener('paste', e => { if($('aiModal').classList.contains('on')) aiPaste(e); });
 
-const APP_VERSION = '2026-11-03';   // 빌드 날짜 (설치 안내 페이지가 이 값을 읽어 최신 버전을 표시)
+const APP_VERSION = '2026-11-18';   // 빌드 날짜 (설치 안내 페이지가 이 값을 읽어 최신 버전을 표시)
 // ───────── 브라우저 탭 아이콘 ─────────
 const DEFAULT_FAVICON = document.getElementById('favicon').getAttribute('href');
 function setFavicon(src){ $('favicon').href = src || DEFAULT_FAVICON; }
