@@ -28,7 +28,8 @@
   h1{font-size:22px} h2{font-size:18px} h3{font-size:15px}
   a{color:var(--navy)}
 
-  .top{background:var(--panel);border-bottom:1px solid var(--line)}
+  .top{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:6}
+  html{scroll-padding-top:calc(var(--topH,56px) + 8px)}
   .top .in{max-width:1560px;margin:0 auto;padding:14px 28px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .top .school{font-size:17px;font-weight:700}
   .top .logo{height:42px;max-width:70px;object-fit:contain;align-self:center;margin:-8px 0}
@@ -37,7 +38,7 @@
   .top .crumb button{background:none;border:0;padding:0;color:var(--navy);cursor:pointer;text-decoration:underline}
 
   .layout{display:flex;align-items:flex-start;max-width:1720px;margin:0 auto}
-  .side{width:250px;flex:none;position:sticky;top:0;height:100vh;overflow-y:auto;padding:22px 18px;border-right:1px solid var(--line);background:var(--panel)}
+  .side{width:250px;flex:none;position:sticky;top:var(--topH,56px);height:calc(100vh - var(--topH,56px));overflow-y:auto;padding:22px 18px;border-right:1px solid var(--line);background:var(--panel)}
   .side h4{margin:0 0 6px;font-size:13px;color:var(--ink-3);font-weight:600;letter-spacing:.02em}
   .side .blk{margin-bottom:22px}
   .side select{width:100%;margin-bottom:6px}
@@ -3994,6 +3995,8 @@ async function resetTestSchool(){
   finally{ busy(false); }
 }
 
+// 맨 위 제목 줄 고정: 높이를 재서 옆 메뉴와 스크롤 위치가 가려지지 않게 한다
+(function(){ const t=document.querySelector('.top'); if(!t) return; const set=()=>document.documentElement.style.setProperty('--topH', t.offsetHeight+'px'); set(); window.addEventListener('resize', set); if(window.ResizeObserver) new ResizeObserver(set).observe(t); })();
 init();
 </script>
 </body>
