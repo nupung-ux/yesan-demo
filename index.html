@@ -391,6 +391,7 @@
         <li><b>담당자 품의</b> 탭에서 <b>취합 품의서 열기</b> → 제목을 쓰고(배부할 때는 제목 양식을 정하지 않습니다) <b>제목 저장</b>. 저장한 제목이 학년, 전담 화면의 담기 목록에 나타납니다.</li>
         <li>각 학년, 반, 전담이 물품을 담으면 <b>담긴 물품</b>에 모입니다. 담기 완료 여부도 함께 보입니다.</li>
         <li>개요를 만들어 복사하고 <b>에듀파인 업로드 양식</b>을 내려받아 기안합니다. 기안했으면 <b>기안 완료</b> 체크. 그 차수는 마무리되어 학년에서 더 고칠 수 없습니다.</li>
+        <li>학년과 전담은 물품을 모두 담았으면 <b>담기 완료</b>에 체크하고 저장합니다. 담당자 품의 탭의 카드와 취합 품의서에 대상별로 "담기 완료 ✓", "담는 중", "아직 안 담음"이 표시되어 누가 끝냈는지 볼 수 있습니다. 완료 뒤에도 기안 완료 전까지는 체크를 풀고 고칠 수 있습니다.</li>
         <li>업체에서 학년별로 나눈 견적서(엑셀)를 받았으면 취합 품의서의 <b>학년별 견적서 가져오기</b>로 올립니다. "■1학년■"처럼 학년이 적힌 구분 줄을 기준으로 물품을 나눠 보여 주고, 확인 후 넣으면 각 학년이 담아 둔 물품이 견적서 내용으로 바뀝니다. 학년별 사용액이 견적서와 같아지고, 에듀파인 원인행위액도 이 금액 비율로 나뉘어 반영됩니다. 대상이 잘못 잡힌 줄은 미리보기에서 바꿀 수 있습니다. 읽히지 않는 견적서(PDF 등)는 <b>대상별 금액만 입력</b>으로 학년별 금액만 넣으세요.</li>
         <li>학습준비물처럼 1학기, 2학기로 나눠 여러 번 품의할 때는 기안 완료 뒤 카드의 <b>＋ 2차 품의 추가</b>를 누릅니다. 각 학년과 전담 화면에 2차 품의가 새로 생겨 남은 예산 안에서 다시 물품을 담을 수 있고, 3차도 같은 방식입니다. 지난 차수는 카드의 "보기"로 다시 열어 볼 수 있습니다.</li>
       </ol>
@@ -804,7 +805,7 @@
         </div>
 
         <div class="stepbox">
-          <div class="steph"><span class="num">2</span><h3>담긴 물품</h3><span class="r">각 학년·반·전담에서 담은 물품입니다. 고치려면 해당 학년 화면에서 수정합니다.</span></div>
+          <div class="steph"><span class="num">2</span><h3>담긴 물품</h3><span class="r">각 학년·반·전담에서 담은 물품입니다. 고치려면 해당 학년 화면에서 수정합니다. 학년과 전담이 "담기 완료"에 체크하고 저장하면 위에 완료로 표시됩니다.</span></div>
           <div id="cgImportBar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;background:#fff">
             <button class="btn" onclick="$('cqFileIn').click()">📄 학년별 견적서 가져오기</button><input type="file" id="cqFileIn" accept=".xls,.xlsx,.htm,.html" style="display:none" onchange="cqFile(this)">
             <button class="btn soft" onclick="caOpen()">대상별 금액만 입력</button>
@@ -894,7 +895,7 @@
           </div>
         </div>
 
-        <div class="note" id="collectBar" style="display:none;justify-content:space-between;align-items:center;gap:10px;margin-top:0"><span id="collectBarMsg"></span><button class="btn primary" onclick="savePumui()">저장</button></div>
+        <div class="note" id="collectBar" style="display:none;justify-content:space-between;align-items:center;gap:10px;margin-top:0"><span id="collectBarMsg"></span><span style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:6px;align-items:center;cursor:pointer;white-space:nowrap" title="필요한 물품을 모두 담았으면 체크하고 저장하세요. 예산배정 담당자 화면에 완료로 표시됩니다."><input type="checkbox" id="gDone"> <b>담기 완료</b> <span class="hint" style="margin:0">모두 담았으면 체크하고 저장</span></label><button class="btn primary" onclick="savePumui()">저장</button></span></div>
         <div class="actions" id="classActions" style="justify-content:space-between;display:none">
           <label id="collectWrap" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="cDone"> <b>담기 완료</b> <span class="hint" style="margin:0">체크하면 학년 공통 화면에 완료로 표시됩니다</span></label>
           <button class="btn primary" onclick="saveClassItems()">저장</button>
@@ -1507,7 +1508,7 @@ async function managerGetAll(id, pw) {
         let rd = g.회차목록.find(r => r.회차 === no); if (!rd) { rd = { 회차: no, 키: cp.취합그룹, 취합: [] }; g.회차목록.push(rd); }
         const its = (cp.품목 || []).slice().sort((x, y) => num_(x.순서) - num_(y.순서)).map(i => ({ 내용: i.내용, 규격: i.규격, 단위: i.단위, 수량: num_(i.수량), 예상단가: num_(i.예상단가), 구매처: i.구매처, 링크: i.링크 || '', 반: num_(i.반) }));
         rd.취합.push({ 품의id: cp.id, 대상: a.대상, 라벨: targetLabel_(a.대상, depts), 제목: cp.제목, 상태: cp.상태, 원인행위액: num_(cp.원인행위액), 에듀파인품의번호: cp.에듀파인품의번호 || '',
-          담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 품목합계: pumuiAmount_(cp).품목합계, 조정합계: pumuiAmount_(cp).조정합계,
+          담기마감: cp.담기마감 === 'Y', 학급담기: cp.학급담기 === 'Y', 담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 품목합계: pumuiAmount_(cp).품목합계, 조정합계: pumuiAmount_(cp).조정합계,
           합계: pumuiAmount_(cp).조정합계 !== null ? pumuiAmount_(cp).조정합계 : pumuiAmount_(cp).품목합계 });
       });
     }
@@ -1710,7 +1711,7 @@ async function managerDeleteGroup(id, pw, gid) {
 function pumuiOut_(p) {
   const amt = pumuiAmount_(p);
   return Object.assign({}, p, amt, { 반: num_(p.반), 차수: num_(p.차수), 원인행위액: num_(p.원인행위액), 조정합계: amt.조정합계,
-    학급담기: p.학급담기 === 'Y', 취합그룹: p.취합그룹 || '', 반당한도: num_(p.반당한도), 담기완료: doneList_(p),
+    학급담기: p.학급담기 === 'Y', 취합그룹: p.취합그룹 || '', 반당한도: num_(p.반당한도), 담기완료: doneList_(p), 담기마감: p.담기마감 === 'Y',
     품목: (p.품목 || []).slice().sort((x, y) => num_(x.순서) - num_(y.순서)).map(i => Object.assign({}, i, { 수량: num_(i.수량), 예상단가: num_(i.예상단가), 반: num_(i.반) })) });
 }
 async function userGetAll(target) {
@@ -1801,6 +1802,7 @@ async function userSavePumui(pumuiId, patch, who) {
     조정합계: (patch.조정합계 === undefined || patch.조정합계 === null || String(patch.조정합계).trim() === '') ? '' : num_(patch.조정합계),
     수정일시: now_(), 품목: cleanItems_(patch.품목),
   };
+  if (p.취합그룹) { delete upd.조정합계; if (patch.담기마감 !== undefined) upd.담기마감 = patch.담기마감 ? 'Y' : 'N'; }   // 취합 품의: 담당자가 정한 금액은 그대로, 학년은 담기 완료만 표시
   if (patch.학급담기 !== undefined && num_(p.반) === 0) { upd.학급담기 = patch.학급담기 ? 'Y' : 'N'; upd.반당한도 = patch.학급담기 ? num_(patch.반당한도) : ''; }
   if (upd.상태 === '기안완료' && !patch.초과허용) {
     const a = (await col_('배부')).find(x => x.id === p.배부id);
@@ -2475,7 +2477,7 @@ function groupCard(g){
         : `<span class="k">제목</span><span>${g.제목목록.length?g.제목목록.map(t=>`<div>${esc(t)} <span style="color:var(--ink-3)">→ ${esc(titlePreview(t))}</span></div>`).join(''):'<span style="color:var(--warn)">없음 (학년에서 직접 작성)</span>'}</span>`}
       ${g.문구목록.length?`<span class="k">문구</span><span>${g.문구목록.map(p=>esc(p.이름)).join(', ')}</span>`:''}
       ${g.품의있음&&!g.담당자품의?'<span class="k">품의</span><span>작성된 품의 있음</span>':''}
-      ${g.담당자품의?`<span class="k">${g.회차}차 담긴 물품</span><span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${g.취합.map(c=>{ const doneAll=c.학급수&&c.담기완료.length?c.담기완료.length>=c.학급수:c.품목.length>0; return `<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:${doneAll?'var(--navy-tint)':'#fff'}">${esc(c.라벨)} ${c.품목.length}건 ${won(c.합계)}${c.학급수&&c.담기완료.length?` (${c.담기완료.length}/${c.학급수}반 완료)`:''}</span>`; }).join('')}</div></span>`:''}
+      ${g.담당자품의?`<span class="k">${g.회차}차 담긴 물품</span><span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${g.취합.map(c=>`<span style="border:1px solid ${c.담기마감?'var(--navy)':'var(--line)'};border-radius:999px;padding:2px 10px;font-size:13px;background:${c.담기마감?'var(--navy-tint)':'#fff'}">${esc(c.라벨)} ${c.품목.length}건 ${won(c.합계)} · ${cDoneText(c)}</span>`).join('')}<span class="hint" style="margin:0">담기 완료 ${g.취합.filter(c=>c.담기마감).length}/${g.취합.length}</span></div></span>`:''}
     </div></div>`;
 }
 function renderGroups(){
@@ -2492,6 +2494,7 @@ function renderGroups(){
 let CG=null;
 function cLabels(g){ return g.대상들.map(t=>t.라벨).join('·'); }
 function cSubst(t,g){ const L=cLabels(g); return t.replace(PH_CLS_UI,L).replace(/\{예산명\}/g,g.예산명); }
+function cDoneText(c){ return c.담기마감 ? '<b>담기 완료 ✓</b>' : ((c.학급담기&&c.학급수) ? `담는 중 (${c.담기완료.length}/${c.학급수}반 완료)` : (c.품목.length ? '담는 중' : '아직 안 담음')); }
 function cItems(g){ return g.취합.flatMap(c=>c.품목.map(i=>({...i, 대상:c.라벨}))); }
 function openCollect(gid, round){
   const g0=M.groups.find(x=>x.그룹id===gid); if(!g0) return;
@@ -2511,7 +2514,7 @@ function openCollect(gid, round){
   $('cgTitle').value=curTitle||(titles[0]||'');
   $('cgItems').querySelector('tbody').innerHTML=items.map(i=>`<tr><td style="white-space:nowrap">${esc(i.대상)}${i.반?` <span class="cls-tag">${i.반}반</span>`:''}</td><td>${esc(i.내용)}</td><td>${esc(i.규격)}</td><td>${esc(i.단위||'개')}</td><td class="amt" style="text-align:right">${i.수량}</td><td class="amt" style="text-align:right">${won(i.예상단가)}</td><td class="amt" style="text-align:right">${won(i.수량*i.예상단가)}</td><td>${esc(i.구매처||'')}</td><td>${i.링크?`<a href="${esc(i.링크)}" target="_blank">열기</a>`:''}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">아직 담긴 물품이 없습니다.</td></tr>';
   $('cgTotal').textContent=won(total);
-  $('cgStatus').innerHTML=g.취합.map(c=>`<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:#fff">${esc(c.라벨)}${c.학급수?` ${c.담기완료.length}/${c.학급수}반 완료`:(c.품목.length?' 담음':' 미담')}${c.합계?` · ${won(c.합계)}원`:''}${c.원인행위액?` · 원인행위 ${won(c.원인행위액)}`:''}</span>`).join(' ');
+  $('cgStatus').innerHTML=g.취합.map(c=>`<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:${c.담기마감?'var(--navy-tint)':'#fff'}">${esc(c.라벨)} · ${cDoneText(c)}${c.합계?` · ${won(c.합계)}원`:''}${c.원인행위액?` · 원인행위 ${won(c.원인행위액)}`:''}</span>`).join(' ');
   const list=[...M.기본문구.map(x=>({...x,출처:'기본'})), ...g.문구목록.map(x=>({...x,출처:'담당자'}))];
   $('cgPhrase').innerHTML=list.map((x,i)=>`<option value="${i}">${esc(x.이름)}${x.출처==='담당자'?' (이 예산 전용)':''}</option>`).join('')||'<option value="">문구 없음</option>'; $('cgPhrase')._list=list;
   const vs=[...new Set(items.map(i=>String(i.구매처||'').trim()).filter(Boolean))];
@@ -2547,6 +2550,8 @@ async function newCollectRound(gid){
 }
 function cgXlsx(){ if(!CG) return; xlsxItems(cItems(CG), $('cgTitle').value.trim()||CG.예산명); }
 async function cgFinalize(){ if(!CG) return; const done=$('cgDone').checked;
+  const notYet = CG.취합.filter(c=>!c.담기마감).map(c=>c.라벨);
+  if(done && notYet.length && !confirm(`아직 담기 완료하지 않은 대상이 있습니다: ${notYet.join(', ')}\n그래도 기안 완료로 진행할까요?`)){ $('cgDone').checked=false; return; }
   if(done && !confirm('취합 품의를 기안 완료로 표시합니다. 각 학년·전담의 사용액에 반영되고, 더 이상 물품을 담을 수 없습니다. 계속할까요?')){ $('cgDone').checked=false; return; }
   const r=CG.회차; const t=$('cgTitle').value.trim();
   if(done && !t){ $('cgDone').checked=false; return toast('품의 제목을 먼저 쓰세요', true); }
@@ -2654,7 +2659,7 @@ function renderPumuiPanel(a){
   $('uAllocName').innerHTML = (uCls ? '<span class="badge cls">우리 반 품의</span>' : (U.isGrade ? '<span class="badge common">학년 공통 품의</span>' : '')) + `${esc(a.예산명)} — ${uCls?U.target+'학년 '+uCls+'반':(U.isGrade?U.target+'학년 공통':esc(U.label))} · 잔액 ${won(rem(a))}원`;
   $('uAllocDesc').style.display = a.설명?'block':'none'; $('uAllocDesc').textContent=a.설명;
   const list = a.품의.filter(p=>p.반===uCls);
-  $('uPList').innerHTML = list.map(p=>`<div class="pchip ${uP===p.id?'sel':''}" onclick="openPumui('${p.id}')"><div>${p.차수}차 · ${esc(p.제목||'(제목 없음)')}${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':(p.학급담기?' <span class="cls-tag">학급 담기</span>':'')}</div><div class="st ${p.상태==='기안완료'?'done':''}">${p.상태==='기안완료'?'기안 완료':'작성 중'} · ${won(p.반영액)}원${p.원인행위액?` (원인행위 ${won(p.원인행위액)})`:(p.조정합계!==null&&p.조정합계!==undefined?' (합계 수정)':'')}</div></div>`).join('')
+  $('uPList').innerHTML = list.map(p=>`<div class="pchip ${uP===p.id?'sel':''}" onclick="openPumui('${p.id}')"><div>${p.차수}차 · ${esc(p.제목||'(제목 없음)')}${p.취합그룹?' <span class="cls-tag">담당자 취합</span>':(p.학급담기?' <span class="cls-tag">학급 담기</span>':'')}</div><div class="st ${p.상태==='기안완료'||(p.취합그룹&&p.담기마감)?'done':''}">${p.상태==='기안완료'?'기안 완료':(p.취합그룹?(p.담기마감?'담기 완료':'담는 중'):'작성 중')} · ${won(p.반영액)}원${p.원인행위액?` (원인행위 ${won(p.원인행위액)})`:(p.조정합계!==null&&p.조정합계!==undefined?' (합계 수정)':'')}</div></div>`).join('')
     || '<span class="empty" style="padding:4px 0">아직 품의가 없습니다. [새 품의 만들기]를 누르세요.</span>';
   if(a.담당자품의) $('uPList').innerHTML = (uCls>0)
     ? '<div class="note" style="margin:0;flex-basis:100%">예산배정 담당자가 모아서 품의하는 예산입니다. 지금은 학년에서 한꺼번에 물품을 담고 있습니다. 반별로 담으려면 학년부장이 학년 전체 탭의 품의에서 "각 학급에서 물품 담기"를 켜야 합니다.</div>'
@@ -2689,7 +2694,8 @@ function setEditorMode(mode, p){
   $('xlsxWrap').style.display = (mode==='class'||collect)?'none':'flex';
   $('classActions').style.display = mode==='class'?'flex':'none';
   $('collectBar').style.display = collect?'flex':'none';
-  if(collect) $('collectBarMsg').textContent = `예산배정 담당자가 취합해 기안하는 품의입니다. 물품만 담고 저장하세요. ${p.차수}차 · 제목: ${p.제목||'(담당자가 정함)'}${p.상태==='기안완료'?' · 담당자가 기안을 완료해 더 이상 고칠 수 없습니다':''}`;
+  if(collect) $('collectBarMsg').textContent = `예산배정 담당자가 취합해 기안하는 품의입니다. 물품을 담고, 모두 담았으면 담기 완료에 체크한 뒤 저장하세요. ${p.차수}차 · 제목: ${p.제목||'(담당자가 정함)'}${p.상태==='기안완료'?' · 담당자가 기안을 완료해 더 이상 고칠 수 없습니다':''}`;
+  $('gDone').checked = !!(collect && p.담기마감);
   const lockEl = $('uEditor'); lockEl.classList.toggle('locked', !!(collect && p.상태==='기안완료'));
 }
 function renderCpBox(p){
@@ -2795,7 +2801,9 @@ async function savePumui(allowOver){
   const filled = iDraft.filter(it=>it.내용||it.수량||it.예상단가);
   const bad = filled.find(it=>!it.내용||!it.수량||!it.예상단가);
   if(bad) return toast('품목의 내용·수량·예상단가는 모두 입력해야 합니다', true);
-  const patch = { 제목:titleValue(), 작성자:'', 상태:$('pDone').checked?'기안완료':'작성중', 품목:iDraft, 초과허용: !!allowOver,
+  const cur = (curAlloc()||{품의:[]}).품의.find(x=>x.id===uP); const isCollect = !!(cur && cur.취합그룹);
+  if(isCollect && $('gDone').checked && !filled.length && !confirm('담은 물품이 없습니다. 이번에는 살 물품이 없는 것으로 담기 완료할까요?')) return;
+  const patch = { 제목:titleValue(), 작성자:'', 상태:$('pDone').checked?'기안완료':'작성중', 품목:iDraft, 초과허용: !!allowOver, 담기마감: isCollect ? $('gDone').checked : undefined,
 
     조정합계: $('pAdjOn').checked ? ($('pAdj').value.replace(/[^0-9]/g,'')||'') : '' };
   const r = await call('userSavePumui', uP, patch, who);
@@ -2803,7 +2811,7 @@ async function savePumui(allowOver){
     if(confirm(`잔액을 초과합니다. 반영하면 잔액이 ${won(r.잔액)}원(마이너스)이 됩니다.\n그래도 사용액에 반영할까요?`)) return savePumui(true);
     return;
   }
-  toast('저장했습니다'); await loadUser();
+  toast(isCollect ? ($('gDone').checked ? '담기 완료로 저장했습니다. 담당자 화면에 완료로 표시됩니다' : '저장했습니다. 물품을 모두 담았으면 담기 완료에 체크하고 저장해 주세요') : '저장했습니다'); await loadUser();
 }
 async function deletePumui(){
   if(!confirm('이 품의를 삭제할까요? 품목도 함께 지워집니다.')) return;
