@@ -391,6 +391,7 @@
         <li><b>담당자 품의</b> 탭에서 <b>취합 품의서 열기</b> → 제목을 쓰고(배부할 때는 제목 양식을 정하지 않습니다) <b>제목 저장</b>. 저장한 제목이 학년, 전담 화면의 담기 목록에 나타납니다.</li>
         <li>각 학년, 반, 전담이 물품을 담으면 <b>담긴 물품</b>에 모입니다. 담기 완료 여부도 함께 보입니다.</li>
         <li>개요를 만들어 복사하고 <b>에듀파인 업로드 양식</b>을 내려받아 기안합니다. 기안했으면 <b>기안 완료</b> 체크. 그 차수는 마무리되어 학년에서 더 고칠 수 없습니다.</li>
+        <li>견적서를 넣기 전에 학년이 담았던 내용은 지워지지 않고 따로 보관됩니다. 학년 화면에는 안내 줄과 <b>원래 담았던 내용 보기</b> 버튼이, 취합 품의서에는 <b>학년이 원래 담았던 내용 보기</b> 버튼이 생겨 견적서와 비교할 수 있고 엑셀로도 받을 수 있습니다.</li>
         <li>학년과 전담은 물품을 모두 담았으면 <b>담기 완료</b>에 체크하고 저장합니다. 담당자 품의 탭의 카드와 취합 품의서에 대상별로 "담기 완료 ✓", "담는 중", "아직 안 담음"이 표시되어 누가 끝냈는지 볼 수 있습니다. 완료 뒤에도 기안 완료 전까지는 체크를 풀고 고칠 수 있습니다.</li>
         <li>업체에서 학년별로 나눈 견적서(엑셀)를 받았으면 취합 품의서의 <b>학년별 견적서 가져오기</b>로 올립니다. "■1학년■"처럼 학년이 적힌 구분 줄을 기준으로 물품을 나눠 보여 주고, 확인 후 넣으면 각 학년이 담아 둔 물품이 견적서 내용으로 바뀝니다. 학년별 사용액이 견적서와 같아지고, 에듀파인 원인행위액도 이 금액 비율로 나뉘어 반영됩니다. 대상이 잘못 잡힌 줄은 미리보기에서 바꿀 수 있습니다. 읽히지 않는 견적서(PDF 등)는 <b>대상별 금액만 입력</b>으로 학년별 금액만 넣으세요.</li>
         <li>학습준비물처럼 1학기, 2학기로 나눠 여러 번 품의할 때는 기안 완료 뒤 카드의 <b>＋ 2차 품의 추가</b>를 누릅니다. 각 학년과 전담 화면에 2차 품의가 새로 생겨 남은 예산 안에서 다시 물품을 담을 수 있고, 3차도 같은 방식입니다. 지난 차수는 카드의 "보기"로 다시 열어 볼 수 있습니다.</li>
@@ -812,6 +813,7 @@
             <span class="hint" style="margin:0">업체가 학년별로 나눠 준 견적서(엑셀)를 올리면 각 학년 물품이 견적서 내용으로 바뀌어 학년별 사용액이 견적서와 같아집니다.</span>
           </div>
           <div id="cgAdjNote" class="hint warn" style="display:none"></div>
+          <div id="cgOrigBar" style="display:none;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 10px;font-size:14px"><span id="cgOrigMsg"></span><button class="btn small" onclick="ogOpenAll()">학년이 원래 담았던 내용 보기</button></div>
           <div style="overflow-x:auto"><table class="list" id="cgItems" style="font-size:14px"><thead><tr><th>대상</th><th>내용</th><th>규격</th><th>단위</th><th style="text-align:right">수량</th><th style="text-align:right">예상단가</th><th style="text-align:right">합계</th><th>구매처</th><th>링크</th></tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="6" style="text-align:right">합계</td><td class="amt" style="text-align:right" id="cgTotal">0</td><td colspan="2"></td></tr></tfoot></table></div>
           <div style="margin-top:8px;display:flex;justify-content:flex-end;flex-direction:column;align-items:flex-end;gap:3px"><span style="display:flex;gap:8px"><button class="btn" onclick="cgXlsxFull()" title="대상(학년, 반), 구매처, 링크, 합계까지 들어간 전체 내역">⬇ 품목 내역 받기 (구매처, 링크 포함)</button><button class="btn soft" onclick="cgXlsx()">에듀파인 업로드 양식</button></span><span class="hint" style="margin:0">에듀파인 품의에 업로드하면 물품이 자동 등록됩니다</span></div>
         </div>
@@ -895,6 +897,7 @@
           </div>
         </div>
 
+        <div class="note" id="origNote" style="display:none;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;background:#eef2f8;border-left-color:var(--navy)"><span id="origNoteMsg"></span><button class="btn" onclick="ogOpenMine()">원래 담았던 내용 보기</button></div>
         <div class="note" id="collectBar" style="display:none;justify-content:space-between;align-items:center;gap:10px;margin-top:0"><span id="collectBarMsg"></span><span style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:6px;align-items:center;cursor:pointer;white-space:nowrap" title="필요한 물품을 모두 담았으면 체크하고 저장하세요. 예산배정 담당자 화면에 완료로 표시됩니다."><input type="checkbox" id="gDone"> <b>담기 완료</b> <span class="hint" style="margin:0">모두 담았으면 체크하고 저장</span></label><button class="btn primary" onclick="savePumui()">저장</button></span></div>
         <div class="actions" id="classActions" style="justify-content:space-between;display:none">
           <label id="collectWrap" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="cDone"> <b>담기 완료</b> <span class="hint" style="margin:0">체크하면 학년 공통 화면에 완료로 표시됩니다</span></label>
@@ -966,6 +969,14 @@
   <div class="hint">견적서를 읽을 수 없을 때 씁니다. 견적서에 적힌 학년별(전담별) 금액을 넣으면 물품 합계 대신 이 금액이 사용액으로 잡힙니다. 비워 두면 담긴 물품 합계를 그대로 씁니다.</div>
   <div style="overflow-x:auto"><table class="list" id="caTable" style="font-size:14px"><thead><tr><th>대상</th><th style="text-align:right">담긴 물품 합계</th><th style="text-align:right;width:170px">견적 금액</th></tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="2" style="text-align:right">합계</td><td class="amt" style="text-align:right" id="caTotal">0</td></tr></tfoot></table></div>
   <div class="actions"><button class="btn" onclick="$('caModal').classList.remove('on')">취소</button><button class="btn primary" onclick="caApply()">저장</button></div>
+</div></div>
+
+<!-- 견적서 반영 전 학년이 담았던 내용 -->
+<div class="modal-bg" id="ogModal"><div class="modal" style="max-width:980px">
+  <h3 id="ogTitle">견적서 반영 전에 담았던 내용</h3>
+  <div class="hint" id="ogInfo"></div>
+  <div style="overflow-x:auto;max-height:55vh;overflow-y:auto"><table class="list" id="ogTable" style="font-size:13px"><thead></thead><tbody></tbody></table></div>
+  <div class="actions"><button class="btn" onclick="ogXlsx()">⬇ 엑셀로 받기</button><button class="btn primary" onclick="$('ogModal').classList.remove('on')">닫기</button></div>
 </div></div>
 
 <!-- 견적서 미리보기 모달 -->
@@ -1508,7 +1519,7 @@ async function managerGetAll(id, pw) {
         let rd = g.회차목록.find(r => r.회차 === no); if (!rd) { rd = { 회차: no, 키: cp.취합그룹, 취합: [] }; g.회차목록.push(rd); }
         const its = (cp.품목 || []).slice().sort((x, y) => num_(x.순서) - num_(y.순서)).map(i => ({ 내용: i.내용, 규격: i.규격, 단위: i.단위, 수량: num_(i.수량), 예상단가: num_(i.예상단가), 구매처: i.구매처, 링크: i.링크 || '', 반: num_(i.반) }));
         rd.취합.push({ 품의id: cp.id, 대상: a.대상, 라벨: targetLabel_(a.대상, depts), 제목: cp.제목, 상태: cp.상태, 원인행위액: num_(cp.원인행위액), 에듀파인품의번호: cp.에듀파인품의번호 || '',
-          담기마감: cp.담기마감 === 'Y', 학급담기: cp.학급담기 === 'Y', 담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 품목합계: pumuiAmount_(cp).품목합계, 조정합계: pumuiAmount_(cp).조정합계,
+          원래품목: Array.isArray(cp.원래품목) ? cp.원래품목 : null, 원래일시: cp.원래일시 || '', 담기마감: cp.담기마감 === 'Y', 학급담기: cp.학급담기 === 'Y', 담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 품목합계: pumuiAmount_(cp).품목합계, 조정합계: pumuiAmount_(cp).조정합계,
           합계: pumuiAmount_(cp).조정합계 !== null ? pumuiAmount_(cp).조정합계 : pumuiAmount_(cp).품목합계 });
       });
     }
@@ -1672,7 +1683,9 @@ async function managerSetCollectItems(id, pw, key, parts) {
   if (members.some(p => p.상태 === '기안완료')) throw new Error('기안 완료한 품의는 바꿀 수 없습니다. 기안 완료를 먼저 풀어 주세요.');
   const ops = []; let n = 0;
   (parts || []).forEach(pt => { const m = members.find(p => p.id === pt.품의id); if (!m) return;
-    if (Array.isArray(pt.품목)) { const its = cleanItems_(pt.품목.map(i => Object.assign({}, i, { id: '', 반: 0 }))); n += its.length; ops.push(opUpd_('품의', m.id, { 품목: its, 조정합계: '', 수정일시: now_() })); }
+    if (Array.isArray(pt.품목)) { const its = cleanItems_(pt.품목.map(i => Object.assign({}, i, { id: '', 반: 0 }))); n += its.length; const upd = { 품목: its, 조정합계: '', 수정일시: now_() };
+      if (!Array.isArray(m.원래품목) && (m.품목 || []).length) { upd.원래품목 = m.품목; upd.원래일시 = now_(); }   // 학년이 처음 담았던 내용은 따로 남겨 둔다(처음 한 번만)
+      ops.push(opUpd_('품의', m.id, upd)); }
     else if (pt.금액 !== undefined) ops.push(opUpd_('품의', m.id, { 조정합계: String(pt.금액).trim() === '' ? '' : num_(pt.금액), 수정일시: now_() })); });
   if (!ops.length) throw new Error('바꿀 대상이 없습니다.');
   ops.push(logOp_('담당자', '취합 물품 넣기', key, `${ops.length}개 대상, 물품 ${n}건`));
@@ -2494,6 +2507,23 @@ function renderGroups(){
 let CG=null;
 function cLabels(g){ return g.대상들.map(t=>t.라벨).join('·'); }
 function cSubst(t,g){ const L=cLabels(g); return t.replace(PH_CLS_UI,L).replace(/\{예산명\}/g,g.예산명); }
+// 견적서 반영 전에 학년이 담았던 내용 보기
+let OG=null;
+function ogSum(list){ return (list||[]).reduce((t,i)=>t+(Number(i.수량)||0)*(Number(i.예상단가)||0),0); }
+function ogShow(items, title, info, withTarget){
+  OG={items, title, withTarget}; const anyCls=items.some(i=>Number(i.반)>0);
+  $('ogTitle').textContent=title; $('ogInfo').textContent=info;
+  $('ogTable').querySelector('thead').innerHTML=`<tr>${withTarget?'<th>대상</th>':''}${anyCls?'<th>반</th>':''}<th>내용</th><th>규격</th><th>단위</th><th style="text-align:right">수량</th><th style="text-align:right">예상단가</th><th style="text-align:right">합계</th><th>구매처</th><th>링크</th></tr>`;
+  $('ogTable').querySelector('tbody').innerHTML=items.map(i=>`<tr>${withTarget?`<td style="white-space:nowrap">${esc(i.대상)}</td>`:''}${anyCls?`<td style="white-space:nowrap">${Number(i.반)>0?i.반+'반':'공통'}</td>`:''}<td>${esc(i.내용)}</td><td>${esc(i.규격)}</td><td>${esc(i.단위||'개')}</td><td class="amt" style="text-align:right">${Number(i.수량)||0}</td><td class="amt" style="text-align:right">${won(i.예상단가)}</td><td class="amt" style="text-align:right">${won((Number(i.수량)||0)*(Number(i.예상단가)||0))}</td><td>${esc(i.구매처||'')}</td><td>${i.링크?`<a href="${esc(i.링크)}" target="_blank">열기</a>`:''}</td></tr>`).join('')
+    + `<tr class="tot-row"><td colspan="${5+(withTarget?1:0)+(anyCls?1:0)}" style="text-align:right">합계</td><td class="amt" style="text-align:right">${won(ogSum(items))}</td><td colspan="2"></td></tr>`;
+  $('ogModal').classList.add('on');
+}
+function ogOpenMine(){ const p=(curAlloc()||{품의:[]}).품의.find(x=>x.id===uP); if(!p||!Array.isArray(p.원래품목)) return;
+  const its=p.원래품목.slice().sort((a,b)=>(Number(a.순서)||0)-(Number(b.순서)||0));
+  ogShow(its, `견적서 반영 전에 담았던 내용 — ${U.label}`, `원래 담았던 내용 ${its.length}건 ${won(ogSum(its))}원 → 지금(견적서) ${p.품목.length}건 ${won(p.품목합계)}원, 차이 ${won(p.품목합계-ogSum(its))}원. 보기만 할 수 있고, 지금 물품은 아래 표에서 그대로 볼 수 있습니다.`, false); }
+function ogOpenAll(){ if(!CG) return; const its=CG.취합.flatMap(c=>(c.원래품목||[]).slice().sort((a,b)=>(Number(a.순서)||0)-(Number(b.순서)||0)).map(i=>({...i, 대상:c.라벨})));
+  ogShow(its, '견적서 반영 전에 학년이 담았던 내용', CG.취합.filter(c=>c.원래품목&&c.원래품목.length).map(c=>`${c.라벨}: 원래 ${won(ogSum(c.원래품목))}원 → 지금 ${won(c.품목합계)}원`).join(' / '), true); }
+function ogXlsx(){ if(!OG) return; xlsxItemsFull(OG.items.map(i=>({...i, 수량:Number(i.수량)||0, 예상단가:Number(i.예상단가)||0})), '원래담은내용_'+OG.title.replace(/^.*— /,''), OG.withTarget); }
 function cDoneText(c){ return c.담기마감 ? '<b>담기 완료 ✓</b>' : ((c.학급담기&&c.학급수) ? `담는 중 (${c.담기완료.length}/${c.학급수}반 완료)` : (c.품목.length ? '담는 중' : '아직 안 담음')); }
 function cItems(g){ return g.취합.flatMap(c=>c.품목.map(i=>({...i, 대상:c.라벨}))); }
 function openCollect(gid, round){
@@ -2508,6 +2538,8 @@ function openCollect(gid, round){
   const real=g.취합.reduce((t,c)=>t+c.합계,0); const adj=g.취합.filter(c=>c.조정합계!==null);
   $('cgName').textContent=`${g.예산명} — ${cLabels(g)} · 품목 ${items.length}건 · 합계 ${won(real)}원`;
   $('cgImportBar').style.display = done ? 'none' : 'flex';
+  const ogs=g.취합.filter(c=>c.원래품목&&c.원래품목.length); $('cgOrigBar').style.display = ogs.length ? 'flex' : 'none';
+  if(ogs.length) $('cgOrigMsg').textContent = `견적서 내용으로 바꾼 품의입니다. 견적서 반영 전 금액: ${ogs.map(c=>`${c.라벨} ${won(ogSum(c.원래품목))}원`).join(', ')}`;
   $('cgAdjNote').style.display = adj.length ? 'block' : 'none'; $('cgAdjNote').textContent = adj.length ? `금액만 입력한 대상: ${adj.map(c=>`${c.라벨} ${won(c.조정합계)}원`).join(', ')}. 이 대상은 물품 합계 대신 입력한 금액이 사용액으로 잡힙니다.` : '';
   $('cgTitleSel').innerHTML=(titles.length?'<option value="">제목 양식 고르기</option>':'<option value="">제공된 제목 없음</option>')+titles.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
   $('cgTitleSel').disabled=!titles.length; $('cgTitleSel').style.display=titles.length?'':'none';
@@ -2696,6 +2728,9 @@ function setEditorMode(mode, p){
   $('collectBar').style.display = collect?'flex':'none';
   if(collect) $('collectBarMsg').textContent = `예산배정 담당자가 취합해 기안하는 품의입니다. 물품을 담고, 모두 담았으면 담기 완료에 체크한 뒤 저장하세요. ${p.차수}차 · 제목: ${p.제목||'(담당자가 정함)'}${p.상태==='기안완료'?' · 담당자가 기안을 완료해 더 이상 고칠 수 없습니다':''}`;
   $('gDone').checked = !!(collect && p.담기마감);
+  const og = collect && Array.isArray(p.원래품목) && p.원래품목.length;
+  $('origNote').style.display = og ? 'flex' : 'none';
+  if(og){ const o=ogSum(p.원래품목); $('origNoteMsg').innerHTML = `예산배정 담당자가 업체 견적서 내용으로 물품을 바꿨습니다${p.원래일시?` (${esc(String(p.원래일시).slice(0,10))})`:''}. 우리가 원래 담았던 내용은 ${p.원래품목.length}건 ${won(o)}원, 지금은 ${p.품목.length}건 ${won(p.품목합계)}원입니다.`; }
   const lockEl = $('uEditor'); lockEl.classList.toggle('locked', !!(collect && p.상태==='기안완료'));
 }
 function renderCpBox(p){
