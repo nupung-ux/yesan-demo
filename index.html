@@ -391,6 +391,7 @@
         <li><b>담당자 품의</b> 탭에서 <b>취합 품의서 열기</b> → 제목을 쓰고(배부할 때는 제목 양식을 정하지 않습니다) <b>제목 저장</b>. 저장한 제목이 학년, 전담 화면의 담기 목록에 나타납니다.</li>
         <li>각 학년, 반, 전담이 물품을 담으면 <b>담긴 물품</b>에 모입니다. 담기 완료 여부도 함께 보입니다.</li>
         <li>개요를 만들어 복사하고 <b>에듀파인 업로드 양식</b>을 내려받아 기안합니다. 기안했으면 <b>기안 완료</b> 체크. 그 차수는 마무리되어 학년에서 더 고칠 수 없습니다.</li>
+        <li>업체에서 학년별로 나눈 견적서(엑셀)를 받았으면 취합 품의서의 <b>학년별 견적서 가져오기</b>로 올립니다. "■1학년■"처럼 학년이 적힌 구분 줄을 기준으로 물품을 나눠 보여 주고, 확인 후 넣으면 각 학년이 담아 둔 물품이 견적서 내용으로 바뀝니다. 학년별 사용액이 견적서와 같아지고, 에듀파인 원인행위액도 이 금액 비율로 나뉘어 반영됩니다. 대상이 잘못 잡힌 줄은 미리보기에서 바꿀 수 있습니다. 읽히지 않는 견적서(PDF 등)는 <b>대상별 금액만 입력</b>으로 학년별 금액만 넣으세요.</li>
         <li>학습준비물처럼 1학기, 2학기로 나눠 여러 번 품의할 때는 기안 완료 뒤 카드의 <b>＋ 2차 품의 추가</b>를 누릅니다. 각 학년과 전담 화면에 2차 품의가 새로 생겨 남은 예산 안에서 다시 물품을 담을 수 있고, 3차도 같은 방식입니다. 지난 차수는 카드의 "보기"로 다시 열어 볼 수 있습니다.</li>
       </ol>
       <p>에듀파인 품의목록 반영은 "에듀파인 반영" 탭을 보세요.</p>
@@ -804,6 +805,12 @@
 
         <div class="stepbox">
           <div class="steph"><span class="num">2</span><h3>담긴 물품</h3><span class="r">각 학년·반·전담에서 담은 물품입니다. 고치려면 해당 학년 화면에서 수정합니다.</span></div>
+          <div id="cgImportBar" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border:1px dashed var(--line);border-radius:10px;background:#fff">
+            <button class="btn" onclick="$('cqFileIn').click()">📄 학년별 견적서 가져오기</button><input type="file" id="cqFileIn" accept=".xls,.xlsx,.htm,.html" style="display:none" onchange="cqFile(this)">
+            <button class="btn soft" onclick="caOpen()">대상별 금액만 입력</button>
+            <span class="hint" style="margin:0">업체가 학년별로 나눠 준 견적서(엑셀)를 올리면 각 학년 물품이 견적서 내용으로 바뀌어 학년별 사용액이 견적서와 같아집니다.</span>
+          </div>
+          <div id="cgAdjNote" class="hint warn" style="display:none"></div>
           <div style="overflow-x:auto"><table class="list" id="cgItems" style="font-size:14px"><thead><tr><th>대상</th><th>내용</th><th>규격</th><th>단위</th><th style="text-align:right">수량</th><th style="text-align:right">예상단가</th><th style="text-align:right">합계</th><th>구매처</th><th>링크</th></tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="6" style="text-align:right">합계</td><td class="amt" style="text-align:right" id="cgTotal">0</td><td colspan="2"></td></tr></tfoot></table></div>
           <div style="margin-top:8px;display:flex;justify-content:flex-end;flex-direction:column;align-items:flex-end;gap:3px"><span style="display:flex;gap:8px"><button class="btn" onclick="cgXlsxFull()" title="대상(학년, 반), 구매처, 링크, 합계까지 들어간 전체 내역">⬇ 품목 내역 받기 (구매처, 링크 포함)</button><button class="btn soft" onclick="cgXlsx()">에듀파인 업로드 양식</button></span><span class="hint" style="margin:0">에듀파인 품의에 업로드하면 물품이 자동 등록됩니다</span></div>
         </div>
@@ -939,6 +946,25 @@
   <div class="hint">켜면 각 반 화면에 이 품의가 나타나 담임이 물품을 직접 담습니다. 담긴 물품은 이 공통 품의의 품목이 되고, 금액은 학년 공통 예산에서 나갑니다.</div>
   <div id="cpLimitBox" style="display:none;margin-top:10px"><label class="f">반당 담을 수 있는 금액 (안내용, 비우면 제한 없음)</label><input type="text" inputmode="numeric" id="cpLimit" style="width:100%" placeholder="예: 100,000" onblur="this.value=this.value?won(this.value.replace(/[^0-9]/g,'')):''"></div>
   <div class="actions"><button class="btn" onclick="$('cpModal').classList.remove('on')">취소</button><button class="btn primary" onclick="createCommonPumui()">만들기</button></div>
+</div></div>
+
+<!-- 학년별 견적서 가져오기 (담당자 취합 품의) -->
+<div class="modal-bg" id="cqModal"><div class="modal" style="max-width:980px">
+  <h3 id="cqTitle">학년별 견적서 가져오기</h3>
+  <div class="hint" id="cqInfo"></div>
+  <div class="hint warn" id="cqWarn" style="display:none"></div>
+  <div style="overflow-x:auto"><table class="list" id="cqSum" style="font-size:14px"><thead><tr><th>대상</th><th style="text-align:right">품목 수</th><th style="text-align:right">견적 금액</th><th style="text-align:right">쓸 수 있는 금액</th><th style="text-align:right">넣은 뒤 잔액</th></tr></thead><tbody></tbody></table></div>
+  <div class="hint" style="margin:10px 0 4px">구분 줄(색칠된 줄)의 대상을 바꾸면 그 아래 물품이 모두 따라 바뀝니다. 한 줄만 바꾸려면 그 줄의 대상을 고르세요.</div>
+  <div style="overflow-x:auto;max-height:42vh;overflow-y:auto"><table class="list" id="cqTable" style="font-size:13px"><thead><tr><th style="width:130px">대상</th><th>내용</th><th>규격</th><th>단위</th><th style="text-align:right">수량</th><th style="text-align:right">단가</th><th style="text-align:right">금액</th></tr></thead><tbody></tbody></table></div>
+  <div class="actions"><button class="btn" onclick="$('cqModal').classList.remove('on')">취소</button><button class="btn primary" onclick="cqApply()">각 대상에 넣기</button></div>
+</div></div>
+
+<!-- 대상별 금액만 입력 (담당자 취합 품의) -->
+<div class="modal-bg" id="caModal"><div class="modal" style="max-width:560px">
+  <h3>대상별 금액만 입력</h3>
+  <div class="hint">견적서를 읽을 수 없을 때 씁니다. 견적서에 적힌 학년별(전담별) 금액을 넣으면 물품 합계 대신 이 금액이 사용액으로 잡힙니다. 비워 두면 담긴 물품 합계를 그대로 씁니다.</div>
+  <div style="overflow-x:auto"><table class="list" id="caTable" style="font-size:14px"><thead><tr><th>대상</th><th style="text-align:right">담긴 물품 합계</th><th style="text-align:right;width:170px">견적 금액</th></tr></thead><tbody></tbody><tfoot><tr class="tot-row"><td colspan="2" style="text-align:right">합계</td><td class="amt" style="text-align:right" id="caTotal">0</td></tr></tfoot></table></div>
+  <div class="actions"><button class="btn" onclick="$('caModal').classList.remove('on')">취소</button><button class="btn primary" onclick="caApply()">저장</button></div>
 </div></div>
 
 <!-- 견적서 미리보기 모달 -->
@@ -1481,7 +1507,8 @@ async function managerGetAll(id, pw) {
         let rd = g.회차목록.find(r => r.회차 === no); if (!rd) { rd = { 회차: no, 키: cp.취합그룹, 취합: [] }; g.회차목록.push(rd); }
         const its = (cp.품목 || []).slice().sort((x, y) => num_(x.순서) - num_(y.순서)).map(i => ({ 내용: i.내용, 규격: i.규격, 단위: i.단위, 수량: num_(i.수량), 예상단가: num_(i.예상단가), 구매처: i.구매처, 링크: i.링크 || '', 반: num_(i.반) }));
         rd.취합.push({ 품의id: cp.id, 대상: a.대상, 라벨: targetLabel_(a.대상, depts), 제목: cp.제목, 상태: cp.상태, 원인행위액: num_(cp.원인행위액), 에듀파인품의번호: cp.에듀파인품의번호 || '',
-          담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 합계: its.reduce((t, i) => t + i.수량 * i.예상단가, 0) });
+          담기완료: doneList_(cp), 학급수: /^[1-6]$/.test(String(a.대상)) ? Number(s['학급수_' + a.대상] || 0) : 0, 품목: its, 품목합계: pumuiAmount_(cp).품목합계, 조정합계: pumuiAmount_(cp).조정합계,
+          합계: pumuiAmount_(cp).조정합계 !== null ? pumuiAmount_(cp).조정합계 : pumuiAmount_(cp).품목합계 });
       });
     }
   });
@@ -1631,6 +1658,23 @@ async function managerSetCollectTitle(id, pw, gid, title) {
   if (!members.length) throw new Error('취합 품의를 찾을 수 없습니다.');
   const ops = members.map(p => opUpd_('품의', p.id, { 제목: String(title || '').trim(), 수정일시: now_() }));
   ops.push(logOp_('담당자', '취합 제목', String(title || '').slice(0, 30), `${members.length}개 대상`));
+  await batch_(ops);
+  return true;
+}
+/** 취합 품의의 대상별 물품을 담당자가 한 번에 넣는다 (업체 견적서 가져오기, 금액만 입력).
+ *  parts: [{품의id, 품목:[…]}]  → 그 대상의 물품을 통째로 바꿈
+ *         [{품의id, 금액:숫자|''}] → 물품은 그대로 두고 반영 금액만 정함('' 이면 지움) */
+async function managerSetCollectItems(id, pw, key, parts) {
+  await checkManager_(id, pw); guardWrite_();
+  const members = (await col_('품의')).filter(p => p.취합그룹 === key);
+  if (!members.length) throw new Error('취합 품의를 찾을 수 없습니다.');
+  if (members.some(p => p.상태 === '기안완료')) throw new Error('기안 완료한 품의는 바꿀 수 없습니다. 기안 완료를 먼저 풀어 주세요.');
+  const ops = []; let n = 0;
+  (parts || []).forEach(pt => { const m = members.find(p => p.id === pt.품의id); if (!m) return;
+    if (Array.isArray(pt.품목)) { const its = cleanItems_(pt.품목.map(i => Object.assign({}, i, { id: '', 반: 0 }))); n += its.length; ops.push(opUpd_('품의', m.id, { 품목: its, 조정합계: '', 수정일시: now_() })); }
+    else if (pt.금액 !== undefined) ops.push(opUpd_('품의', m.id, { 조정합계: String(pt.금액).trim() === '' ? '' : num_(pt.금액), 수정일시: now_() })); });
+  if (!ops.length) throw new Error('바꿀 대상이 없습니다.');
+  ops.push(logOp_('담당자', '취합 물품 넣기', key, `${ops.length}개 대상, 물품 ${n}건`));
   await batch_(ops);
   return true;
 }
@@ -1892,7 +1936,7 @@ async function edufineApply(auth, decisions) {
       const gid = d.품의id.slice(2); const members = all.filter(x => x.취합그룹 === gid);
       if (!members.length || seenIds.has(d.품의id)) { none++; return; }
       seenIds.add(d.품의id);
-      const sums = members.map(m => (m.품목 || []).reduce((t, i) => t + num_(i.수량) * num_(i.예상단가), 0)); const total = sums.reduce((t, v) => t + v, 0);
+      const sums = members.map(m => { const am = pumuiAmount_(m); return am.조정합계 !== null ? am.조정합계 : am.품목합계; }); const total = sums.reduce((t, v) => t + v, 0);
       const amt = d.상태 === '원인행위' ? num_(d.원인행위금액) : 0; let given = 0;
       members.forEach((m, i) => { const share = i === members.length - 1 ? amt - given : (total > 0 ? Math.round(amt * sums[i] / total) : Math.round(amt / members.length)); given += share;
         ops.push(opUpd_('품의', m.id, { 에듀파인품의번호: no, 원인행위액: share, 수정일시: now_() })); });
@@ -1917,7 +1961,7 @@ async function getUploadHistory(auth) {
 
 const API = { getBootstrap, verifyGradePassword, adminSetPassword, adminLogin, adminChangePassword, adminSetLogo, adminSaveSettings, adminSaveDepartments, adminRenameManager, adminResetManagerPassword,
   adminDeleteManager, adminSavePhrases, adminGetChangeLog, adminResetData, adminNewYear, adminArchives, adminBackup, adminImport, registerManager, loginManager, managerGetAll, managerSaveBudgets,
-  managerAllocate, managerAllocateBatch, managerUpdateGroup, managerSetCollectTitle, managerFinalizeCollect, managerNewCollectRound, managerDeleteGroup, userGetAll, userSaveDistribution, userCreatePumui, userSavePumui,
+  managerAllocate, managerAllocateBatch, managerUpdateGroup, managerSetCollectTitle, managerSetCollectItems, managerFinalizeCollect, managerNewCollectRound, managerDeleteGroup, userGetAll, userSaveDistribution, userCreatePumui, userSavePumui,
   userSaveClassItems, userSetClassCollect, userDeletePumui, edufineMatch, edufineApply, getUploadHistory, createSchool, openSchool, schoolExists, testDeleteAll };
 // ═══════════════════════ CORE END ═══════════════════════
 
@@ -2458,13 +2502,16 @@ function openCollect(gid, round){
   const titles=g.제목목록.map(t=>cSubst(t,g));
   const curTitle=(g.취합[0]||{}).제목||'';
   const done=g.취합.length && g.취합.every(c=>c.상태==='기안완료');
-  $('cgName').textContent=`${g.예산명} — ${cLabels(g)} · 품목 ${items.length}건 · 합계 ${won(total)}원`;
+  const real=g.취합.reduce((t,c)=>t+c.합계,0); const adj=g.취합.filter(c=>c.조정합계!==null);
+  $('cgName').textContent=`${g.예산명} — ${cLabels(g)} · 품목 ${items.length}건 · 합계 ${won(real)}원`;
+  $('cgImportBar').style.display = done ? 'none' : 'flex';
+  $('cgAdjNote').style.display = adj.length ? 'block' : 'none'; $('cgAdjNote').textContent = adj.length ? `금액만 입력한 대상: ${adj.map(c=>`${c.라벨} ${won(c.조정합계)}원`).join(', ')}. 이 대상은 물품 합계 대신 입력한 금액이 사용액으로 잡힙니다.` : '';
   $('cgTitleSel').innerHTML=(titles.length?'<option value="">제목 양식 고르기</option>':'<option value="">제공된 제목 없음</option>')+titles.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
   $('cgTitleSel').disabled=!titles.length; $('cgTitleSel').style.display=titles.length?'':'none';
   $('cgTitle').value=curTitle||(titles[0]||'');
   $('cgItems').querySelector('tbody').innerHTML=items.map(i=>`<tr><td style="white-space:nowrap">${esc(i.대상)}${i.반?` <span class="cls-tag">${i.반}반</span>`:''}</td><td>${esc(i.내용)}</td><td>${esc(i.규격)}</td><td>${esc(i.단위||'개')}</td><td class="amt" style="text-align:right">${i.수량}</td><td class="amt" style="text-align:right">${won(i.예상단가)}</td><td class="amt" style="text-align:right">${won(i.수량*i.예상단가)}</td><td>${esc(i.구매처||'')}</td><td>${i.링크?`<a href="${esc(i.링크)}" target="_blank">열기</a>`:''}</td></tr>`).join('')||'<tr><td colspan="9" class="empty">아직 담긴 물품이 없습니다.</td></tr>';
   $('cgTotal').textContent=won(total);
-  $('cgStatus').innerHTML=g.취합.map(c=>`<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:#fff">${esc(c.라벨)}${c.학급수?` ${c.담기완료.length}/${c.학급수}반 완료`:(c.품목.length?' 담음':' 미담')}${c.원인행위액?` · 원인행위 ${won(c.원인행위액)}`:''}</span>`).join(' ');
+  $('cgStatus').innerHTML=g.취합.map(c=>`<span style="border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;background:#fff">${esc(c.라벨)}${c.학급수?` ${c.담기완료.length}/${c.학급수}반 완료`:(c.품목.length?' 담음':' 미담')}${c.합계?` · ${won(c.합계)}원`:''}${c.원인행위액?` · 원인행위 ${won(c.원인행위액)}`:''}</span>`).join(' ');
   const list=[...M.기본문구.map(x=>({...x,출처:'기본'})), ...g.문구목록.map(x=>({...x,출처:'담당자'}))];
   $('cgPhrase').innerHTML=list.map((x,i)=>`<option value="${i}">${esc(x.이름)}${x.출처==='담당자'?' (이 예산 전용)':''}</option>`).join('')||'<option value="">문구 없음</option>'; $('cgPhrase')._list=list;
   const vs=[...new Set(items.map(i=>String(i.구매처||'').trim()).filter(Boolean))];
@@ -2915,14 +2962,15 @@ function parseIscream(text){
 }
 // xlsx: 헤더 행을 보고 YES24 / 에듀파인 품목내역 양식 / 학교장터 판별
 function parseXlsxQuote(buf){
-  const wb=XLSX.read(buf,{type:'array'});
-  for(const n of wb.SheetNames){
-    const A=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''}).map(r=>r.map(v=>String(v).trim()));
+  const sheets=xlsxSheets(buf);
+  for(const sh of sheets){ const A=sh.A;
     if(A.some(r=>r.includes('서명')&&r.some(v=>v.includes('공급단가')))) return parseYes24(A);
     if(A.some(r=>r.includes('내용')&&r.includes('수량')&&r.includes('예상단가'))) return parseEdufineForm(A);
-    if(A.some(r=>r.includes('품명')&&r.includes('수량')&&r.includes('단가'))) return parseKidkids(A);
   }
-  return parseS2B(buf);
+  const A0=sheets[0].A;
+  if(A0.some(r=>r.some(v=>v.includes('물품'))&&r.some(v=>v==='수량')&&r.some(v=>v.includes('단가')))) return parseS2B(A0);
+  for(const sh of sheets){ if(quoteRows(sh.A)) return parseGenericQuote(sh.A); }
+  return parseS2B(A0);
 }
 function parseYes24(A){
   const hi=A.findIndex(r=>r.includes('서명')&&r.some(v=>v.includes('공급단가')));
@@ -2931,21 +2979,6 @@ function parseYes24(A){
   for(let i=hi+1;i<A.length;i++){ const r=A[i]; if(/합계/.test(r.join(' '))) break; if(!r[cName]||!numOf(r[cQty])) continue;
     items.push({내용:(cType>=0&&r[cType]?`[${r[cType]}] `:'')+r[cName], 규격:cPub>=0?r[cPub]:'', 단위:'권', 수량:numOf(r[cQty]), 예상단가:numOf(r[cPrice]), 구매처:'YES24', 출처:'YES24'}); }
   return {items, ship:0, 출처:'YES24'};
-}
-// 키드키즈몰: 엑셀 첫 줄이 품명 규격 수량 단위 단가. 옵션은 품명 끝에 "선택 : 핑크"처럼 붙어 있어 규격으로 옮긴다
-function parseKidkids(A){
-  const hi=A.findIndex(r=>r.includes('품명')&&r.includes('수량')&&r.includes('단가'));
-  const H=A[hi]; const cName=H.indexOf('품명'), cSpec=H.indexOf('규격'), cQty=H.indexOf('수량'), cUnit=H.indexOf('단위'), cPrice=H.indexOf('단가');
-  const items=[]; let ship=0;
-  for(let i=hi+1;i<A.length;i++){ const r=A[i]; let name=r[cName]; if(!name) continue;
-    if(/^(합\s*계|총\s*계|총\s*금액)/.test(name)) continue;
-    if(/^배송비/.test(name)){ ship=Math.max(ship, numOf(r[cPrice])); continue; }
-    if(!numOf(r[cQty])) continue;
-    let spec=cSpec>=0?r[cSpec]:'';
-    if(!spec){ const k=name.lastIndexOf(' : '); if(k>0){ spec=name.slice(k+3).trim(); name=name.slice(0,k).replace(/\s*(색상\s*)?선택$/,'').trim(); } }
-    items.push({내용:name, 규격:spec, 단위:cUnit>=0&&r[cUnit]?r[cUnit]:'개', 수량:numOf(r[cQty]), 예상단가:numOf(r[cPrice]), 구매처:'키드키즈몰', 출처:'키드키즈몰'});
-  }
-  return {items, ship, 출처:'키드키즈몰'};
 }
 // 에듀파인 품목내역 양식(내용·규격·단위·수량·예상단가) — YES24 에듀파인 양식 등
 function parseEdufineForm(A){
@@ -2995,9 +3028,7 @@ async function parsePdfQuote(buf){
   return { ship, 출처:'이마트몰', items: items.map(it=>{ const name=it.names.sort((a,b)=>a.y-b.y).map(n=>n.s).join(' ').replace(/\s+/g,' ').trim();
     return {내용:name, 규격:'', 단위:'개', 수량:it.수량, 예상단가:Math.round(it.tot/it.수량), 구매처:'이마트몰', 출처:'이마트몰', _mismatch: it.tot%it.수량!==0}; }) };
 }
-function parseS2B(buf){
-  const wb=XLSX.read(buf,{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]];
-  const A=XLSX.utils.sheet_to_json(ws,{header:1,defval:''}).map(r=>r.map(v=>String(v).trim()));
+function parseS2B(A){
   const hi=A.findIndex(r=>r.some(v=>v.includes('물품'))&&r.some(v=>v==='수량')&&r.some(v=>v.includes('단가')));
   if(hi<0) throw new Error('학교장터 견적서 표를 찾지 못했습니다.');
   const H=A[hi]; const cName=H.findIndex(v=>v.includes('물품')), cQty=H.indexOf('수량'), cPrice=H.findIndex(v=>v.includes('단가')), cUnit=H.findIndex(v=>v.includes('단위'));
@@ -3012,6 +3043,122 @@ function parseS2B(buf){
     items.push({내용:parts[0], 규격:parts.slice(1).join(' '), 단위:unit||'개', 수량:numOf(r[cQty]), 예상단가:numOf(r[cPrice]), 구매처:'학교장터', 출처:'학교장터'});
   }
   return {items, ship, 출처:'학교장터'};
+}
+// ───────── 엑셀 읽기 보완: 한셀 등에서 저장해 SheetJS가 못 읽는 xlsx는 직접 풀어 읽는다 ─────────
+function xlsxSheets(buf){
+  if(!(buf instanceof Uint8Array)) buf=new Uint8Array(buf);
+  const wb=XLSX.read(buf,{type:'array'});
+  const ok=wb.SheetNames.length && wb.SheetNames.every(n=>wb.Sheets[n]);
+  if(ok && wb.SheetNames.some(n=>wb.Sheets[n]['!ref'])) return wb.SheetNames.map(n=>({name:n, A:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''}).map(r=>r.map(v=>String(v).trim()))}));
+  const z=XLSX.CFB.read(buf,{type:'array'}); const dec=new TextDecoder('utf-8');
+  const file=re=>z.FileIndex.map((f,i)=>({f, p:z.FullPaths[i]})).filter(x=>re.test(x.p)&&x.f.content&&x.f.content.length).map(x=>({p:x.p, t:dec.decode(new Uint8Array(x.f.content)).replace(/<(\/?)[a-z]\w*:/g,'<$1')}));
+  const un=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#(\d+);/g,(m,d)=>String.fromCharCode(d)).replace(/&amp;/g,'&');
+  const ssf=file(/sharedStrings\.xml$/i)[0]; const SS=ssf?(ssf.t.match(/<si>[\s\S]*?<\/si>|<si\/>/g)||[]).map(si=>un((si.replace(/<rPh>[\s\S]*?<\/rPh>/g,'').match(/<t[^>]*>[\s\S]*?<\/t>/g)||[]).map(t=>t.replace(/<[^>]+>/g,'')).join(''))):[];
+  const wbx=file(/workbook\.xml$/i)[0]; const names=wbx?(wbx.t.match(/<sheet [^>]*>/g)||[]).map(s=>un((s.match(/name="([^"]*)"/)||[])[1]||'')):[];
+  const sheets=file(/worksheets\/sheet\d+\.xml$/i).sort((a,b)=>numOf(a.p.match(/sheet(\d+)\.xml/i)[1])-numOf(b.p.match(/sheet(\d+)\.xml/i)[1]));
+  if(!sheets.length) throw new Error('엑셀 파일을 읽지 못했습니다.');
+  const colNo=L=>{ let n=0; for(const ch of L) n=n*26+ch.charCodeAt(0)-64; return n-1; };
+  return sheets.map((sh,si)=>{ const A=[];
+    (sh.t.match(/<row[ >][\s\S]*?<\/row>/g)||[]).forEach(row=>{ const rn=numOf((row.match(/^<row[^>]*\sr="(\d+)"/)||[])[1])||A.length+1; const R=[];
+      (row.match(/<c [^>]*?(?:\/>|>[\s\S]*?<\/c>)/g)||[]).forEach(c=>{ const ref=(c.match(/\sr="([A-Z]+)\d+"/)||[])[1]; if(!ref) return; const type=(c.match(/\st="([^"]*)"/)||[])[1]||'';
+        let v=(c.match(/<v>([\s\S]*?)<\/v>/)||[])[1]; if(type==='inlineStr') v=(c.match(/<t[^>]*>([\s\S]*?)<\/t>/)||[])[1];
+        if(v===undefined) return; R[colNo(ref)] = (type==='s' ? (SS[Number(v)]||'') : un(v)).trim(); });
+      for(let i=0;i<R.length;i++) if(R[i]===undefined) R[i]='';
+      A[rn-1]=R; });
+    for(let i=0;i<A.length;i++) if(!A[i]) A[i]=[];
+    return {name:names[si]||('시트'+(si+1)), A}; });
+}
+// 견적 표 읽기(업체 양식 무관): 제목 줄에서 품명, 수량, 단가 칸을 찾고 금액이 0인 줄은 구분 줄(■1학년■ 등)로 본다
+function quoteRows(A){
+  const nz=v=>String(v||'').replace(/\s+/g,'');
+  const NAMES=['품명','상품명','물품명','품목명','품목','내용','물품'];
+  const hi=A.findIndex(r=>{ const h=r.map(nz); return h.some(v=>NAMES.includes(v)) && h.includes('수량') && h.some(v=>v.includes('단가')); });
+  if(hi<0) return null;
+  const H=A[hi].map(nz); const cName=H.findIndex(v=>NAMES.includes(v)), cSpec=H.indexOf('규격'), cUnit=H.indexOf('단위'), cQty=H.indexOf('수량'), cPrice=H.findIndex(v=>v.includes('단가')), cGrade=H.indexOf('학년');
+  let sup=''; A.slice(0,hi).forEach(r=>{ const i=r.findIndex(v=>nz(v)==='상호'); if(i>=0&&!sup){ const v=r.slice(i+1).find(x=>x); if(v&&!/귀하|귀중/.test(v)) sup=v; } });
+  let total=0; A.forEach(r=>{ const i=r.findIndex(v=>/^(합계|총계|총액|합계금액|총금액)$/.test(nz(v))); if(i>=0){ const n=r.slice(i+1).map(numOf).filter(Boolean); if(n.length) total=n[n.length-1]; } });
+  const rows=[];
+  for(let i=hi+1;i<A.length;i++){ const r=A[i]; const name=String(r[cName]||'').trim(); if(!name) continue;
+    if(/^(합계|소계|총계|공급가액|세액|부가세)/.test(nz(name))) continue;
+    const qty=numOf(r[cQty]), price=numOf(r[cPrice]);
+    if(!qty||!price){ if(!/^이하(여백|빈칸)|^끝\.?$/.test(nz(name))) rows.push({sec:true, text:name}); continue; }
+    rows.push({내용:name, 규격:cSpec>=0?String(r[cSpec]||''):'', 단위:cUnit>=0&&r[cUnit]?String(r[cUnit]):'개', 수량:qty, 예상단가:price, 학년:cGrade>=0?String(r[cGrade]||''):''});
+  }
+  return {rows, sup, total, top:hi===0};
+}
+// 일반 견적서(품명 규격 수량 단가): 첫 줄이 바로 제목 줄이고 업체 정보가 없으면 키드키즈몰 양식
+function parseGenericQuote(A){
+  const q=quoteRows(A); if(!q) throw new Error('견적 표를 찾지 못했습니다.');
+  const kid=q.top&&!q.sup; const src=kid?'키드키즈몰':(q.sup||'견적서'); let ship=0; const items=[];
+  q.rows.forEach(r=>{ if(r.sec) return; let name=r.내용, spec=r.규격;
+    if(/^배송비/.test(name)){ ship=Math.max(ship, r.수량*r.예상단가); return; }
+    if(kid&&!spec){ const k=name.lastIndexOf(' : '); if(k>0){ spec=name.slice(k+3).trim(); name=name.slice(0,k).replace(/\s*(색상\s*)?선택$/,'').trim(); } }
+    items.push({내용:name, 규격:spec, 단위:r.단위, 수량:r.수량, 예상단가:r.예상단가, 구매처:src==='견적서'?'':src, 출처:src}); });
+  return {items, ship, 출처:src};
+}
+
+// ───────── 담당자 취합 품의: 학년별 견적서 가져오기 / 금액만 입력 ─────────
+let CQ=null;
+function cqTargets(){ return CG.취합.map(c=>{ const t=CG.대상들.find(x=>String(x.대상)===String(c.대상))||{}; return {id:c.품의id, 대상:String(c.대상), 라벨:c.라벨, 남음:(t.배부액||0)-(t.사용||0), 지금:c.합계}; }); }
+function cqMatch(text, T){
+  const s=String(text||'').replace(/\s+/g,''); if(!s) return '';
+  const m=s.match(/([1-6])학년/); if(m){ const t=T.find(x=>x.대상===m[1]); if(t) return t.id; }
+  if(/^[1-6]$/.test(s)){ const t=T.find(x=>x.대상===s); if(t) return t.id; }
+  const t=T.find(x=>!/^[1-6]$/.test(x.대상) && (s.includes(x.라벨.replace(/\s+/g,'')) || (x.라벨.replace(/\s+|전담$/g,'').length>=2 && s.includes(x.라벨.replace(/\s+|전담$/g,'')))));
+  return t?t.id:'';
+}
+async function cqFile(inp){
+  const f=(inp.files||[])[0]; try{ inp.value=''; }catch(e){}
+  if(!f||!CG) return;
+  try{
+    const buf=await f.arrayBuffer(); const head=new Uint8Array(buf.slice(0,4)); let sheets;
+    if(head[0]===0x25&&head[1]===0x50) throw new Error('PDF 견적서는 학년별로 나눠 읽지 못합니다. 업체에 엑셀 파일을 요청하거나 "대상별 금액만 입력"을 쓰세요.');
+    if((head[0]===0x50&&head[1]===0x4B)||(head[0]===0xD0&&head[1]===0xCF)) sheets=xlsxSheets(buf);
+    else { let text; try{ text=new TextDecoder('utf-8',{fatal:true}).decode(buf); }catch(e){ text=new TextDecoder('euc-kr').decode(buf); }
+      sheets=htmlTables(text).map((tb,i)=>({name:'', A:[...tb.querySelectorAll('tr')].map(cellsOf)})); }
+    const T=cqTargets(); const rows=[]; let sup='', total=0, cur='';
+    sheets.forEach(sh=>{ const q=quoteRows(sh.A); if(!q||!q.rows.some(r=>!r.sec)) return;
+      if(!sup) sup=q.sup; total+=q.total; const byName=cqMatch(sh.name,T); if(byName && sheets.length>1){ cur=byName; rows.push({sec:true, text:sh.name, t:cur}); }
+      q.rows.forEach(r=>{ if(r.sec){ const hit=cqMatch(r.text,T); if(hit||/학년|전담|학급|반\b|■|◆|▣|【|\[/.test(r.text)){ cur=hit; rows.push({sec:true, text:r.text, t:cur}); } return; }
+        const own=r.학년?cqMatch(/^\d$/.test(r.학년.trim())?r.학년.trim()+'학년':r.학년,T):'';
+        rows.push({t:own||cur, 내용:r.내용, 규격:r.규격, 단위:r.단위, 수량:r.수량, 예상단가:r.예상단가}); }); });
+    if(!rows.some(r=>!r.sec)) throw new Error('견적 표(품명, 수량, 단가)를 찾지 못했습니다. "대상별 금액만 입력"을 쓰세요.');
+    CQ={rows, sup, total, fname:f.name, T}; cqRender(); $('cqModal').classList.add('on');
+  }catch(e){ toast(`${f.name} — ${e.message}`, true); }
+}
+function cqOpts(sel, all){ return `<option value="">${all?'대상 고르기':'넣지 않음'}</option>`+CQ.T.map(t=>`<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.라벨)}</option>`).join(''); }
+function cqRender(){
+  const items=CQ.rows.filter(r=>!r.sec); const sum=items.reduce((t,r)=>t+r.수량*r.예상단가,0); const none=items.filter(r=>!r.t);
+  $('cqTitle').textContent=`학년별 견적서 가져오기${CQ.sup?' — '+CQ.sup:''}`;
+  $('cqInfo').textContent=`${CQ.fname} · 물품 ${items.length}건 · 합계 ${won(sum)}원. 넣으면 각 대상이 담아 둔 물품은 지워지고 견적서 내용으로 바뀝니다.`;
+  const warn=[]; if(none.length) warn.push(`대상이 정해지지 않은 물품이 ${none.length}건(${won(none.reduce((t,r)=>t+r.수량*r.예상단가,0))}원) 있습니다. 대상을 고르지 않으면 넣지 않습니다.`);
+  if(CQ.total && CQ.total!==sum) warn.push(`견적서에 적힌 합계(${won(CQ.total)}원)와 물품 합계(${won(sum)}원)가 다릅니다. 부가세가 따로 붙는 견적서인지 확인하세요.`);
+  $('cqWarn').style.display=warn.length?'block':'none'; $('cqWarn').innerHTML=warn.map(esc).join('<br>');
+  $('cqSum').querySelector('tbody').innerHTML=CQ.T.map(t=>{ const mine=items.filter(r=>r.t===t.id); const s=mine.reduce((a,r)=>a+r.수량*r.예상단가,0); const left=t.남음-s;
+    return `<tr><td>${esc(t.라벨)}</td><td class="amt" style="text-align:right">${mine.length||'<span style="color:var(--ink-3)">없음</span>'}</td><td class="amt" style="text-align:right">${won(s)}</td><td class="amt" style="text-align:right">${won(t.남음)}</td><td class="amt" style="text-align:right;${left<0?'color:var(--danger);font-weight:700':''}">${won(left)}${left<0?' 초과':''}</td></tr>`; }).join('')
+    +`<tr class="tot-row"><td>합계</td><td class="amt" style="text-align:right">${items.length-none.length}</td><td class="amt" style="text-align:right">${won(sum-none.reduce((t,r)=>t+r.수량*r.예상단가,0))}</td><td colspan="2"></td></tr>`;
+  $('cqTable').querySelector('tbody').innerHTML=CQ.rows.map((r,i)=> r.sec
+    ? `<tr style="background:var(--navy-tint,#eef2f8)"><td><select onchange="cqSetSec(${i},this.value)" style="width:120px">${cqOpts(r.t,true)}</select></td><td colspan="6"><b>${esc(r.text)}</b></td></tr>`
+    : `<tr ${r.t?'':'style="background:var(--warn-tint)"'}><td><select onchange="cqSetRow(${i},this.value)" style="width:120px">${cqOpts(r.t)}</select></td><td>${esc(r.내용)}</td><td>${esc(r.규격)}</td><td>${esc(r.단위)}</td><td class="amt" style="text-align:right">${r.수량}</td><td class="amt" style="text-align:right">${won(r.예상단가)}</td><td class="amt" style="text-align:right">${won(r.수량*r.예상단가)}</td></tr>`).join('');
+}
+function cqSetSec(i,v){ CQ.rows[i].t=v; for(let k=i+1;k<CQ.rows.length&&!CQ.rows[k].sec;k++) CQ.rows[k].t=v; const box=$('cqTable').parentElement; const y=box.scrollTop; cqRender(); box.scrollTop=y; }
+function cqSetRow(i,v){ CQ.rows[i].t=v; const box=$('cqTable').parentElement; const y=box.scrollTop; cqRender(); box.scrollTop=y; }
+async function cqApply(){
+  if(!CQ||!CG) return; const items=CQ.rows.filter(r=>!r.sec&&r.t); if(!items.length) return toast('넣을 물품이 없습니다. 대상을 골라 주세요', true);
+  const skip=CQ.rows.filter(r=>!r.sec&&!r.t).length; const empty=CQ.T.filter(t=>!items.some(r=>r.t===t.id)&&t.지금>0).map(t=>t.라벨);
+  if(!confirm(`견적서 물품 ${items.length}건을 각 대상에 넣습니다. 각 대상이 담아 둔 물품은 지워지고 견적서 내용으로 바뀝니다.`+(empty.length?`\n견적서에 없는 ${empty.join(', ')}의 물품도 비워집니다.`:'')+(skip?`\n대상을 고르지 않은 ${skip}건은 넣지 않습니다.`:'')+'\n계속할까요?')) return;
+  const parts=CQ.T.map(t=>({품의id:t.id, 품목:items.filter(r=>r.t===t.id).map(r=>({내용:r.내용, 규격:r.규격, 단위:r.단위, 수량:r.수량, 예상단가:r.예상단가, 구매처:CQ.sup||'', 출처:'견적서'}))}));
+  const r=CG.회차, gid=CG.그룹id; await call('managerSetCollectItems', mgr.id, mgr.pw, CG.취합키, parts);
+  $('cqModal').classList.remove('on'); toast(`견적서 물품 ${items.length}건을 넣었습니다`); await loadManager(); openCollect(gid, r);
+}
+function caOpen(){ if(!CG) return;
+  $('caTable').querySelector('tbody').innerHTML=CG.취합.map((c,i)=>`<tr><td>${esc(c.라벨)}</td><td class="amt" style="text-align:right">${won(c.품목합계)}</td><td class="num"><input type="text" data-id="${c.품의id}" value="${c.조정합계===null?'':won(c.조정합계)}" placeholder="${won(c.품목합계)}" style="text-align:right;width:150px" oninput="caSum()" onblur="this.value=this.value.trim()===''?'':won(numOf(this.value))"></td></tr>`).join('');
+  caSum(); $('caModal').classList.add('on'); }
+function caSum(){ let t=0; $('caTable').querySelectorAll('tbody input').forEach(inp=>{ t += inp.value.trim()===''? numOf(inp.placeholder) : numOf(inp.value); }); $('caTotal').textContent=won(t); }
+async function caApply(){ if(!CG) return;
+  const parts=[...$('caTable').querySelectorAll('tbody input')].map(inp=>({품의id:inp.dataset.id, 금액: inp.value.trim()===''?'':numOf(inp.value)}));
+  const r=CG.회차, gid=CG.그룹id; await call('managerSetCollectItems', mgr.id, mgr.pw, CG.취합키, parts);
+  $('caModal').classList.remove('on'); toast('대상별 금액을 저장했습니다'); await loadManager(); openCollect(gid, r);
 }
 function openQuote(parsed, fname){
   qDraft=parsed.items.map(x=>({...x,선택:true})); qShip=parsed.ship||0;
